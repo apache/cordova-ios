@@ -23,8 +23,8 @@
 #import "CordovaApp-Swift.h"
 
 @interface CDVPluginInitTests : XCTestCase
-@property AppDelegate* appDelegate;
-@property CDVViewController* viewController;
+@property AppDelegate *appDelegate;
+@property CDVViewController *viewController;
 @end
 
 @implementation CDVPluginInitTests
@@ -39,7 +39,7 @@
     // uncaught and the app crashes upon a failed STAssert (oh well).
     // [self raiseAfterFailure];
 
-    self.appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
+    self.appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     [self.appDelegate createViewController];
     self.viewController = self.appDelegate.testViewController;
 }
@@ -52,7 +52,7 @@
     [super tearDown];
 }
 
-- (id)pluginInstance:(NSString*)pluginName
+- (id)pluginInstance:(NSString *)pluginName
 {
     id ret = [self.viewController getCommandInstance:pluginName];
 
@@ -62,13 +62,13 @@
 
 - (void)testSwiftVariablesInitialized
 {
-    CDVPlugin* swiftPlugin = [self pluginInstance:@"SwiftInit"];
+    CDVPlugin *swiftPlugin = [self pluginInstance:@"SwiftInit"];
 
     XCTAssertTrue([@"Successfully initialized" isEqualToString:[swiftPlugin performSelector:@selector(getInitString)]]);
 }
 
 // Unused, just to avoid a warning about the selector use above
-- (NSString*)getInitString
+- (NSString *)getInitString
 {
     return nil;
 }

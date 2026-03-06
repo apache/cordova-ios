@@ -23,9 +23,9 @@
 
 @interface CDVTimerItem : NSObject
 
-@property (nonatomic, strong) NSString* name;
-@property (nonatomic, strong) NSDate* started;
-@property (nonatomic, strong) NSDate* ended;
+@property (nonatomic, strong) NSString *name;
+@property (nonatomic, strong) NSDate *started;
+@property (nonatomic, strong) NSDate *ended;
 
 - (void)log;
 
@@ -44,7 +44,7 @@
 
 @interface CDVTimer ()
 
-@property (nonatomic, strong) NSMutableDictionary* items;
+@property (nonatomic, strong) NSMutableDictionary *items;
 
 @end
 
@@ -61,10 +61,10 @@
     return self;
 }
 
-- (void)add:(NSString*)name
+- (void)add:(NSString *)name
 {
     if ([self.items objectForKey:[name lowercaseString]] == nil) {
-        CDVTimerItem* item = [CDVTimerItem new];
+        CDVTimerItem *item = [CDVTimerItem new];
         item.name = name;
         item.started = [NSDate new];
         [self.items setObject:item forKey:[name lowercaseString]];
@@ -73,9 +73,9 @@
     }
 }
 
-- (void)remove:(NSString*)name
+- (void)remove:(NSString *)name
 {
-    CDVTimerItem* item = [self.items objectForKey:[name lowercaseString]];
+    CDVTimerItem *item = [self.items objectForKey:[name lowercaseString]];
 
     if (item != nil) {
         item.ended = [NSDate new];
@@ -93,12 +93,12 @@
 
 #pragma mark class methods
 
-+ (void)start:(NSString*)name
++ (void)start:(NSString *)name
 {
     [[CDVTimer sharedInstance] add:name];
 }
 
-+ (void)stop:(NSString*)name
++ (void)stop:(NSString *)name
 {
     [[CDVTimer sharedInstance] remove:name];
 }
@@ -108,14 +108,14 @@
     [[CDVTimer sharedInstance] removeAll];
 }
 
-+ (CDVTimer*)sharedInstance
++ (CDVTimer *)sharedInstance
 {
     static dispatch_once_t pred = 0;
-    __strong static CDVTimer* _sharedObject = nil;
+    __strong static CDVTimer *_sharedObject = nil;
 
     dispatch_once(&pred, ^{
-            _sharedObject = [[self alloc] init];
-        });
+        _sharedObject = [[self alloc] init];
+    });
 
     return _sharedObject;
 }

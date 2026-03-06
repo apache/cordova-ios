@@ -21,7 +21,7 @@
 
 @interface CDVStatusBarInternal : CDVPlugin
 
-- (void)setVisible:(CDVInvokedUrlCommand*)command;
-- (void)setBackgroundColor:(CDVInvokedUrlCommand*)command;
+- (void)setVisible:(CDVInvokedUrlCommand *)command;
+- (void)setBackgroundColor:(CDVInvokedUrlCommand *)command;
 
 @end

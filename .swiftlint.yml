@@ -15,6 +15,4 @@
 # specific language governing permissions and limitations
 # under the License.
 
-* text=auto eol=lf
-*.bat text eol=crlf
-*.jar binary
+line_length: 150

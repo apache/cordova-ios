@@ -28,8 +28,8 @@
  */
 CDV_DEPRECATED(8.0.0, "WebKit WKProcessPool is deprecated in iOS")
 @interface CDVWebViewProcessPoolFactory : NSObject
-@property (nonatomic, retain) WKProcessPool* sharedPool;
+@property (nonatomic, retain) WKProcessPool *sharedPool;
 
-+(instancetype) sharedFactory;
--(WKProcessPool*) sharedProcessPool;
++ (instancetype)sharedFactory;
+- (WKProcessPool *)sharedProcessPool;
 @end

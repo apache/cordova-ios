@@ -83,10 +83,10 @@ SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_ERROR, error);
 #undef SWIFT_ENUM_COMPAT_HACK
 #endif
 
-
 NS_ASSUME_NONNULL_BEGIN
 
-@interface CDVPluginResult : NSObject {}
+@interface CDVPluginResult : NSObject {
+}
 
 @property (nonatomic, strong, readonly) NSNumber *status;
 @property (nonatomic, nullable, strong, readonly) id message;
@@ -112,7 +112,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setKeepCallbackAsBool:(BOOL)bKeepCallback;
 
-- (NSString*)argumentsAsJSON;
+- (NSString *)argumentsAsJSON;
 
 @end
 

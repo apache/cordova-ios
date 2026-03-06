@@ -26,11 +26,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol CDVCommandDelegate <NSObject>
+@protocol CDVCommandDelegate<NSObject>
 
 @optional
 
-@property (nonatomic, nullable, copy) NSURL *(^urlTransformer)(NSURL *) CDV_DEPRECATED(8.0.0, "");
+@property (nonatomic, nullable, copy) NSURL * (^urlTransformer)(NSURL *)CDV_DEPRECATED(8.0.0, "");
 
 @required
 /**
@@ -39,7 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
  This is a dictionary populated from the preference key/value pairs in the
  Cordova XML configuration file.
  */
-@property (nonatomic, readonly) CDVSettingsDictionary* settings;
+@property (nonatomic, readonly) CDVSettingsDictionary *settings;
 
 - (NSString *)pathForResource:(NSString *)resourcepath;
 

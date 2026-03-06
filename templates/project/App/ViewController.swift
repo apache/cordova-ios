@@ -20,12 +20,10 @@
 import Cordova
 
 #if compiler(>=6.1)
-@objc @implementation
+    @objc @implementation
 #else
-@_objcImplementation
+    @_objcImplementation
 #endif
-extension MainViewController {
-}
+extension MainViewController {}
 
-class ViewController: MainViewController {
-}
+class ViewController: MainViewController {}

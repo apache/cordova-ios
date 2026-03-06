@@ -20,7 +20,7 @@
 #import <Cordova/CDVViewController.h>
 
 #ifndef __CORDOVA_SILENCE_HEADER_DEPRECATIONS
-    #warning It is unsafe to rely on the MainViewController class as an extension point. \
+#warning It is unsafe to rely on the MainViewController class as an extension point. \
              Update your code to extend CDVViewController instead -- \
              This code will stop working in Cordova iOS 9!
 #endif

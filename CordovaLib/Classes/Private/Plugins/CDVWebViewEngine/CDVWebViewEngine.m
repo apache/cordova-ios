@@ -28,21 +28,20 @@
 
 #define CDV_BRIDGE_NAME @"cordova"
 
-@interface CDVWebViewWeakScriptMessageHandler : NSObject <WKScriptMessageHandler>
+@interface CDVWebViewWeakScriptMessageHandler : NSObject<WKScriptMessageHandler>
 
-@property (nonatomic, weak, readonly) id<WKScriptMessageHandler>scriptMessageHandler;
+@property (nonatomic, weak, readonly) id<WKScriptMessageHandler> scriptMessageHandler;
 
 - (instancetype)initWithScriptMessageHandler:(id<WKScriptMessageHandler>)scriptMessageHandler;
 
 @end
 
-
 @interface CDVWebViewEngine ()
 
-@property (nonatomic, strong, readwrite) UIView* engineWebView;
-@property (nonatomic, strong, readwrite) id <WKUIDelegate> uiDelegate;
-@property (nonatomic, weak) id <WKScriptMessageHandler> weakScriptMessageHandler;
-@property (nonatomic, strong) CDVURLSchemeHandler * schemeHandler;
+@property (nonatomic, strong, readwrite) UIView *engineWebView;
+@property (nonatomic, strong, readwrite) id<WKUIDelegate> uiDelegate;
+@property (nonatomic, weak) id<WKScriptMessageHandler> weakScriptMessageHandler;
+@property (nonatomic, strong) CDVURLSchemeHandler *schemeHandler;
 @property (nonatomic, readwrite) NSString *CDV_ASSETS_URL;
 @property (nonatomic, readwrite) Boolean cdvIsFileScheme;
 @property (nullable, nonatomic, strong, readwrite) WKWebViewConfiguration *configuration;
@@ -63,7 +62,7 @@
         if (NSClassFromString(@"WKWebView") == nil) {
             return nil;
         }
-        
+
         self.configuration = configuration;
         self.engineWebView = configuration ? [[WKWebView alloc] initWithFrame:frame configuration:configuration] : [[WKWebView alloc] initWithFrame:frame];
     }
@@ -76,9 +75,9 @@
     return [self initWithFrame:frame configuration:nil];
 }
 
-- (WKWebViewConfiguration*) createConfigurationFromSettings:(CDVSettingsDictionary*)settings
+- (WKWebViewConfiguration *)createConfigurationFromSettings:(CDVSettingsDictionary *)settings
 {
-    WKWebViewConfiguration* configuration;
+    WKWebViewConfiguration *configuration;
     if (_configuration) {
         configuration = _configuration;
     } else {
@@ -88,7 +87,7 @@
         configuration.processPool = [[CDVWebViewProcessPoolFactory sharedFactory] sharedProcessPool];
 #pragma clang diagnostic pop
     }
-    
+
     if (settings == nil) {
         return configuration;
     }
@@ -120,7 +119,7 @@
      * Check if the new preference key "AllowsAirPlayForMediaPlayback" exists and overwrite the "MediaPlaybackAllowsAirPlay" value.
      */
     BOOL allowsAirPlayForMediaPlayback = [settings cordovaBoolSettingForKey:@"MediaPlaybackAllowsAirPlay" defaultValue:YES];
-    if([settings cordovaSettingForKey:@"AllowsAirPlayForMediaPlayback"] != nil) {
+    if ([settings cordovaSettingForKey:@"AllowsAirPlayForMediaPlayback"] != nil) {
         allowsAirPlayForMediaPlayback = [settings cordovaBoolSettingForKey:@"AllowsAirPlayForMediaPlayback" defaultValue:YES];
     }
     configuration.allowsAirPlayForMediaPlayback = allowsAirPlayForMediaPlayback;
@@ -145,16 +144,15 @@
     NSString *userAgent = configuration.applicationNameForUserAgent;
     if (
         [settings cordovaSettingForKey:@"OverrideUserAgent"] == nil &&
-        [settings cordovaSettingForKey:@"AppendUserAgent"] != nil
-        ) {
+        [settings cordovaSettingForKey:@"AppendUserAgent"] != nil) {
         userAgent = [NSString stringWithFormat:@"%@ %@", userAgent, [settings cordovaSettingForKey:@"AppendUserAgent"]];
     }
     configuration.applicationNameForUserAgent = userAgent;
 
     NSString *contentMode = [settings cordovaSettingForKey:@"PreferredContentMode"];
-    if ([contentMode isEqual: @"mobile"]) {
+    if ([contentMode isEqual:@"mobile"]) {
         configuration.defaultWebpagePreferences.preferredContentMode = WKContentModeMobile;
-    } else if ([contentMode isEqual: @"desktop"]) {
+    } else if ([contentMode isEqual:@"desktop"]) {
         configuration.defaultWebpagePreferences.preferredContentMode = WKContentModeDesktop;
     }
 
@@ -169,7 +167,7 @@
 
 - (void)pluginInitialize
 {
-    CDVSettingsDictionary* settings = self.commandDelegate.settings;
+    CDVSettingsDictionary *settings = self.commandDelegate.settings;
 
     NSString *scheme = self.viewController.appScheme;
 
@@ -177,21 +175,21 @@
     self.cdvIsFileScheme = [scheme isEqualToString:@"file"] || scheme == nil;
 
     NSString *hostname = @"";
-    if(!self.cdvIsFileScheme) {
-        if(scheme == nil || [WKWebView handlesURLScheme:scheme]){
+    if (!self.cdvIsFileScheme) {
+        if (scheme == nil || [WKWebView handlesURLScheme:scheme]) {
             scheme = @"app";
             self.viewController.appScheme = scheme;
         }
 
         hostname = [settings cordovaSettingForKey:@"hostname"];
-        if(hostname == nil){
+        if (hostname == nil) {
             hostname = @"localhost";
         }
 
         self.CDV_ASSETS_URL = [NSString stringWithFormat:@"%@://%@", scheme, hostname];
     }
 
-    CDVWebViewUIDelegate* uiDelegate = [[CDVWebViewUIDelegate alloc] initWithViewController:self.viewController];
+    CDVWebViewUIDelegate *uiDelegate = [[CDVWebViewUIDelegate alloc] initWithViewController:self.viewController];
     uiDelegate.title = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
     uiDelegate.mediaPermissionGrantType = [self parsePermissionGrantType:[settings cordovaSettingForKey:@"MediaPermissionGrantType"]];
     uiDelegate.allowNewWindows = [settings cordovaBoolSettingForKey:@"AllowNewWindows" defaultValue:NO];
@@ -199,10 +197,10 @@
 
     CDVWebViewWeakScriptMessageHandler *weakScriptMessageHandler = [[CDVWebViewWeakScriptMessageHandler alloc] initWithScriptMessageHandler:self];
 
-    WKUserContentController* userContentController = [[WKUserContentController alloc] init];
+    WKUserContentController *userContentController = [[WKUserContentController alloc] init];
     [userContentController addScriptMessageHandler:weakScriptMessageHandler name:CDV_BRIDGE_NAME];
 
-    if(self.CDV_ASSETS_URL) {
+    if (self.CDV_ASSETS_URL) {
         NSString *scriptCode = [NSString stringWithFormat:@"window.CDV_ASSETS_URL = '%@';", self.CDV_ASSETS_URL];
         WKUserScript *wkScript = [[WKUserScript alloc] initWithSource:scriptCode injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES];
 
@@ -211,17 +209,17 @@
         }
     }
 
-    WKWebViewConfiguration* configuration = [self createConfigurationFromSettings:settings];
+    WKWebViewConfiguration *configuration = [self createConfigurationFromSettings:settings];
     configuration.userContentController = userContentController;
 
     // Do not configure the scheme handler if the scheme is default (file)
-    if(!self.cdvIsFileScheme) {
+    if (!self.cdvIsFileScheme) {
         self.schemeHandler = [[CDVURLSchemeHandler alloc] initWithViewController:self.viewController];
         [configuration setURLSchemeHandler:self.schemeHandler forURLScheme:scheme];
     }
 
     // re-create WKWebView, since we need to update configuration
-    WKWebView* wkWebView = [[WKWebView alloc] initWithFrame:self.engineWebView.frame configuration:configuration];
+    WKWebView *wkWebView = [[WKWebView alloc] initWithFrame:self.engineWebView.frame configuration:configuration];
     wkWebView.UIDelegate = self.uiDelegate;
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 160400
@@ -251,17 +249,17 @@
     self.engineWebView = wkWebView;
 
     if ([self.viewController conformsToProtocol:@protocol(WKUIDelegate)]) {
-        wkWebView.UIDelegate = (id <WKUIDelegate>)self.viewController;
+        wkWebView.UIDelegate = (id<WKUIDelegate>)self.viewController;
     }
 
     if ([self.viewController conformsToProtocol:@protocol(WKNavigationDelegate)]) {
-        wkWebView.navigationDelegate = (id <WKNavigationDelegate>)self.viewController;
+        wkWebView.navigationDelegate = (id<WKNavigationDelegate>)self.viewController;
     } else {
-        wkWebView.navigationDelegate = (id <WKNavigationDelegate>)self;
+        wkWebView.navigationDelegate = (id<WKNavigationDelegate>)self;
     }
 
     if ([self.viewController conformsToProtocol:@protocol(WKScriptMessageHandler)]) {
-        [wkWebView.configuration.userContentController addScriptMessageHandler:(id < WKScriptMessageHandler >)self.viewController name:CDV_BRIDGE_NAME];
+        [wkWebView.configuration.userContentController addScriptMessageHandler:(id<WKScriptMessageHandler>)self.viewController name:CDV_BRIDGE_NAME];
     }
 
     [self updateSettings:settings];
@@ -271,70 +269,69 @@
 
 - (void)dispose
 {
-    WKWebView* wkWebView = (WKWebView*)_engineWebView;
+    WKWebView *wkWebView = (WKWebView *)_engineWebView;
     [wkWebView.configuration.userContentController removeScriptMessageHandlerForName:CDV_BRIDGE_NAME];
     _engineWebView = nil;
 
     [super dispose];
 }
 
-- (id)loadRequest:(NSURLRequest*)request
+- (id)loadRequest:(NSURLRequest *)request
 {
     if ([self canLoadRequest:request]) { // can load, differentiate between file urls and other schemes
-        if(request.URL.fileURL && self.cdvIsFileScheme) {
-            NSURL* readAccessUrl = [request.URL URLByDeletingLastPathComponent];
-            return [(WKWebView*)_engineWebView loadFileURL:request.URL allowingReadAccessToURL:readAccessUrl];
+        if (request.URL.fileURL && self.cdvIsFileScheme) {
+            NSURL *readAccessUrl = [request.URL URLByDeletingLastPathComponent];
+            return [(WKWebView *)_engineWebView loadFileURL:request.URL allowingReadAccessToURL:readAccessUrl];
         } else if (request.URL.fileURL) {
-            NSURL* startURL = [NSURL URLWithString:self.viewController.startPage];
-            NSString* startFilePath = [self.commandDelegate pathForResource:[startURL path]];
+            NSURL *startURL = [NSURL URLWithString:self.viewController.startPage];
+            NSString *startFilePath = [self.commandDelegate pathForResource:[startURL path]];
             NSURL *url = [[NSURL URLWithString:self.CDV_ASSETS_URL] URLByAppendingPathComponent:request.URL.path];
             if ([request.URL.path isEqualToString:startFilePath]) {
                 url = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@", self.CDV_ASSETS_URL, startURL]];
             }
-            if(request.URL.query) {
+            if (request.URL.query) {
                 url = [NSURL URLWithString:[@"?" stringByAppendingString:request.URL.query] relativeToURL:url];
             }
-            if(request.URL.fragment) {
+            if (request.URL.fragment) {
                 url = [NSURL URLWithString:[@"#" stringByAppendingString:request.URL.fragment] relativeToURL:url];
             }
             // We ignore any existing cached data, since we're already loading it from the filesystem
             request = [NSURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:request.timeoutInterval];
         }
-        return [(WKWebView*)_engineWebView loadRequest:request];
+        return [(WKWebView *)_engineWebView loadRequest:request];
     } else { // can't load, print out error
-        NSString* errorHtml = [NSString stringWithFormat:
-                               @"<!doctype html>"
-                               @"<title>Error</title>"
-                               @"<div style='font-size:2em'>"
-                               @"   <p>The WebView engine '%@' is unable to load the request: %@</p>"
-                               @"   <p>Most likely the cause of the error is that the loading of file urls is not supported in iOS %@.</p>"
-                               @"</div>",
-                               NSStringFromClass([self class]),
-                               [request.URL description],
-                               [[UIDevice currentDevice] systemVersion]
-                               ];
+        NSString *errorHtml = [NSString stringWithFormat:
+                                            @"<!doctype html>"
+                                            @"<title>Error</title>"
+                                            @"<div style='font-size:2em'>"
+                                            @"   <p>The WebView engine '%@' is unable to load the request: %@</p>"
+                                            @"   <p>Most likely the cause of the error is that the loading of file urls is not supported in iOS %@.</p>"
+                                            @"</div>",
+                                            NSStringFromClass([self class]),
+                                            [request.URL description],
+                                            [[UIDevice currentDevice] systemVersion]];
         return [self loadHTMLString:errorHtml baseURL:nil];
     }
 }
 
-- (id)loadHTMLString:(NSString*)string baseURL:(NSURL*)baseURL
+- (id)loadHTMLString:(NSString *)string baseURL:(NSURL *)baseURL
 {
-    return [(WKWebView*)_engineWebView loadHTMLString:string baseURL:baseURL];
+    return [(WKWebView *)_engineWebView loadHTMLString:string baseURL:baseURL];
 }
 
-- (NSURL*) URL
+- (NSURL *)URL
 {
-    return [(WKWebView*)_engineWebView URL];
+    return [(WKWebView *)_engineWebView URL];
 }
 
-- (BOOL) canLoadRequest:(NSURLRequest*)request
+- (BOOL)canLoadRequest:(NSURLRequest *)request
 {
     return YES;
 }
 
-- (void)updateSettings:(CDVSettingsDictionary*)settings
+- (void)updateSettings:(CDVSettingsDictionary *)settings
 {
-    WKWebView* wkWebView = (WKWebView*)_engineWebView;
+    WKWebView *wkWebView = (WKWebView *)_engineWebView;
 
     wkWebView.configuration.preferences.minimumFontSize = [settings cordovaFloatSettingForKey:@"MinimumFontSize" defaultValue:0.0];
 
@@ -349,20 +346,20 @@
     // prevent webView from bouncing
     if (!bounceAllowed) {
         if ([wkWebView respondsToSelector:@selector(scrollView)]) {
-            UIScrollView* scrollView = [wkWebView scrollView];
+            UIScrollView *scrollView = [wkWebView scrollView];
             scrollView.bounces = NO;
-            scrollView.alwaysBounceVertical = NO;     /* iOS 16 workaround */
-            scrollView.alwaysBounceHorizontal = NO;   /* iOS 16 workaround */
+            scrollView.alwaysBounceVertical = NO;   /* iOS 16 workaround */
+            scrollView.alwaysBounceHorizontal = NO; /* iOS 16 workaround */
         } else {
             for (id subview in wkWebView.subviews) {
                 if ([[subview class] isSubclassOfClass:[UIScrollView class]]) {
-                    ((UIScrollView*)subview).bounces = NO;
+                    ((UIScrollView *)subview).bounces = NO;
                 }
             }
         }
     }
 
-    NSString* decelerationSetting = [settings cordovaSettingForKey:@"WKWebViewDecelerationSpeed"];
+    NSString *decelerationSetting = [settings cordovaSettingForKey:@"WKWebViewDecelerationSpeed"];
 
     if (![@"fast" isEqualToString:decelerationSetting]) {
         [wkWebView.scrollView setDecelerationRate:UIScrollViewDecelerationRateNormal];
@@ -374,19 +371,19 @@
     wkWebView.allowsLinkPreview = [settings cordovaBoolSettingForKey:@"Allow3DTouchLinkPreview" defaultValue:YES];
 }
 
-- (void)updateWithInfo:(NSDictionary*)info
+- (void)updateWithInfo:(NSDictionary *)info
 {
-    NSDictionary* scriptMessageHandlers = [info objectForKey:kCDVWebViewEngineScriptMessageHandlers];
+    NSDictionary *scriptMessageHandlers = [info objectForKey:kCDVWebViewEngineScriptMessageHandlers];
     id settings = [info objectForKey:kCDVWebViewEngineWebViewPreferences];
     id navigationDelegate = [info objectForKey:kCDVWebViewEngineWKNavigationDelegate];
     id uiDelegate = [info objectForKey:kCDVWebViewEngineWKUIDelegate];
 
-    WKWebView* wkWebView = (WKWebView*)_engineWebView;
+    WKWebView *wkWebView = (WKWebView *)_engineWebView;
 
     if (scriptMessageHandlers && [scriptMessageHandlers isKindOfClass:[NSDictionary class]]) {
-        NSArray* allKeys = [scriptMessageHandlers allKeys];
+        NSArray *allKeys = [scriptMessageHandlers allKeys];
 
-        for (NSString* key in allKeys) {
+        for (NSString *key in allKeys) {
             id object = [scriptMessageHandlers objectForKey:key];
             if ([object conformsToProtocol:@protocol(WKScriptMessageHandler)]) {
                 [wkWebView.configuration.userContentController addScriptMessageHandler:object name:key];
@@ -418,16 +415,16 @@
     return _engineWebView;
 }
 
-- (UIView*)webView
+- (UIView *)webView
 {
     return self.engineWebView;
 }
 
-- (CDVWebViewPermissionGrantType)parsePermissionGrantType:(NSString*)optionString
+- (CDVWebViewPermissionGrantType)parsePermissionGrantType:(NSString *)optionString
 {
     CDVWebViewPermissionGrantType result = CDVWebViewPermissionGrantType_GrantIfSameHost_ElsePrompt;
-    
-    if (optionString != nil){
+
+    if (optionString != nil) {
         if ([optionString isEqualToString:@"prompt"]) {
             result = CDVWebViewPermissionGrantType_Prompt;
         } else if ([optionString isEqualToString:@"deny"]) {
@@ -442,7 +439,7 @@
             NSLog(@"Invalid \"MediaPermissionGrantType\" was detected. Fallback to default value of \"grantIfSameHostElsePrompt\"");
         }
     }
-    
+
     return result;
 }
 
@@ -459,23 +456,23 @@
 
 #pragma mark - WKScriptMessageHandler implementation
 
-- (void)userContentController:(WKUserContentController*)userContentController didReceiveScriptMessage:(WKScriptMessage*)message
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
     if (![message.name isEqualToString:CDV_BRIDGE_NAME]) {
         return;
     }
 
-    CDVViewController* vc = (CDVViewController*)self.viewController;
+    CDVViewController *vc = (CDVViewController *)self.viewController;
 
-    NSArray* jsonEntry = message.body; // NSString:callbackId, NSString:service, NSString:action, NSArray:args
-    CDVInvokedUrlCommand* command = [CDVInvokedUrlCommand commandFromJson:jsonEntry];
+    NSArray *jsonEntry = message.body; // NSString:callbackId, NSString:service, NSString:action, NSArray:args
+    CDVInvokedUrlCommand *command = [CDVInvokedUrlCommand commandFromJson:jsonEntry];
     CDV_EXEC_LOG(@"Exec(%@): Calling %@.%@", command.callbackId, command.className, command.methodName);
 
     if (![vc.commandQueue execute:command]) {
 #ifdef DEBUG
-        NSError* error = nil;
-        NSString* commandJson = nil;
-        NSData* jsonData = [NSJSONSerialization dataWithJSONObject:jsonEntry
+        NSError *error = nil;
+        NSString *commandJson = nil;
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:jsonEntry
                                                            options:0
                                                              error:&error];
 
@@ -483,40 +480,38 @@
             commandJson = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         }
 
-            static NSUInteger maxLogLength = 1024;
-            NSString* commandString = ([commandJson length] > maxLogLength) ?
-                [NSString stringWithFormat : @"%@[...]", [commandJson substringToIndex:maxLogLength]] :
-                commandJson;
+        static NSUInteger maxLogLength = 1024;
+        NSString *commandString = ([commandJson length] > maxLogLength) ? [NSString stringWithFormat:@"%@[...]", [commandJson substringToIndex:maxLogLength]] : commandJson;
 
-            NSLog(@"FAILED pluginJSON = %@", commandString);
+        NSLog(@"FAILED pluginJSON = %@", commandString);
 #endif
     }
 }
 
 #pragma mark - WKNavigationDelegate implementation
 
-- (void)webView:(WKWebView*)webView didStartProvisionalNavigation:(WKNavigation*)navigation
+- (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation
 {
     [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPluginResetNotification object:webView]];
 }
 
-- (void)webView:(WKWebView*)webView didFinishNavigation:(WKNavigation*)navigation
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
     [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVPageDidLoadNotification object:webView]];
 }
 
-- (void)webView:(WKWebView*)theWebView didFailProvisionalNavigation:(WKNavigation*)navigation withError:(NSError*)error
+- (void)webView:(WKWebView *)theWebView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error
 {
     [self webView:theWebView didFailNavigation:navigation withError:error];
 }
 
-- (void)webView:(WKWebView*)theWebView didFailNavigation:(WKNavigation*)navigation withError:(NSError*)error
+- (void)webView:(WKWebView *)theWebView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error
 {
-    NSString* message = [NSString stringWithFormat:@"Failed to load webpage with error: %@", [error localizedDescription]];
+    NSString *message = [NSString stringWithFormat:@"Failed to load webpage with error: %@", [error localizedDescription]];
     NSLog(@"%@", message);
 
     if (error.code != NSURLErrorCancelled) {
-        NSURL* errorUrl = self.viewController.errorURL;
+        NSURL *errorUrl = self.viewController.errorURL;
         if (errorUrl) {
             NSCharacterSet *charSet = [NSCharacterSet URLFragmentAllowedCharacterSet];
             errorUrl = [NSURL URLWithString:[NSString stringWithFormat:@"?error=%@", [message stringByAddingPercentEncodingWithAllowedCharacters:charSet]] relativeToURL:errorUrl];
@@ -538,7 +533,7 @@
     }
 }
 
-- (BOOL)defaultResourcePolicyForURL:(NSURL*)url
+- (BOOL)defaultResourcePolicyForURL:(NSURL *)url
 {
     // all file:// urls are allowed
     if ([url isFileURL]) {
@@ -571,7 +566,7 @@
 
         for (CDVPlugin *plugin in vc.enumerablePlugins) {
             if ([plugin respondsToSelector:@selector(shouldOverrideLoadWithRequest:navigationType:info:)] || [plugin respondsToSelector:@selector(shouldOverrideLoadWithRequest:navigationType:)]) {
-                CDVPlugin <CDVPluginNavigationHandler> *navPlugin = (CDVPlugin <CDVPluginNavigationHandler> *)plugin;
+                CDVPlugin<CDVPluginNavigationHandler> *navPlugin = (CDVPlugin<CDVPluginNavigationHandler> *)plugin;
                 anyPluginsResponded = YES;
 
                 if ([navPlugin respondsToSelector:@selector(shouldOverrideLoadWithRequest:navigationType:info:)]) {
@@ -593,7 +588,7 @@
             return decisionHandler(shouldAllowRequest ? WKNavigationActionPolicyAllow : WKNavigationActionPolicyCancel);
         }
     } else {
-        CDVPlugin <CDVPluginNavigationHandler> *intentAndNavFilter = (CDVPlugin <CDVPluginNavigationHandler> *)[vc getCommandInstance:@"IntentAndNavigationFilter"];
+        CDVPlugin<CDVPluginNavigationHandler> *intentAndNavFilter = (CDVPlugin<CDVPluginNavigationHandler> *)[vc getCommandInstance:@"IntentAndNavigationFilter"];
         if (intentAndNavFilter) {
             BOOL shouldAllowRequest = [intentAndNavFilter shouldOverrideLoadWithRequest:request navigationType:navType info:info];
             return decisionHandler(shouldAllowRequest ? WKNavigationActionPolicyAllow : WKNavigationActionPolicyCancel);
@@ -608,13 +603,13 @@
     return decisionHandler(shouldAllowNavigation ? WKNavigationActionPolicyAllow : WKNavigationActionPolicyCancel);
 }
 
-- (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential * _Nullable))completionHandler
+- (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential *_Nullable))completionHandler
 {
-    CDVViewController* vc = (CDVViewController*)self.viewController;
+    CDVViewController *vc = (CDVViewController *)self.viewController;
 
     for (CDVPlugin *plugin in vc.enumerablePlugins) {
         if ([plugin respondsToSelector:@selector(willHandleAuthenticationChallenge:completionHandler:)]) {
-            CDVPlugin <CDVPluginAuthenticationHandler> *challengePlugin = (CDVPlugin <CDVPluginAuthenticationHandler> *)plugin;
+            CDVPlugin<CDVPluginAuthenticationHandler> *challengePlugin = (CDVPlugin<CDVPluginAuthenticationHandler> *)plugin;
             if ([challengePlugin willHandleAuthenticationChallenge:challenge completionHandler:completionHandler]) {
                 return;
             }
@@ -626,14 +621,14 @@
 
 #pragma mark - Plugin interface
 
-- (void)allowsBackForwardNavigationGestures:(CDVInvokedUrlCommand*)command;
+- (void)allowsBackForwardNavigationGestures:(CDVInvokedUrlCommand *)command;
 {
     id value = [command argumentAtIndex:0];
     if (!([value isKindOfClass:[NSNumber class]])) {
         value = [NSNumber numberWithBool:NO];
     }
 
-    WKWebView* wkWebView = (WKWebView*)_engineWebView;
+    WKWebView *wkWebView = (WKWebView *)_engineWebView;
     wkWebView.allowsBackForwardNavigationGestures = [value boolValue];
 }
 

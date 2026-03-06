@@ -32,7 +32,7 @@
         _viewController = viewController;
         _commandQueue = _viewController.commandQueue;
 
-        NSError* err = nil;
+        NSError *err = nil;
         _callbackIdPattern = [NSRegularExpression regularExpressionWithPattern:@"[^A-Za-z0-9._-]" options:0 error:&err];
         if (err != nil) {
             // Couldn't initialize Regex
@@ -43,16 +43,16 @@
     return self;
 }
 
-- (NSString*)pathForResource:(NSString*)resourcepath
+- (NSString *)pathForResource:(NSString *)resourcepath
 {
-    NSBundle* mainBundle = [NSBundle mainBundle];
-    NSMutableArray* directoryParts = [NSMutableArray arrayWithArray:[resourcepath componentsSeparatedByString:@"/"]];
-    NSString* filename = [directoryParts lastObject];
+    NSBundle *mainBundle = [NSBundle mainBundle];
+    NSMutableArray *directoryParts = [NSMutableArray arrayWithArray:[resourcepath componentsSeparatedByString:@"/"]];
+    NSString *filename = [directoryParts lastObject];
 
     [directoryParts removeLastObject];
 
-    NSString* directoryPartsJoined = [directoryParts componentsJoinedByString:@"/"];
-    NSString* directoryStr = _viewController.webContentFolderName;
+    NSString *directoryPartsJoined = [directoryParts componentsJoinedByString:@"/"];
+    NSString *directoryStr = _viewController.webContentFolderName;
 
     if ([directoryPartsJoined length] > 0) {
         directoryStr = [NSString stringWithFormat:@"%@/%@", _viewController.webContentFolderName, [directoryParts componentsJoinedByString:@"/"]];
@@ -68,13 +68,13 @@
     _delayResponses = NO;
 }
 
-- (void)evalJsHelper2:(NSString*)js
+- (void)evalJsHelper2:(NSString *)js
 {
     CDV_EXEC_LOG(@"Exec: evalling: %@", [js substringToIndex:MIN([js length], 160)]);
-    [_viewController.webViewEngine evaluateJavaScript:js completionHandler:^(id obj, NSError* error) {
+    [_viewController.webViewEngine evaluateJavaScript:js completionHandler:^(id obj, NSError *error) {
         // TODO: obj can be something other than string
         if ([obj isKindOfClass:[NSString class]]) {
-            NSString* commandsJSON = (NSString*)obj;
+            NSString *commandsJSON = (NSString *)obj;
             if ([commandsJSON length] > 0) {
                 CDV_EXEC_LOG(@"Exec: Retrieved new exec messages by chaining.");
             }
@@ -85,7 +85,7 @@
     }];
 }
 
-- (void)evalJsHelper:(NSString*)js
+- (void)evalJsHelper:(NSString *)js
 {
     // Cycle the run-loop before executing the JS.
     // For _delayResponses -
@@ -107,7 +107,7 @@
     }
 }
 
-- (BOOL)isValidCallbackId:(NSString*)callbackId
+- (BOOL)isValidCallbackId:(NSString *)callbackId
 {
     if ((callbackId == nil) || (_callbackIdPattern == nil)) {
         return NO;
@@ -120,7 +120,7 @@
     return YES;
 }
 
-- (void)sendPluginResult:(CDVPluginResult*)result callbackId:(NSString*)callbackId
+- (void)sendPluginResult:(CDVPluginResult *)result callbackId:(NSString *)callbackId
 {
     CDV_EXEC_LOG(@"Exec(%@): Sending result. Status=%@", callbackId, result.status);
     // This occurs when there is are no win/fail callbacks for the call.
@@ -134,24 +134,24 @@
     }
     int status = [result.status intValue];
     BOOL keepCallback = [result.keepCallback boolValue];
-    NSString* argumentsAsJSON = [result argumentsAsJSON];
+    NSString *argumentsAsJSON = [result argumentsAsJSON];
     BOOL debug = NO;
-    
+
 #ifdef DEBUG
     debug = YES;
 #endif
 
-    NSString* js = [NSString stringWithFormat:@"cordova.require('cordova/exec').nativeCallback('%@',%d,%@,%d, %d)", callbackId, status, argumentsAsJSON, keepCallback, debug];
+    NSString *js = [NSString stringWithFormat:@"cordova.require('cordova/exec').nativeCallback('%@',%d,%@,%d, %d)", callbackId, status, argumentsAsJSON, keepCallback, debug];
 
     [self evalJsHelper:js];
 }
 
-- (void)evalJs:(NSString*)js
+- (void)evalJs:(NSString *)js
 {
     [self evalJs:js scheduledOnRunLoop:YES];
 }
 
-- (void)evalJs:(NSString*)js scheduledOnRunLoop:(BOOL)scheduledOnRunLoop
+- (void)evalJs:(NSString *)js scheduledOnRunLoop:(BOOL)scheduledOnRunLoop
 {
     js = [NSString stringWithFormat:@"try{cordova.require('cordova/exec').nativeEvalAndFetch(function(){%@})}catch(e){console.log('exception nativeEvalAndFetch : '+e);};", js];
     if (scheduledOnRunLoop) {
@@ -161,7 +161,7 @@
     }
 }
 
-- (id)getCommandInstance:(NSString*)pluginName
+- (id)getCommandInstance:(NSString *)pluginName
 {
     return [_viewController getCommandInstance:pluginName];
 }
@@ -171,7 +171,7 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), block);
 }
 
-- (CDVSettingsDictionary*)settings
+- (CDVSettingsDictionary *)settings
 {
     return _viewController.settings;
 }

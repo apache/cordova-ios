@@ -48,13 +48,13 @@ SWIFT_ENUM_COMPAT_HACK(CDVCommandStatus_ERROR);
 @implementation CDVPluginResult
 @synthesize status, message, keepCallback, associatedObject;
 
-static NSArray* org_apache_cordova_CommandStatusMsgs;
+static NSArray *org_apache_cordova_CommandStatusMsgs;
 
-id messageFromArrayBuffer(NSData* data)
+id messageFromArrayBuffer(NSData *data)
 {
     return @{
-               @"CDVType" : @"ArrayBuffer",
-               @"data" :[data base64EncodedStringWithOptions:0]
+        @"CDVType" : @"ArrayBuffer",
+        @"data" : [data base64EncodedStringWithOptions:0]
     };
 }
 
@@ -66,33 +66,33 @@ id massageMessage(id message)
     return message;
 }
 
-id messageFromMultipart(NSArray* theMessages)
+id messageFromMultipart(NSArray *theMessages)
 {
-    NSMutableArray* messages = [NSMutableArray arrayWithArray:theMessages];
+    NSMutableArray *messages = [NSMutableArray arrayWithArray:theMessages];
 
     for (NSUInteger i = 0; i < messages.count; ++i) {
         [messages replaceObjectAtIndex:i withObject:massageMessage([messages objectAtIndex:i])];
     }
 
     return @{
-               @"CDVType" : @"MultiPart",
-               @"messages" : messages
+        @"CDVType" : @"MultiPart",
+        @"messages" : messages
     };
 }
 
 + (void)initialize
 {
     org_apache_cordova_CommandStatusMsgs = [[NSArray alloc] initWithObjects:@"No result",
-        @"OK",
-        @"Class not found",
-        @"Illegal access",
-        @"Instantiation error",
-        @"Malformed url",
-        @"IO error",
-        @"Invalid action",
-        @"JSON error",
-        @"Error",
-        nil];
+                                                                            @"OK",
+                                                                            @"Class not found",
+                                                                            @"Illegal access",
+                                                                            @"Instantiation error",
+                                                                            @"Malformed url",
+                                                                            @"IO error",
+                                                                            @"Invalid action",
+                                                                            @"JSON error",
+                                                                            @"Error",
+                                                                            nil];
 }
 
 - (instancetype)init
@@ -168,7 +168,7 @@ id messageFromMultipart(NSArray* theMessages)
 
 + (instancetype)resultWithStatus:(CDVCommandStatus)statusOrdinal messageToErrorObject:(int)errorCode
 {
-    NSDictionary* errDict = @{@"code" :[NSNumber numberWithInt:errorCode]};
+    NSDictionary *errDict = @{@"code" : [NSNumber numberWithInt:errorCode]};
 
     return [[self alloc] initWithStatus:statusOrdinal message:errDict];
 }
@@ -178,12 +178,12 @@ id messageFromMultipart(NSArray* theMessages)
     [self setKeepCallback:[NSNumber numberWithBool:bKeepCallback]];
 }
 
-- (NSString*)argumentsAsJSON
+- (NSString *)argumentsAsJSON
 {
     id arguments = (self.message == nil ? [NSNull null] : self.message);
-    NSArray* argumentsWrappedInArray = [NSArray arrayWithObject:arguments];
+    NSArray *argumentsWrappedInArray = [NSArray arrayWithObject:arguments];
 
-    NSString* argumentsJSON = [argumentsWrappedInArray cdv_JSONString];
+    NSString *argumentsJSON = [argumentsWrappedInArray cdv_JSONString];
 
     argumentsJSON = [argumentsJSON substringWithRange:NSMakeRange(1, [argumentsJSON length] - 2)];
 

@@ -22,18 +22,16 @@ import Cordova
 
 let testSettings = [
     "disallowoverscroll": true
-];
+]
 
-class CDVSettingsDictionarySwiftTests: XCTestCase
-{
-    func testInitWithSwiftDictionary()
-    {
-        let dict = CDVSettingsDictionary(dictionary:testSettings);
+class CDVSettingsDictionarySwiftTests: XCTestCase {
+    func testInitWithSwiftDictionary() {
+        let dict = CDVSettingsDictionary(dictionary: testSettings)
 
-        XCTAssertEqual(1, dict.count);
-        XCTAssertEqual(true, dict["DisallowOverscroll"] as? Bool);
+        XCTAssertEqual(1, dict.count)
+        XCTAssertEqual(true, dict["DisallowOverscroll"] as? Bool)
 
-        dict.setObject(false, forKey:"DisallowOverScroll");
-        XCTAssertEqual(false, dict["disallowoverscroll"] as? Bool);
+        dict.setObject(false, forKey: "DisallowOverScroll")
+        XCTAssertEqual(false, dict["disallowoverscroll"] as? Bool)
     }
 }

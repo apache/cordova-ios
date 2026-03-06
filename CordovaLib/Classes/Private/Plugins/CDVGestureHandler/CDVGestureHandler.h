@@ -21,6 +21,6 @@
 
 @interface CDVGestureHandler : CDVPlugin
 
-@property (nonatomic, strong) UILongPressGestureRecognizer* lpgr;
+@property (nonatomic, strong) UILongPressGestureRecognizer *lpgr;
 
 @end

@@ -25,13 +25,12 @@ let package = Package(
     name: "CordovaPlugins",
     platforms: [
         .iOS(.v13),
-        .macCatalyst(.v13)
+        .macCatalyst(.v13),
     ],
     products: [
-        .library(name: "CordovaPlugins", targets: ["CordovaPlugins"])
+        .library(name: "CordovaPlugins", targets: ["CordovaPlugins"]),
     ],
     targets: [
-        .target(name: "CordovaPlugins")
+        .target(name: "CordovaPlugins"),
     ]
 )
-

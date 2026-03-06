@@ -26,8 +26,7 @@
 
 @end
 
-@implementation CDVWebViewUIDelegate
-{
+@implementation CDVWebViewUIDelegate {
     NSMutableArray<UIViewController *> *windows;
 }
 
@@ -43,94 +42,89 @@
     return self;
 }
 
-- (void)webView:(WKWebView*)webView runJavaScriptAlertPanelWithMessage:(NSString*)message initiatedByFrame:(WKFrameInfo*)frame completionHandler:(CDV_SWIFT_UI_ACTOR void (^)(void))completionHandler
+- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(CDV_SWIFT_UI_ACTOR void (^)(void))completionHandler
 {
-    UIAlertController* alert = [UIAlertController alertControllerWithTitle:self.title
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:self.title
                                                                    message:message
                                                             preferredStyle:UIAlertControllerStyleAlert];
 
-    UIAlertAction* ok = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"OK")
+    UIAlertAction *ok = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"OK")
                                                  style:UIAlertActionStyleDefault
-                                               handler:^(UIAlertAction* action)
-        {
-            completionHandler();
-            [alert dismissViewControllerAnimated:YES completion:nil];
-        }];
+                                               handler:^(UIAlertAction *action) {
+                                                   completionHandler();
+                                                   [alert dismissViewControllerAnimated:YES completion:nil];
+                                               }];
 
     [alert addAction:ok];
 
     [[self topViewController] presentViewController:alert animated:YES completion:nil];
 }
 
-- (void)webView:(WKWebView*)webView runJavaScriptConfirmPanelWithMessage:(NSString*)message initiatedByFrame:(WKFrameInfo*)frame completionHandler:(CDV_SWIFT_UI_ACTOR void (^)(BOOL result))completionHandler
+- (void)webView:(WKWebView *)webView runJavaScriptConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(CDV_SWIFT_UI_ACTOR void (^)(BOOL result))completionHandler
 {
-    UIAlertController* alert = [UIAlertController alertControllerWithTitle:self.title
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:self.title
                                                                    message:message
                                                             preferredStyle:UIAlertControllerStyleAlert];
 
-    UIAlertAction* ok = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"OK")
+    UIAlertAction *ok = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"OK")
                                                  style:UIAlertActionStyleDefault
-                                               handler:^(UIAlertAction* action)
-        {
-            completionHandler(YES);
-            [alert dismissViewControllerAnimated:YES completion:nil];
-        }];
+                                               handler:^(UIAlertAction *action) {
+                                                   completionHandler(YES);
+                                                   [alert dismissViewControllerAnimated:YES completion:nil];
+                                               }];
 
     [alert addAction:ok];
 
-    UIAlertAction* cancel = [UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"Cancel")
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"Cancel")
                                                      style:UIAlertActionStyleDefault
-                                                   handler:^(UIAlertAction* action)
-        {
-            completionHandler(NO);
-            [alert dismissViewControllerAnimated:YES completion:nil];
-        }];
+                                                   handler:^(UIAlertAction *action) {
+                                                       completionHandler(NO);
+                                                       [alert dismissViewControllerAnimated:YES completion:nil];
+                                                   }];
     [alert addAction:cancel];
 
     [[self topViewController] presentViewController:alert animated:YES completion:nil];
 }
 
-- (void)webView:(WKWebView*)webView runJavaScriptTextInputPanelWithPrompt:(NSString*)prompt defaultText:(NSString*)defaultText initiatedByFrame:(WKFrameInfo*)frame completionHandler:(CDV_SWIFT_UI_ACTOR void (^)(NSString* result))completionHandler
+- (void)webView:(WKWebView *)webView runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText initiatedByFrame:(WKFrameInfo *)frame completionHandler:(CDV_SWIFT_UI_ACTOR void (^)(NSString *result))completionHandler
 {
-    UIAlertController* alert = [UIAlertController alertControllerWithTitle:self.title
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:self.title
                                                                    message:prompt
                                                             preferredStyle:UIAlertControllerStyleAlert];
 
-    UIAlertAction* ok = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"OK")
+    UIAlertAction *ok = [UIAlertAction actionWithTitle:NSLocalizedString(@"OK", @"OK")
                                                  style:UIAlertActionStyleDefault
-                                               handler:^(UIAlertAction* action)
-        {
-            completionHandler(((UITextField*)alert.textFields[0]).text);
-            [alert dismissViewControllerAnimated:YES completion:nil];
-        }];
+                                               handler:^(UIAlertAction *action) {
+                                                   completionHandler(((UITextField *)alert.textFields[0]).text);
+                                                   [alert dismissViewControllerAnimated:YES completion:nil];
+                                               }];
 
     [alert addAction:ok];
 
-    UIAlertAction* cancel = [UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"Cancel")
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"Cancel")
                                                      style:UIAlertActionStyleDefault
-                                                   handler:^(UIAlertAction* action)
-        {
-            completionHandler(nil);
-            [alert dismissViewControllerAnimated:YES completion:nil];
-        }];
+                                                   handler:^(UIAlertAction *action) {
+                                                       completionHandler(nil);
+                                                       [alert dismissViewControllerAnimated:YES completion:nil];
+                                                   }];
     [alert addAction:cancel];
 
-    [alert addTextFieldWithConfigurationHandler:^(UITextField* textField) {
+    [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
         textField.text = defaultText;
     }];
 
     [[self topViewController] presentViewController:alert animated:YES completion:nil];
 }
 
-- (nullable WKWebView*)webView:(WKWebView*)webView createWebViewWithConfiguration:(WKWebViewConfiguration*)configuration forNavigationAction:(WKNavigationAction*)navigationAction windowFeatures:(WKWindowFeatures*)windowFeatures
+- (nullable WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
 {
     if (!navigationAction.targetFrame.isMainFrame) {
         if (self.allowNewWindows) {
-            WKWebView* v = [[WKWebView alloc] initWithFrame:webView.frame configuration:configuration];
+            WKWebView *v = [[WKWebView alloc] initWithFrame:webView.frame configuration:configuration];
             v.UIDelegate = webView.UIDelegate;
             v.navigationDelegate = webView.navigationDelegate;
 
-            UIViewController* vc = [[UIViewController alloc] init];
+            UIViewController *vc = [[UIViewController alloc] init];
             vc.modalPresentationStyle = UIModalPresentationOverCurrentContext;
             vc.view = v;
 
@@ -146,9 +140,9 @@
     return nil;
 }
 
-- (void)webViewDidClose:(WKWebView*)webView
+- (void)webViewDidClose:(WKWebView *)webView
 {
-    for (UIViewController* vc in windows) {
+    for (UIViewController *vc in windows) {
         if (vc.view == webView) {
             [vc dismissViewControllerAnimated:YES completion:nil];
             [windows removeObject:vc];
@@ -160,28 +154,24 @@
 }
 
 - (void)webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(nonnull WKSecurityOrigin *)origin initiatedByFrame:(nonnull WKFrameInfo *)frame type:(WKMediaCaptureType)type decisionHandler:(nonnull void (^)(WKPermissionDecision))decisionHandler
-  API_AVAILABLE(ios(15.0))
+    API_AVAILABLE(ios(15.0))
 {
     WKPermissionDecision decision;
-    
+
     if (_mediaPermissionGrantType == CDVWebViewPermissionGrantType_Prompt) {
         decision = WKPermissionDecisionPrompt;
-    }
-    else if (_mediaPermissionGrantType == CDVWebViewPermissionGrantType_Deny) {
+    } else if (_mediaPermissionGrantType == CDVWebViewPermissionGrantType_Deny) {
         decision = WKPermissionDecisionDeny;
-    }
-    else if (_mediaPermissionGrantType == CDVWebViewPermissionGrantType_Grant) {
+    } else if (_mediaPermissionGrantType == CDVWebViewPermissionGrantType_Grant) {
         decision = WKPermissionDecisionGrant;
-    }
-    else {
+    } else {
         if ([origin.host isEqualToString:webView.URL.host]) {
             decision = WKPermissionDecisionGrant;
-        }
-        else {
-            decision =_mediaPermissionGrantType == CDVWebViewPermissionGrantType_GrantIfSameHost_ElsePrompt ? WKPermissionDecisionPrompt : WKPermissionDecisionDeny;
+        } else {
+            decision = _mediaPermissionGrantType == CDVWebViewPermissionGrantType_GrantIfSameHost_ElsePrompt ? WKPermissionDecisionPrompt : WKPermissionDecisionDeny;
         }
     }
-    
+
     decisionHandler(decision);
 }
 

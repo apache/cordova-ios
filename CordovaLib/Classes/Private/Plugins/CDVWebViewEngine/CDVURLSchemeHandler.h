@@ -21,7 +21,7 @@
 
 @class CDVViewController;
 
-@interface CDVURLSchemeHandler : NSObject <WKURLSchemeHandler>
+@interface CDVURLSchemeHandler : NSObject<WKURLSchemeHandler>
 NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithViewController:(CDVViewController *)controller;

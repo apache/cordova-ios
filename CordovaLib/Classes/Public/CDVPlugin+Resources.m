@@ -21,16 +21,16 @@
 
 @implementation CDVPlugin (CDVPluginResources)
 
-- (NSString*)pluginLocalizedString:(NSString*)key
+- (NSString *)pluginLocalizedString:(NSString *)key
 {
-    NSBundle* bundle = [NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:NSStringFromClass([self class]) ofType:@"bundle"]];
+    NSBundle *bundle = [NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:NSStringFromClass([self class]) ofType:@"bundle"]];
 
     return [bundle localizedStringForKey:(key) value:nil table:nil];
 }
 
-- (UIImage*)pluginImageResource:(NSString*)name
+- (UIImage *)pluginImageResource:(NSString *)name
 {
-    NSString* resourceIdentifier = [NSString stringWithFormat:@"%@.bundle/%@", NSStringFromClass([self class]), name];
+    NSString *resourceIdentifier = [NSString stringWithFormat:@"%@.bundle/%@", NSStringFromClass([self class]), name];
 
     return [UIImage imageNamed:resourceIdentifier];
 }

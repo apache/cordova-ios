@@ -37,10 +37,10 @@ static NSDictionary *testSettings;
     [super setUp];
 
     testSettings = @{
-        @"test": @"CDVSettingsDictionary Test",
-        @"minimumfontsize": @1.1,
-        @"disallowoverscroll": @YES,
-        @"mediatypesrequiringuseractionforplayback": @"all"
+        @"test" : @"CDVSettingsDictionary Test",
+        @"minimumfontsize" : @1.1,
+        @"disallowoverscroll" : @YES,
+        @"mediatypesrequiringuseractionforplayback" : @"all"
     };
 }
 
@@ -81,9 +81,9 @@ static NSDictionary *testSettings;
     XCTAssertNil(err);
 
     NSSet<Class> *classes = [NSSet setWithArray:@[
-      CDVSettingsDictionary.class,
-      NSNumber.class,
-      NSString.class,
+        CDVSettingsDictionary.class,
+        NSNumber.class,
+        NSString.class,
     ]];
 
     err = nil;
@@ -95,7 +95,7 @@ static NSDictionary *testSettings;
 
 - (void)testInitWithObjectsForKeys
 {
-    CDVSettingsDictionary* dict = [[CDVSettingsDictionary alloc] initWithObjects:[testSettings allValues] forKeys:[testSettings allKeys]];
+    CDVSettingsDictionary *dict = [[CDVSettingsDictionary alloc] initWithObjects:[testSettings allValues] forKeys:[testSettings allKeys]];
     XCTAssertTrue([dict isEqualToDictionary:testSettings], @"Not equal to creating dictionary");
 }
 
@@ -107,7 +107,7 @@ static NSDictionary *testSettings;
 
 - (void)testKeyAccessCaseInsensitive
 {
-    CDVSettingsDictionary* dict = [[CDVSettingsDictionary alloc] initWithDictionary:testSettings];
+    CDVSettingsDictionary *dict = [[CDVSettingsDictionary alloc] initWithDictionary:testSettings];
 
     XCTAssertEqualObjects(@YES, [dict objectForKey:@"DisallowOverscroll"], @"Uppercase key name failed to match");
     XCTAssertEqualObjects(@YES, [dict objectForKey:@"disallowoverscroll"], @"Lowercase key name failed to match");
@@ -176,18 +176,18 @@ static NSDictionary *testSettings;
 - (void)testGetWithBoolDefaultValue
 {
     CDVSettingsDictionary *dict = [[CDVSettingsDictionary alloc] initWithDictionary:@{
-        @"btruthy": @YES,
-        @"bfalsy": @NO,
-        @"itruthy": @1,
-        @"ifalsy": @0,
-        @"struthy": @"true",
-        @"sfalsy": @"false",
-        @"sbtruthy": @"yes",
-        @"sbfalsy": @"no",
-        @"sitruthy": @"1",
-        @"sifalsy": @"0",
+        @"btruthy" : @YES,
+        @"bfalsy" : @NO,
+        @"itruthy" : @1,
+        @"ifalsy" : @0,
+        @"struthy" : @"true",
+        @"sfalsy" : @"false",
+        @"sbtruthy" : @"yes",
+        @"sbfalsy" : @"no",
+        @"sitruthy" : @"1",
+        @"sifalsy" : @"0",
 
-        @"nonbool": @"some string"
+        @"nonbool" : @"some string"
     }];
 
     XCTAssertTrue([dict cordovaBoolSettingForKey:@"bTruthy" defaultValue:NO]);
@@ -212,9 +212,9 @@ static NSDictionary *testSettings;
 - (void)testGetWithFloatDefaultValue
 {
     CDVSettingsDictionary *dict = [[CDVSettingsDictionary alloc] initWithDictionary:@{
-        @"floatvalue": @3.14,
-        @"nonfloat": @"some string",
-        @"boolvalue": @YES
+        @"floatvalue" : @3.14,
+        @"nonfloat" : @"some string",
+        @"boolvalue" : @YES
     }];
 
     XCTAssertEqualWithAccuracy(3.14, [dict cordovaFloatSettingForKey:@"FloatValue" defaultValue:0.0], 0.001);

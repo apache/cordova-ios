@@ -26,7 +26,7 @@
 
 @dynamic scrollView;
 
-- (UIScrollView*)scrollView
+- (UIScrollView *)scrollView
 {
     static UIView *caller = nil;
 
@@ -57,7 +57,7 @@ const NSNotificationName CDVViewWillTransitionToSizeNotification = @"CDVViewWill
 @interface CDVPlugin ()
 
 @property (readwrite, assign) BOOL hasPendingOperation;
-@property (nonatomic, readwrite, weak) id <CDVWebViewEngineProtocol> webViewEngine;
+@property (nonatomic, readwrite, weak) id<CDVWebViewEngineProtocol> webViewEngine;
 
 @end
 
@@ -66,7 +66,7 @@ const NSNotificationName CDVViewWillTransitionToSizeNotification = @"CDVViewWill
 @dynamic webView;
 
 // Do not override these methods. Use pluginInitialize instead.
-- (instancetype)initWithWebViewEngine:(id <CDVWebViewEngineProtocol>)theWebViewEngine
+- (instancetype)initWithWebViewEngine:(id<CDVWebViewEngineProtocol>)theWebViewEngine
 {
     self = [self init];
     if (self) {
@@ -99,7 +99,7 @@ const NSNotificationName CDVViewWillTransitionToSizeNotification = @"CDVViewWill
 
     // Added in 2.5.0
     // [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pageDidLoad:) name:CDVPageDidLoadNotification object:self.webView];
-    //Added in 4.3.0
+    // Added in 4.3.0
     // [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(viewWillAppear:) name:CDVViewWillAppearNotification object:nil];
     // [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(viewDidAppear:) name:CDVViewDidAppearNotification object:nil];
     // [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(viewWillDisappear:) name:CDVViewWillDisappearNotification object:nil];
@@ -138,7 +138,7 @@ const NSNotificationName CDVViewWillTransitionToSizeNotification = @"CDVViewWill
     // override to handle urls sent to your app
     // register your url schemes in your App-Info.plist
 
-    NSURL* url = [notification object];
+    NSURL *url = [notification object];
 
     if ([url isKindOfClass:[NSURL class]]) {
         /* Do your thing! */
@@ -150,31 +150,30 @@ const NSNotificationName CDVViewWillTransitionToSizeNotification = @"CDVViewWill
  */
 - (void)handleOpenURLWithApplicationSourceAndAnnotation:(NSNotification *)notification
 {
-    
+
     // override to handle urls sent to your app
     // register your url schemes in your App-Info.plist
-    
+
     // The notification object is an NSDictionary which contains
     // - url which is a type of NSURL
     // - sourceApplication which is a type of NSString and represents the package
     // id of the app that calls our app
     // - annotation which a type of Property list which can be several different types
     // please see https://developer.apple.com/library/content/documentation/General/Conceptual/DevPedia-CocoaCore/PropertyList.html
-    
-    NSDictionary*  notificationData = [notification object];
-    
-    if ([notificationData isKindOfClass: NSDictionary.class]){
-        
-        NSURL* url = notificationData[@"url"];
-        NSString* sourceApplication = notificationData[@"sourceApplication"];
+
+    NSDictionary *notificationData = [notification object];
+
+    if ([notificationData isKindOfClass:NSDictionary.class]) {
+
+        NSURL *url = notificationData[@"url"];
+        NSString *sourceApplication = notificationData[@"sourceApplication"];
         id annotation = notificationData[@"annotation"];
-        
+
         if ([url isKindOfClass:NSURL.class] && [sourceApplication isKindOfClass:NSString.class] && annotation) {
             /* Do your thing! */
         }
     }
 }
-
 
 /* NOTE: calls into JavaScript must not call or trigger any blocking UI, like alerts */
 - (void)onAppTerminate
@@ -194,7 +193,7 @@ const NSNotificationName CDVViewWillTransitionToSizeNotification = @"CDVViewWill
 
 - (void)dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];   // this will remove all notifications unless added using addObserverForName:object:queue:usingBlock:
+    [[NSNotificationCenter defaultCenter] removeObserver:self]; // this will remove all notifications unless added using addObserverForName:object:queue:usingBlock:
 }
 
 - (id)appDelegate

@@ -17,5 +17,7 @@
     under the License.
 */
 
-#define CDV_DEPRECATED(version, msg) __attribute__((deprecated("Deprecated in Cordova " #version ". " msg)))
-#define CDV_DEPRECATED_WITH_REPLACEMENT(version, msg, repl) __attribute__((deprecated("Deprecated in Cordova " #version ". " msg, repl)))
+#define CDV_DEPRECATED(version, msg)                                           \
+  __attribute__((deprecated("Deprecated in Cordova " #version ". " msg)))
+#define CDV_DEPRECATED_WITH_REPLACEMENT(version, msg, repl)                    \
+  __attribute__((deprecated("Deprecated in Cordova " #version ". " msg, repl)))

@@ -85,7 +85,7 @@
 #define __CORDOVA_7_1_1 70101
 #define __CORDOVA_8_0_0 80000
 /* coho:next-version,insert-before */
-#define __CORDOVA_NA 99999      /* not available */
+#define __CORDOVA_NA 99999 /* not available */
 
 /*
  #if CORDOVA_VERSION_MIN_REQUIRED >= __CORDOVA_4_0_0
@@ -95,8 +95,8 @@
  #endif
  */
 #ifndef CORDOVA_VERSION_MIN_REQUIRED
-    /* coho:next-version-min-required,replace-after */
-    #define CORDOVA_VERSION_MIN_REQUIRED __CORDOVA_8_0_0
+/* coho:next-version-min-required,replace-after */
+#define CORDOVA_VERSION_MIN_REQUIRED __CORDOVA_8_0_0
 #endif
 
 // TODO: Remove in Cordova iOS 9
@@ -111,16 +111,17 @@
 #pragma clang deprecated(IsAtLeastiOSVersion, "Use the built-in #available syntax")
 
 /** Return the string version of the decimal version */
-#define CDV_VERSION [NSString stringWithFormat:@"%d.%d.%d", \
-    (CORDOVA_VERSION_MIN_REQUIRED / 10000),                 \
-    (CORDOVA_VERSION_MIN_REQUIRED % 10000) / 100,           \
-    (CORDOVA_VERSION_MIN_REQUIRED % 10000) % 100]
+#define CDV_VERSION [NSString stringWithFormat:@"%d.%d.%d",                                  \
+                                               (CORDOVA_VERSION_MIN_REQUIRED / 10000),       \
+                                               (CORDOVA_VERSION_MIN_REQUIRED % 10000) / 100, \
+                                               (CORDOVA_VERSION_MIN_REQUIRED % 10000) % 100]
 
 // Enable this to log all exec() calls.
 #define CDV_ENABLE_EXEC_LOGGING 0
 #if CDV_ENABLE_EXEC_LOGGING
-    #define CDV_EXEC_LOG NSLog
+#define CDV_EXEC_LOG NSLog
 #else
-    #define CDV_EXEC_LOG(...) do { \
-} while (NO)
+#define CDV_EXEC_LOG(...) \
+    do {                  \
+    } while (NO)
 #endif

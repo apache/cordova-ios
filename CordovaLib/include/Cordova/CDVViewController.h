@@ -81,7 +81,7 @@ NS_ASSUME_NONNULL_BEGIN
     @Available(Cordova, introduced: "8.0.0")
  }
  */
-@property (nonatomic, readonly, copy) NSArray <CDVPlugin *> *enumerablePlugins;
+@property (nonatomic, readonly, copy) NSArray<CDVPlugin *> *enumerablePlugins;
 
 /**
  The scheme being used to load web content from the app bundle into the Cordova
@@ -114,7 +114,7 @@ NS_ASSUME_NONNULL_BEGIN
     @Available(Cordova, introduced: "2.0.0")
  }
  */
-@property (nonatomic, readonly, strong) id <CDVCommandDelegate> commandDelegate;
+@property (nonatomic, readonly, strong) id<CDVCommandDelegate> commandDelegate;
 
 /**
  The associated web view engine implementation.
@@ -127,7 +127,7 @@ NS_ASSUME_NONNULL_BEGIN
     @Available(Cordova, introduced: "4.0.0")
  }
  */
-@property (nonatomic, readonly, strong) id <CDVWebViewEngineProtocol> webViewEngine;
+@property (nonatomic, readonly, strong) id<CDVWebViewEngineProtocol> webViewEngine;
 
 /**
  The Cordova preferences for this view.
@@ -261,7 +261,7 @@ NS_ASSUME_NONNULL_BEGIN
     @Available(Cordova, introduced: "2.0.0")
  }
  */
-- (UIView*)newCordovaViewWithFrame:(CGRect)bounds;
+- (UIView *)newCordovaViewWithFrame:(CGRect)bounds;
 
 /**
  Loads the starting page in the web view, replacing any existing content.
@@ -292,14 +292,14 @@ NS_ASSUME_NONNULL_BEGIN
     @Available(Cordova, introduced: "3.0.0")
  }
  */
-- (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className;
+- (void)registerPlugin:(CDVPlugin *)plugin withClassName:(NSString *)className;
 
 /**
  @Metadata {
     @Available(Cordova, introduced: "3.0.0")
  }
  */
-- (void)registerPlugin:(CDVPlugin*)plugin withPluginName:(NSString*)pluginName;
+- (void)registerPlugin:(CDVPlugin *)plugin withPluginName:(NSString *)pluginName;
 
 /**
  Toggles the display of the splash screen overtop of the web view.
@@ -312,7 +312,6 @@ NS_ASSUME_NONNULL_BEGIN
  }
  */
 - (void)showSplashScreen:(BOOL)visible;
-
 
 #pragma mark - Deprecated
 
@@ -383,7 +382,7 @@ NS_ASSUME_NONNULL_BEGIN
     Use `CDVConfigParser` ``CDVConfigParser/parseConfigFile:withDelegate:`` instead.
  }
  */
-- (void)parseSettingsWithParser:(id <NSXMLParserDelegate>)delegate CDV_DEPRECATED(8.0.0, "Use CDVConfigParser parseConfigFile:withDelegate: instead");
+- (void)parseSettingsWithParser:(id<NSXMLParserDelegate>)delegate CDV_DEPRECATED(8.0.0, "Use CDVConfigParser parseConfigFile:withDelegate: instead");
 
 @end
 

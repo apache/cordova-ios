@@ -125,7 +125,6 @@ jobs:
         timeout-minutes: 40
         run: |
           npm ci
-          npm run lint
           npm run cover
         env:
           CI: true

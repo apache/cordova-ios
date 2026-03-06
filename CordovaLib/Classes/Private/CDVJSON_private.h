@@ -20,11 +20,11 @@
 #import <Foundation/Foundation.h>
 
 @interface NSArray (CDVJSONSerializingPrivate)
-- (NSString*)cdv_JSONString;
+- (NSString *)cdv_JSONString;
 @end
 
 @interface NSDictionary (CDVJSONSerializingPrivate)
-- (NSString*)cdv_JSONString;
+- (NSString *)cdv_JSONString;
 @end
 
 @interface NSString (CDVJSONSerializingPrivate)

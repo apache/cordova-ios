@@ -55,7 +55,7 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:CDVPluginHandleOpenURLNotification object:url userInfo:options];
 
     // TODO: This should be deprecated and removed in Cordova iOS 9, since we're passing this data in the notification userInfo now
-    NSMutableDictionary * openURLData = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *openURLData = [[NSMutableDictionary alloc] init];
 
     [openURLData setValue:url forKey:@"url"];
 

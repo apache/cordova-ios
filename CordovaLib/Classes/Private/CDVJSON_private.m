@@ -21,11 +21,11 @@
 
 @implementation NSArray (CDVJSONSerializingPrivate)
 
-- (NSString*)cdv_JSONString
+- (NSString *)cdv_JSONString
 {
     @autoreleasepool {
-        NSError* error = nil;
-        NSData* jsonData = [NSJSONSerialization dataWithJSONObject:self
+        NSError *error = nil;
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:self
                                                            options:0
                                                              error:&error];
 
@@ -42,11 +42,11 @@
 
 @implementation NSDictionary (CDVJSONSerializingPrivate)
 
-- (NSString*)cdv_JSONString
+- (NSString *)cdv_JSONString
 {
     @autoreleasepool {
-        NSError* error = nil;
-        NSData* jsonData = [NSJSONSerialization dataWithJSONObject:self
+        NSError *error = nil;
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:self
                                                            options:NSJSONWritingPrettyPrinted
                                                              error:&error];
 
@@ -65,8 +65,8 @@
 
 - (id)cdv_JSONObject
 {
-    @autoreleasepool {   
-        NSError* error = nil;
+    @autoreleasepool {
+        NSError *error = nil;
         id object = [NSJSONSerialization JSONObjectWithData:[self dataUsingEncoding:NSUTF8StringEncoding]
                                                     options:NSJSONReadingMutableContainers
                                                       error:&error];
@@ -82,7 +82,7 @@
 - (id)cdv_JSONFragment
 {
     @autoreleasepool {
-        NSError* error = nil;
+        NSError *error = nil;
         id object = [NSJSONSerialization JSONObjectWithData:[self dataUsingEncoding:NSUTF8StringEncoding]
                                                     options:NSJSONReadingAllowFragments
                                                       error:&error];

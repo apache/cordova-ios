@@ -34,4 +34,3 @@ let package = Package(
         .target(name: "CordovaPlugins")
     ]
 )
-

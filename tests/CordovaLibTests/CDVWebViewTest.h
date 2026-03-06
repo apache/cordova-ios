@@ -20,10 +20,10 @@
 #import <WebKit/WebKit.h>
 #import <Cordova/CDVPlugin.h>
 
-@interface CDVWebViewEngine : CDVPlugin <CDVWebViewEngineProtocol, WKScriptMessageHandler, WKNavigationDelegate>
+@interface CDVWebViewEngine : CDVPlugin<CDVWebViewEngineProtocol, WKScriptMessageHandler, WKNavigationDelegate>
 
-@property (nonatomic, strong, readonly) id <WKUIDelegate> uiDelegate;
+@property (nonatomic, strong, readonly) id<WKUIDelegate> uiDelegate;
 
-(void)allowsBackForwardNavigationGestures:(CDVInvokedUrlCommand*)command;
+(void)allowsBackForwardNavigationGestures : (CDVInvokedUrlCommand *)command;
 
 @end

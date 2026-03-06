@@ -19,16 +19,16 @@
 
 #import <Foundation/Foundation.h>
 
-extern NSString* const kCDVDefaultAllowListRejectionString;
+extern NSString *const kCDVDefaultAllowListRejectionString;
 
 @interface CDVAllowList : NSObject
 
-@property (nonatomic, copy) NSString* allowListRejectionFormatString;
+@property (nonatomic, copy) NSString *allowListRejectionFormatString;
 
-- (id)initWithArray:(NSArray*)array;
-- (BOOL)schemeIsAllowed:(NSString*)scheme;
-- (BOOL)URLIsAllowed:(NSURL*)url;
-- (BOOL)URLIsAllowed:(NSURL*)url logFailure:(BOOL)logFailure;
-- (NSString*)errorStringForURL:(NSURL*)url;
+- (id)initWithArray:(NSArray *)array;
+- (BOOL)schemeIsAllowed:(NSString *)scheme;
+- (BOOL)URLIsAllowed:(NSURL *)url;
+- (BOOL)URLIsAllowed:(NSURL *)url logFailure:(BOOL)logFailure;
+- (NSString *)errorStringForURL:(NSURL *)url;
 
 @end

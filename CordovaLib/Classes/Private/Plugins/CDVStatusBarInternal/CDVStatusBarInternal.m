@@ -38,9 +38,8 @@
     NSInteger valueG = [[command argumentAtIndex:1 withDefault:@0] integerValue];
     NSInteger valueB = [[command argumentAtIndex:2 withDefault:@0] integerValue];
 
-    UIColor *bgColor = [UIColor colorWithRed:valueR/255.f green:valueG/255.f blue:valueB/255.f alpha:1.f];
+    UIColor *bgColor = [UIColor colorWithRed:valueR / 255.f green:valueG / 255.f blue:valueB / 255.f alpha:1.f];
     [self.viewController setStatusBarBackgroundColor:bgColor];
 }
 
 @end
-

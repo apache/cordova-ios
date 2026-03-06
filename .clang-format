@@ -15,6 +15,23 @@
 # specific language governing permissions and limitations
 # under the License.
 
-* text=auto eol=lf
-*.bat text eol=crlf
-*.jar binary
+# LLVM Clang-Format Style Options Documentation
+# https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+---
+BasedOnStyle: LLVM
+---
+Language: ObjC
+AccessModifierOffset: 0
+AllowShortBlocksOnASingleLine: Empty
+AllowShortEnumsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowShortLambdasOnASingleLine: Empty
+BreakBeforeBraces: Linux
+ColumnLimit: 0
+IndentWidth: 4
+ObjCBlockIndentWidth: 4
+ObjCBreakBeforeNestedBlockParam: false
+ObjCSpaceAfterProperty: true
+ObjCSpaceBeforeProtocolList: false
+SortIncludes: Never

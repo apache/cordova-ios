@@ -19,28 +19,28 @@
 
 #import "CDVAllowList.h"
 
-NSString* const kCDVDefaultAllowListRejectionString = @"ERROR allowList rejection: url='%@'";
-NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
+NSString *const kCDVDefaultAllowListRejectionString = @"ERROR allowList rejection: url='%@'";
+NSString *const kCDVDefaultSchemeName = @"cdv-default-scheme";
 
 @interface CDVAllowListPattern : NSObject {
     @private
-    NSRegularExpression* _scheme;
-    NSRegularExpression* _host;
-    NSNumber* _port;
-    NSRegularExpression* _path;
+    NSRegularExpression *_scheme;
+    NSRegularExpression *_host;
+    NSNumber *_port;
+    NSRegularExpression *_path;
 }
 
-+ (NSString*)regexFromPattern:(NSString*)pattern allowWildcards:(bool)allowWildcards;
-- (id)initWithScheme:(NSString*)scheme host:(NSString*)host port:(NSString*)port path:(NSString*)path;
-- (bool)matches:(NSURL*)url;
++ (NSString *)regexFromPattern:(NSString *)pattern allowWildcards:(bool)allowWildcards;
+- (id)initWithScheme:(NSString *)scheme host:(NSString *)host port:(NSString *)port path:(NSString *)path;
+- (bool)matches:(NSURL *)url;
 
 @end
 
 @implementation CDVAllowListPattern
 
-+ (NSString*)regexFromPattern:(NSString*)pattern allowWildcards:(bool)allowWildcards
++ (NSString *)regexFromPattern:(NSString *)pattern allowWildcards:(bool)allowWildcards
 {
-    NSString* regex = [NSRegularExpression escapedPatternForString:pattern];
+    NSString *regex = [NSRegularExpression escapedPatternForString:pattern];
 
     if (allowWildcards) {
         regex = [regex stringByReplacingOccurrencesOfString:@"\\*" withString:@".*"];
@@ -55,9 +55,9 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
     return [NSString stringWithFormat:@"%@$", regex];
 }
 
-- (id)initWithScheme:(NSString*)scheme host:(NSString*)host port:(NSString*)port path:(NSString*)path
+- (id)initWithScheme:(NSString *)scheme host:(NSString *)host port:(NSString *)port path:(NSString *)path
 {
-    self = [super init];  // Potentially change "self"
+    self = [super init]; // Potentially change "self"
     if (self) {
         if ((scheme == nil) || [scheme isEqualToString:@"*"]) {
             _scheme = nil;
@@ -85,23 +85,22 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
     return self;
 }
 
-- (bool)matches:(NSURL*)url
+- (bool)matches:(NSURL *)url
 {
     return (_scheme == nil || [_scheme numberOfMatchesInString:[url scheme] options:NSMatchingAnchored range:NSMakeRange(0, [[url scheme] length])]) &&
            (_host == nil || ([url host] != nil && [_host numberOfMatchesInString:[url host] options:NSMatchingAnchored range:NSMakeRange(0, [[url host] length])])) &&
            (_port == nil || [[url port] isEqualToNumber:_port]) &&
-           (_path == nil || [_path numberOfMatchesInString:[url path] options:NSMatchingAnchored range:NSMakeRange(0, [[url path] length])])
-    ;
+           (_path == nil || [_path numberOfMatchesInString:[url path] options:NSMatchingAnchored range:NSMakeRange(0, [[url path] length])]);
 }
 
 @end
 
 @interface CDVAllowList ()
 
-@property (nonatomic, readwrite, strong) NSMutableArray* allowList;
-@property (nonatomic, readwrite, strong) NSMutableSet* permittedSchemes;
+@property (nonatomic, readwrite, strong) NSMutableArray *allowList;
+@property (nonatomic, readwrite, strong) NSMutableSet *permittedSchemes;
 
-- (void)addAllowListEntry:(NSString*)pattern;
+- (void)addAllowListEntry:(NSString *)pattern;
 
 @end
 
@@ -109,7 +108,7 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
 
 @synthesize allowList, permittedSchemes, allowListRejectionFormatString;
 
-- (id)initWithArray:(NSArray*)array
+- (id)initWithArray:(NSArray *)array
 {
     self = [super init];
     if (self) {
@@ -117,21 +116,21 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
         self.permittedSchemes = [[NSMutableSet alloc] init];
         self.allowListRejectionFormatString = kCDVDefaultAllowListRejectionString;
 
-        for (NSString* pattern in array) {
+        for (NSString *pattern in array) {
             [self addAllowListEntry:pattern];
         }
     }
     return self;
 }
 
-- (BOOL)isIPv4Address:(NSString*)externalHost
+- (BOOL)isIPv4Address:(NSString *)externalHost
 {
     // an IPv4 address has 4 octets b.b.b.b where b is a number between 0 and 255.
     // for our purposes, b can also be the wildcard character '*'
 
     // we could use a regex to solve this problem but then I would have two problems
     // anyways, this is much clearer and maintainable
-    NSArray* octets = [externalHost componentsSeparatedByString:@"."];
+    NSArray *octets = [externalHost componentsSeparatedByString:@"."];
     NSUInteger num_octets = [octets count];
 
     // quick check
@@ -140,13 +139,13 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
     }
 
     // restrict number parsing to 0-255
-    NSNumberFormatter* numberFormatter = [[NSNumberFormatter alloc] init];
+    NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
     [numberFormatter setMinimum:[NSNumber numberWithUnsignedInteger:0]];
     [numberFormatter setMaximum:[NSNumber numberWithUnsignedInteger:255]];
 
     // iterate through each octet, and test for a number between 0-255 or if it equals '*'
     for (NSUInteger i = 0; i < num_octets; ++i) {
-        NSString* octet = [octets objectAtIndex:i];
+        NSString *octet = [octets objectAtIndex:i];
 
         if ([octet isEqualToString:@"*"]) { // passes - check next octet
             continue;
@@ -158,7 +157,7 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
     return YES;
 }
 
-- (void)addAllowListEntry:(NSString*)origin
+- (void)addAllowListEntry:(NSString *)origin
 {
     if (self.allowList == nil) {
         return;
@@ -169,17 +168,17 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
         self.allowList = nil;
         self.permittedSchemes = nil;
     } else { // specific access
-        NSRegularExpression* parts = [NSRegularExpression regularExpressionWithPattern:@"^((\\*|([a-z][a-z0-9+\\-.]*)):/?/?)?(((\\*\\.)?[^*/:]+)|\\*)?(:(\\d+))?(/.*)?" options:0 error:nil];
-        NSTextCheckingResult* m = [parts firstMatchInString:origin options:NSMatchingAnchored range:NSMakeRange(0, [origin length])];
+        NSRegularExpression *parts = [NSRegularExpression regularExpressionWithPattern:@"^((\\*|([a-z][a-z0-9+\\-.]*)):/?/?)?(((\\*\\.)?[^*/:]+)|\\*)?(:(\\d+))?(/.*)?" options:0 error:nil];
+        NSTextCheckingResult *m = [parts firstMatchInString:origin options:NSMatchingAnchored range:NSMakeRange(0, [origin length])];
         if (m != nil) {
             NSRange r;
-            NSString* scheme = nil;
+            NSString *scheme = nil;
             r = [m rangeAtIndex:2];
             if (r.location != NSNotFound) {
                 scheme = [origin substringWithRange:r];
             }
 
-            NSString* host = nil;
+            NSString *host = nil;
             r = [m rangeAtIndex:4];
             if (r.location != NSNotFound) {
                 host = [origin substringWithRange:r];
@@ -190,13 +189,13 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
                 host = @"*";
             }
 
-            NSString* port = nil;
+            NSString *port = nil;
             r = [m rangeAtIndex:8];
             if (r.location != NSNotFound) {
                 port = [origin substringWithRange:r];
             }
 
-            NSString* path = nil;
+            NSString *path = nil;
             r = [m rangeAtIndex:9];
             if (r.location != NSNotFound) {
                 path = [origin substringWithRange:r];
@@ -221,7 +220,7 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
     }
 }
 
-- (BOOL)schemeIsAllowed:(NSString*)scheme
+- (BOOL)schemeIsAllowed:(NSString *)scheme
 {
     if ([scheme isEqualToString:@"http"] ||
         [scheme isEqualToString:@"https"] ||
@@ -233,12 +232,12 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
     return (self.permittedSchemes == nil) || [self.permittedSchemes containsObject:scheme];
 }
 
-- (BOOL)URLIsAllowed:(NSURL*)url
+- (BOOL)URLIsAllowed:(NSURL *)url
 {
     return [self URLIsAllowed:url logFailure:YES];
 }
 
-- (BOOL)URLIsAllowed:(NSURL*)url logFailure:(BOOL)logFailure
+- (BOOL)URLIsAllowed:(NSURL *)url logFailure:(BOOL)logFailure
 {
     // Shortcut acceptance: Are all urls allowListed ("*" in allowList)?
     if (allowList == nil) {
@@ -246,7 +245,7 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
     }
 
     // Shortcut rejection: Check that the scheme is supported
-    NSString* scheme = [[url scheme] lowercaseString];
+    NSString *scheme = [[url scheme] lowercaseString];
     if (![self schemeIsAllowed:scheme]) {
         if (logFailure) {
             NSLog(@"%@", [self errorStringForURL:url]);
@@ -256,7 +255,7 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
 
     // http[s] and ftp[s] should also validate against the common set in the kCDVDefaultSchemeName list
     if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"] || [scheme isEqualToString:@"ftp"] || [scheme isEqualToString:@"ftps"]) {
-        NSURL* newUrl = [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@%@", kCDVDefaultSchemeName, [url host], [[url path] stringByAddingPercentEncodingWithAllowedCharacters:NSCharacterSet.URLPathAllowedCharacterSet]]];
+        NSURL *newUrl = [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@%@", kCDVDefaultSchemeName, [url host], [[url path] stringByAddingPercentEncodingWithAllowedCharacters:NSCharacterSet.URLPathAllowedCharacterSet]]];
         // If it is allowed, we are done.  If not, continue to check for the actual scheme-specific list
         if ([self URLIsAllowed:newUrl logFailure:NO]) {
             return YES;
@@ -264,7 +263,7 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
     }
 
     // Check the url against patterns in the allowList
-    for (CDVAllowListPattern* p in self.allowList) {
+    for (CDVAllowListPattern *p in self.allowList) {
         if ([p matches:url]) {
             return YES;
         }
@@ -277,7 +276,7 @@ NSString* const kCDVDefaultSchemeName = @"cdv-default-scheme";
     return NO;
 }
 
-- (NSString*)errorStringForURL:(NSURL*)url
+- (NSString *)errorStringForURL:(NSURL *)url
 {
     return [NSString stringWithFormat:self.allowListRejectionFormatString, [url absoluteString]];
 }

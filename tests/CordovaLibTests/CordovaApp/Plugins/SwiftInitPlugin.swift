@@ -19,10 +19,10 @@
 
 import Cordova
 
-@objc class SwiftInitPlugin : CDVPlugin {
-    let initStr : String = "Successfully initialized";
+@objc class SwiftInitPlugin: CDVPlugin {
+    let initStr: String = "Successfully initialized"
 
     @objc func getInitString() -> String {
-        return self.initStr;
+        return self.initStr
     }
 }

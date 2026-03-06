@@ -21,7 +21,7 @@ import Cordova
 
 class ViewController: CDVViewController, UIScrollViewDelegate {
     override func viewDidLoad() {
-        let webView = self.newCordovaView(withFrame:CGRect(x: 0, y: 0, width: 400, height: 400))
+        let webView = self.newCordovaView(withFrame: CGRect(x: 0, y: 0, width: 400, height: 400))
         webView.isHidden = true
         webView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 

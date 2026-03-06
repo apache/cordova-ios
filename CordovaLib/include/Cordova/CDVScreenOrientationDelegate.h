@@ -26,7 +26,7 @@
  }
  */
 CDV_DEPRECATED(8.0.0, "")
-@protocol CDVScreenOrientationDelegate <NSObject>
+@protocol CDVScreenOrientationDelegate<NSObject>
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations;
 

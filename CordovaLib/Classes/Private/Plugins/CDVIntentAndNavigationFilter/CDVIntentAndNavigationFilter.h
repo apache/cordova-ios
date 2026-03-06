@@ -26,9 +26,9 @@ typedef NS_ENUM(NSInteger, CDVIntentAndNavigationFilterValue) {
     CDVIntentAndNavigationFilterValueNoneAllowed
 };
 
-@interface CDVIntentAndNavigationFilter : CDVPlugin <CDVPluginNavigationHandler, NSXMLParserDelegate>
+@interface CDVIntentAndNavigationFilter : CDVPlugin<CDVPluginNavigationHandler, NSXMLParserDelegate>
 
-+ (CDVIntentAndNavigationFilterValue) filterUrl:(NSURL*)url allowIntentsList:(CDVAllowList*)allowIntentsList navigationsAllowList:(CDVAllowList*)navigationsAllowList;
-+ (BOOL)shouldOverrideLoadWithRequest:(NSURLRequest*)request navigationType:(CDVWebViewNavigationType)navigationType filterValue:(CDVIntentAndNavigationFilterValue)filterValue;
-+ (BOOL)shouldOpenURLRequest:(NSURLRequest*)request navigationType:(CDVWebViewNavigationType)navigationType;
++ (CDVIntentAndNavigationFilterValue)filterUrl:(NSURL *)url allowIntentsList:(CDVAllowList *)allowIntentsList navigationsAllowList:(CDVAllowList *)navigationsAllowList;
++ (BOOL)shouldOverrideLoadWithRequest:(NSURLRequest *)request navigationType:(CDVWebViewNavigationType)navigationType filterValue:(CDVIntentAndNavigationFilterValue)filterValue;
++ (BOOL)shouldOpenURLRequest:(NSURLRequest *)request navigationType:(CDVWebViewNavigationType)navigationType;
 @end

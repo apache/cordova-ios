@@ -19,6 +19,4 @@
 
 import Cordova
 
-class SceneDelegate: CDVSceneDelegate {
-}
-
+class SceneDelegate: CDVSceneDelegate {}

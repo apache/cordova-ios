@@ -21,13 +21,16 @@ import UIKit
 
 @main
 #if compiler(>=6.1)
-@objc @implementation
+    @objc @implementation
 #else
-@_objcImplementation
+    @_objcImplementation
 #endif
 extension AppDelegate {
-    open override func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+    override open func application(
+        _: UIApplication,
+        configurationForConnecting connectingSceneSession: UISceneSession,
+        options _: UIScene.ConnectionOptions
+    ) -> UISceneConfiguration {
         return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
     }
 }
-

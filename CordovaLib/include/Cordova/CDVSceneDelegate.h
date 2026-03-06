@@ -37,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
    @Available(Cordova, introduced: "8.0.0")
  }
 */
-@interface CDVSceneDelegate : UIResponder <UIWindowSceneDelegate>
+@interface CDVSceneDelegate : UIResponder<UIWindowSceneDelegate>
 
 /**
  The application window for the current UI scene.

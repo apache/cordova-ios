@@ -43,11 +43,11 @@
 
 - (void)testAllowedSchemes
 {
-    NSArray* allowedHosts = [NSArray arrayWithObjects:
-        @"*.apache.org",
-        nil];
+    NSArray *allowedHosts = [NSArray arrayWithObjects:
+                                         @"*.apache.org",
+                                         nil];
 
-    CDVAllowList* allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
+    CDVAllowList *allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
 
     XCTAssertTrue([allowList schemeIsAllowed:@"http"]);
     XCTAssertTrue([allowList schemeIsAllowed:@"https"]);
@@ -58,11 +58,11 @@
 
 - (void)testSubdomainWildcard
 {
-    NSArray* allowedHosts = [NSArray arrayWithObjects:
-        @"*.apache.org",
-        nil];
+    NSArray *allowedHosts = [NSArray arrayWithObjects:
+                                         @"*.apache.org",
+                                         nil];
 
-    CDVAllowList* allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
+    CDVAllowList *allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
 
     XCTAssertTrue([allowList URLIsAllowed:[NSURL URLWithString:@"http://build.apache.org"]]);
     XCTAssertTrue([allowList URLIsAllowed:[NSURL URLWithString:@"http://apache.org"]]);
@@ -72,11 +72,11 @@
 
 - (void)testCatchallWildcardOnly
 {
-    NSArray* allowedHosts = [NSArray arrayWithObjects:
-        @"*",
-        nil];
+    NSArray *allowedHosts = [NSArray arrayWithObjects:
+                                         @"*",
+                                         nil];
 
-    CDVAllowList* allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
+    CDVAllowList *allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
 
     XCTAssertTrue([allowList URLIsAllowed:[NSURL URLWithString:@"http://apache.org"]]);
     XCTAssertTrue([allowList URLIsAllowed:[NSURL URLWithString:@"https://build.apache.prg"]]);
@@ -87,12 +87,12 @@
 
 - (void)testURISchemesNotFollowedByDoubleSlashes
 {
-    NSArray* allowedHosts = [NSArray arrayWithObjects:
-                             @"tel:*",
-                             @"sms:*",
-                             nil];
+    NSArray *allowedHosts = [NSArray arrayWithObjects:
+                                         @"tel:*",
+                                         @"sms:*",
+                                         nil];
 
-    CDVAllowList* allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
+    CDVAllowList *allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
 
     XCTAssertTrue([allowList URLIsAllowed:[NSURL URLWithString:@"tel:1234567890"]]);
     XCTAssertTrue([allowList URLIsAllowed:[NSURL URLWithString:@"sms:1234567890"]]);
@@ -100,14 +100,14 @@
 
 - (void)testCatchallWildcardByProto
 {
-    NSArray* allowedHosts = [NSArray arrayWithObjects:
-        @"http://*",
-        @"https://*",
-        @"ftp://*",
-        @"ftps://*",
-        nil];
+    NSArray *allowedHosts = [NSArray arrayWithObjects:
+                                         @"http://*",
+                                         @"https://*",
+                                         @"ftp://*",
+                                         @"ftps://*",
+                                         nil];
 
-    CDVAllowList* allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
+    CDVAllowList *allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
 
     XCTAssertTrue([allowList URLIsAllowed:[NSURL URLWithString:@"http://apache.org"]]);
     XCTAssertTrue([allowList URLIsAllowed:[NSURL URLWithString:@"https://build.apache.prg"]]);
@@ -118,11 +118,11 @@
 
 - (void)testExactMatch
 {
-    NSArray* allowedHosts = [NSArray arrayWithObjects:
-        @"www.apache.org",
-        nil];
+    NSArray *allowedHosts = [NSArray arrayWithObjects:
+                                         @"www.apache.org",
+                                         nil];
 
-    CDVAllowList* allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
+    CDVAllowList *allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
 
     XCTAssertTrue([allowList URLIsAllowed:[NSURL URLWithString:@"http://www.apache.org"]]);
     XCTAssertFalse([allowList URLIsAllowed:[NSURL URLWithString:@"http://build.apache.org"]]);
@@ -131,11 +131,11 @@
 
 - (void)testNoMatchInQueryParam
 {
-    NSArray* allowedHosts = [NSArray arrayWithObjects:
-        @"www.apache.org",
-        nil];
+    NSArray *allowedHosts = [NSArray arrayWithObjects:
+                                         @"www.apache.org",
+                                         nil];
 
-    CDVAllowList* allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
+    CDVAllowList *allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
 
     XCTAssertFalse([allowList URLIsAllowed:[NSURL URLWithString:@"www.malicious-site.org?url=http://www.apache.org"]]);
     XCTAssertFalse([allowList URLIsAllowed:[NSURL URLWithString:@"www.malicious-site.org?url=www.apache.org"]]);
@@ -143,12 +143,12 @@
 
 - (void)testIpExactMatch
 {
-    NSArray* allowedHosts = [NSArray arrayWithObjects:
-        @"192.168.1.1",
-        @"192.168.2.1",
-        nil];
+    NSArray *allowedHosts = [NSArray arrayWithObjects:
+                                         @"192.168.1.1",
+                                         @"192.168.2.1",
+                                         nil];
 
-    CDVAllowList* allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
+    CDVAllowList *allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
 
     XCTAssertFalse([allowList URLIsAllowed:[NSURL URLWithString:@"http://apache.org"]]);
     XCTAssertTrue([allowList URLIsAllowed:[NSURL URLWithString:@"http://192.168.1.1"]]);
@@ -158,12 +158,12 @@
 
 - (void)testIpWildcardMatch
 {
-    NSArray* allowedHosts = [NSArray arrayWithObjects:
-        @"192.168.1.*",
-        @"192.168.2.*",
-        nil];
+    NSArray *allowedHosts = [NSArray arrayWithObjects:
+                                         @"192.168.1.*",
+                                         @"192.168.2.*",
+                                         nil];
 
-    CDVAllowList* allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
+    CDVAllowList *allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
 
     XCTAssertFalse([allowList URLIsAllowed:[NSURL URLWithString:@"http://apache.org"]]);
 
@@ -178,15 +178,15 @@
 
 - (void)testHostnameExtraction
 {
-    NSArray* allowedHosts = [NSArray arrayWithObjects:
-        @"http://apache.org/",
-        @"http://apache.org/foo/bar?x=y",
-        @"ftp://apache.org/foo/bar?x=y",
-        @"ftps://apache.org/foo/bar?x=y",
-        @"http://apache.*/foo/bar?x=y",
-        nil];
+    NSArray *allowedHosts = [NSArray arrayWithObjects:
+                                         @"http://apache.org/",
+                                         @"http://apache.org/foo/bar?x=y",
+                                         @"ftp://apache.org/foo/bar?x=y",
+                                         @"ftps://apache.org/foo/bar?x=y",
+                                         @"http://apache.*/foo/bar?x=y",
+                                         nil];
 
-    CDVAllowList* allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
+    CDVAllowList *allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
 
     XCTAssertTrue([allowList URLIsAllowed:[NSURL URLWithString:@"http://apache.org/"]]);
     XCTAssertFalse([allowList URLIsAllowed:[NSURL URLWithString:@"http://google.com/"]]);
@@ -194,12 +194,12 @@
 
 - (void)testAllowListRejectionString
 {
-    NSArray* allowedHosts = [NSArray arrayWithObject:@"http://www.yahoo.com/"];  // Doesn't matter in this test.
-    CDVAllowList* allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
+    NSArray *allowedHosts = [NSArray arrayWithObject:@"http://www.yahoo.com/"]; // Doesn't matter in this test.
+    CDVAllowList *allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
 
-    NSURL* testUrl = [NSURL URLWithString:@"http://www/google.com"];
-    NSString* errorString = [allowList errorStringForURL:testUrl];
-    NSString* expectedErrorString = [NSString stringWithFormat:kCDVDefaultAllowListRejectionString, [testUrl absoluteString]];
+    NSURL *testUrl = [NSURL URLWithString:@"http://www/google.com"];
+    NSString *errorString = [allowList errorStringForURL:testUrl];
+    NSString *expectedErrorString = [NSString stringWithFormat:kCDVDefaultAllowListRejectionString, [testUrl absoluteString]];
 
     XCTAssertTrue([expectedErrorString isEqualToString:errorString], @"Default error string has an unexpected value.");
 
@@ -211,13 +211,13 @@
 
 - (void)testUnusualSchemes
 {
-    NSArray* allowedHosts = [NSArray arrayWithObjects:
-        @"com.myapp://*",
-        @"web+app://*",
-        @"a12345://*",
-        nil];
+    NSArray *allowedHosts = [NSArray arrayWithObjects:
+                                         @"com.myapp://*",
+                                         @"web+app://*",
+                                         @"a12345://*",
+                                         nil];
 
-    CDVAllowList* allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
+    CDVAllowList *allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
 
     XCTAssertTrue([allowList URLIsAllowed:[NSURL URLWithString:@"com.myapp://www.apache.org"]]);
     XCTAssertTrue([allowList URLIsAllowed:[NSURL URLWithString:@"web+app://www.apache.org"]]);
@@ -226,12 +226,12 @@
 
 - (void)testSpecificProtocol
 {
-    NSArray* allowedHosts = [NSArray arrayWithObjects:
-        @"http://www.apache.org",
-        @"cordova://www.google.com",
-        nil];
+    NSArray *allowedHosts = [NSArray arrayWithObjects:
+                                         @"http://www.apache.org",
+                                         @"cordova://www.google.com",
+                                         nil];
 
-    CDVAllowList* allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
+    CDVAllowList *allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
 
     XCTAssertTrue([allowList URLIsAllowed:[NSURL URLWithString:@"http://www.apache.org"]]);
     XCTAssertTrue([allowList URLIsAllowed:[NSURL URLWithString:@"cordova://www.google.com"]]);
@@ -241,11 +241,11 @@
 
 - (void)testSpecificPort
 {
-    NSArray* allowedHosts = [NSArray arrayWithObjects:
-        @"http://www.apache.org:8080",
-        nil];
+    NSArray *allowedHosts = [NSArray arrayWithObjects:
+                                         @"http://www.apache.org:8080",
+                                         nil];
 
-    CDVAllowList* allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
+    CDVAllowList *allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
 
     XCTAssertFalse([allowList URLIsAllowed:[NSURL URLWithString:@"http://www.apache.org/index.html"]]);
     XCTAssertTrue([allowList URLIsAllowed:[NSURL URLWithString:@"http://www.apache.org:8080/index.html"]]);
@@ -255,12 +255,12 @@
 {
     // test for https://issues.apache.org/jira/browse/CB-3394
 
-    NSArray* allowedHosts = [NSArray arrayWithObjects:
-        @"*",
-        @"cordova.apache.org",
-        nil];
+    NSArray *allowedHosts = [NSArray arrayWithObjects:
+                                         @"*",
+                                         @"cordova.apache.org",
+                                         nil];
 
-    CDVAllowList* allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
+    CDVAllowList *allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
 
     XCTAssertTrue([allowList URLIsAllowed:[NSURL URLWithString:@"http://*.apache.org"]]);
     XCTAssertTrue([allowList URLIsAllowed:[NSURL URLWithString:@"https://www.google.com"]]);
@@ -271,11 +271,11 @@
 
 - (void)testWildcardScheme
 {
-    NSArray* allowedHosts = [NSArray arrayWithObjects:
-        @"*://*.test.com",
-        nil];
+    NSArray *allowedHosts = [NSArray arrayWithObjects:
+                                         @"*://*.test.com",
+                                         nil];
 
-    CDVAllowList* allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
+    CDVAllowList *allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
 
     XCTAssertFalse([allowList URLIsAllowed:[NSURL URLWithString:@"http://apache.org"]]);
     XCTAssertFalse([allowList URLIsAllowed:[NSURL URLWithString:@"gopher://testtt.com"]]);
@@ -297,12 +297,12 @@
 
 - (void)testCredentials
 {
-    NSArray* allowedHosts = [NSArray arrayWithObjects:
-        @"http://*.apache.org",
-        @"http://www.google.com",
-        nil];
+    NSArray *allowedHosts = [NSArray arrayWithObjects:
+                                         @"http://*.apache.org",
+                                         @"http://www.google.com",
+                                         nil];
 
-    CDVAllowList* allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
+    CDVAllowList *allowList = [[CDVAllowList alloc] initWithArray:allowedHosts];
 
     XCTAssertTrue([allowList URLIsAllowed:[NSURL URLWithString:@"http://user:pass@www.apache.org"]]);
     XCTAssertTrue([allowList URLIsAllowed:[NSURL URLWithString:@"http://user:pass@www.google.com"]]);
@@ -310,11 +310,11 @@
 
 - (void)testAllowIntentsAndNavigations
 {
-    NSArray* allowIntents = @[ @"https://*" ];
-    NSArray* allowNavigations = @[ @"https://*.apache.org" ];
+    NSArray *allowIntents = @[ @"https://*" ];
+    NSArray *allowNavigations = @[ @"https://*.apache.org" ];
 
-    CDVAllowList* allowIntentsList = [[CDVAllowList alloc] initWithArray:allowIntents];
-    CDVAllowList* navigationsAllowList = [[CDVAllowList alloc] initWithArray:allowNavigations];
+    CDVAllowList *allowIntentsList = [[CDVAllowList alloc] initWithArray:allowIntents];
+    CDVAllowList *navigationsAllowList = [[CDVAllowList alloc] initWithArray:allowNavigations];
 
     // Test allow-navigation superceding allow-intent
     XCTAssertEqual([CDVIntentAndNavigationFilter filterUrl:[NSURL URLWithString:@"https://apache.org/foo.html"] allowIntentsList:allowIntentsList navigationsAllowList:navigationsAllowList], CDVIntentAndNavigationFilterValueNavigationAllowed);
@@ -323,8 +323,8 @@
     // Test http (not allowed in either)
     XCTAssertEqual([CDVIntentAndNavigationFilter filterUrl:[NSURL URLWithString:@"http://google.com"] allowIntentsList:allowIntentsList navigationsAllowList:navigationsAllowList], CDVIntentAndNavigationFilterValueNoneAllowed);
 
-    NSURL* telUrl = [NSURL URLWithString:@"tel:5555555"];
-    NSMutableURLRequest* telRequest = [NSMutableURLRequest requestWithURL:telUrl];
+    NSURL *telUrl = [NSURL URLWithString:@"tel:5555555"];
+    NSMutableURLRequest *telRequest = [NSMutableURLRequest requestWithURL:telUrl];
     telRequest.mainDocumentURL = telUrl;
 }
 

@@ -21,7 +21,7 @@
 #import <Cordova/CDVAvailabilityDeprecated.h>
 
 #ifndef __CORDOVA_SILENCE_HEADER_DEPRECATIONS
-//#warning "This should not be used"
+// #warning "This should not be used"
 #endif
 
 @interface NSMutableArray (QueueAdditions)

@@ -25,8 +25,8 @@
 #import "AppDelegate.h"
 
 @interface CDVUserAgentTestViewController : UIViewController
-@property (nonatomic) CDVViewController* vc1;
-@property (nonatomic) CDVViewController* vc2;
+@property (nonatomic) CDVViewController *vc1;
+@property (nonatomic) CDVViewController *vc2;
 @end
 
 @implementation CDVUserAgentTestViewController
@@ -53,7 +53,7 @@
     [self addChildViewController:_vc2];
 
     CGRect applicationFrame = [[UIScreen mainScreen] applicationFrame];
-    UIView* contentView = [[UIView alloc] initWithFrame:applicationFrame];
+    UIView *contentView = [[UIView alloc] initWithFrame:applicationFrame];
 
     CGRect sub1, sub2;
     CGRectDivide(applicationFrame, &sub1, &sub2, applicationFrame.size.height / 2, CGRectMinYEdge);
@@ -94,11 +94,10 @@
         NSInteger nullInteger = 0;
         // test releasing NULL token
         [CDVUserAgentUtil releaseLock:&nullInteger];
-        NSInteger* ni = nil;
+        NSInteger *ni = nil;
         // test releasing nil object
         [CDVUserAgentUtil releaseLock:ni];
     }];
 }
-
 
 @end

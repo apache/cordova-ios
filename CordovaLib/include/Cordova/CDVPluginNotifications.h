@@ -17,8 +17,8 @@
     under the License.
 */
 
-#import <Foundation/Foundation.h>
 #import <Cordova/CDVAvailabilityDeprecated.h>
+#import <Foundation/Foundation.h>
 
 extern const NSNotificationName CDVPageDidLoadNotification;
 extern const NSNotificationName CDVPluginHandleOpenURLNotification;
@@ -31,4 +31,7 @@ extern const NSNotificationName CDVViewWillLayoutSubviewsNotification;
 extern const NSNotificationName CDVViewDidLayoutSubviewsNotification;
 extern const NSNotificationName CDVViewWillTransitionToSizeNotification;
 
-extern const NSNotificationName CDVPluginHandleOpenURLWithAppSourceAndAnnotationNotification CDV_DEPRECATED(8.0.0, "Find sourceApplication and annotations in the userInfo of the CDVPluginHandleOpenURLNotification notification.");
+extern const NSNotificationName
+    CDVPluginHandleOpenURLWithAppSourceAndAnnotationNotification CDV_DEPRECATED(
+        8.0.0, "Find sourceApplication and annotations in the userInfo of the "
+               "CDVPluginHandleOpenURLNotification notification.");

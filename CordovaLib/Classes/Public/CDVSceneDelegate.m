@@ -43,7 +43,6 @@
 #endif
 
         [[NSNotificationCenter defaultCenter] postNotificationName:CDVPluginHandleOpenURLNotification object:context.URL userInfo:options];
-
     }
 }
 

@@ -54,7 +54,8 @@ NS_ASSUME_NONNULL_END
     @Available("Cordova", introduced: "1.0.0")
  }
  */
-@interface CDVPlugin : NSObject {}
+@interface CDVPlugin : NSObject {
+}
 
 /**
  The web view engine that manages the web view displaying the Cordova
@@ -67,7 +68,7 @@ NS_ASSUME_NONNULL_END
     @Available("Cordova", introduced: "4.0.0")
  }
  */
-@property (nonatomic, readonly, weak) id <CDVWebViewEngineProtocol> webViewEngine;
+@property (nonatomic, readonly, weak) id<CDVWebViewEngineProtocol> webViewEngine;
 
 /**
  The web view that displays the Cordova application's content.
@@ -99,7 +100,7 @@ NS_ASSUME_NONNULL_END
    @Available("Cordova", introduced: "1.4.0")
  }
 */
-@property (nonatomic, weak) id <CDVCommandDelegate> commandDelegate;
+@property (nonatomic, weak) id<CDVCommandDelegate> commandDelegate;
 
 /**
  Flag for pending plugin work that requires keeping the web view alive.
@@ -210,7 +211,7 @@ NS_ASSUME_NONNULL_BEGIN
     @Available("Cordova", introduced: "8.0.0")
  }
  */
-@protocol CDVPluginAuthenticationHandler <NSObject>
+@protocol CDVPluginAuthenticationHandler<NSObject>
 
 /**
  Asks your plugin to respond to an authentication challenge.
@@ -234,10 +235,9 @@ NS_ASSUME_NONNULL_BEGIN
     @Available("Cordova", introduced: "8.0.0")
  }
  */
-- (BOOL)willHandleAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential * _Nullable))completionHandler;
+- (BOOL)willHandleAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential *_Nullable))completionHandler;
 
 @end
-
 
 /**
  A protocol for Cordova plugins to manage permitting and denying of webview
@@ -250,7 +250,7 @@ NS_ASSUME_NONNULL_BEGIN
     @Available("Cordova", introduced: "8.0.0")
  }
  */
-@protocol CDVPluginNavigationHandler <NSObject>
+@protocol CDVPluginNavigationHandler<NSObject>
 
 /**
  Asks your plugin to decide whether a navigation request should be permitted or
@@ -292,7 +292,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-
 /**
  A protocol for Cordova plugins to intercept handling of WebKit resource
  loading for a custom URL scheme.
@@ -313,7 +312,7 @@ NS_ASSUME_NONNULL_BEGIN
     @Available("Cordova", introduced: "8.0.0")
  }
  */
-@protocol CDVPluginSchemeHandler <NSObject>
+@protocol CDVPluginSchemeHandler<NSObject>
 
 /**
  Asks your plugin to handle the specified request and begin loading data.
@@ -333,7 +332,7 @@ NS_ASSUME_NONNULL_BEGIN
     @Available("Cordova", introduced: "6.2.0")
  }
  */
-- (BOOL)overrideSchemeTask:(id <WKURLSchemeTask>)task;
+- (BOOL)overrideSchemeTask:(id<WKURLSchemeTask>)task;
 
 /**
  Asks your plugin to stop loading the data for the specified resource.
@@ -346,7 +345,7 @@ NS_ASSUME_NONNULL_BEGIN
     @Available("Cordova", introduced: "6.2.0")
  }
  */
-- (void)stopSchemeTask:(id <WKURLSchemeTask>)task;
+- (void)stopSchemeTask:(id<WKURLSchemeTask>)task;
 @end
 
 NS_ASSUME_NONNULL_END
