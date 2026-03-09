@@ -17,14 +17,9 @@
 
 # This file used by release audit workflow
 
-**/*.txt
-
 .git/
 coverage/
 node_modules/
-
-# yes, not .gitignore
-templates/project/App/gitignore
 
 # Files that do not support comments
 **/*.txt
