@@ -148,4 +148,19 @@
     return [[self class] shouldOverrideLoadWithRequest:request navigationType:navigationType filterValue:[self filterUrl:request.URL]];
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+// TODO: Remove in Cordova iOS 9
+// The Ionic Webview plugin calls this method by selector (rather than
+// shouldOverrideLoadWithRequest:navigationType:info: as defined above) and
+// apps using that plugin break by refusing to load content unless this
+// deprecated selector exists.
+- (BOOL)shouldOverrideLoadWithRequest:(NSURLRequest*)request navigationType:(CDVWebViewNavigationType)navigationType
+{
+    NSLog(@"Plugin called shouldOverrideLoadWithRequest:navigationType: which is deprecated and will be removed in Cordova iOS 9");
+
+    return [[self class] shouldOverrideLoadWithRequest:request navigationType:navigationType filterValue:[self filterUrl:request.URL]];
+}
+#pragma clang diagnostic pop
+
 @end
