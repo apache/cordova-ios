@@ -149,7 +149,7 @@
 }
 
 #pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
 // TODO: Remove in Cordova iOS 9
 // The Ionic Webview plugin calls this method by selector (rather than
 // shouldOverrideLoadWithRequest:navigationType:info: as defined above) and
