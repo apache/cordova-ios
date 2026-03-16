@@ -23,6 +23,8 @@ const rewire = require('rewire');
 const { CordovaError } = require('cordova-common');
 const build = rewire('../../lib/build');
 
+const realBuild = require('../../lib/build');
+
 describe('build', () => {
     const testProjectPath = path.join('/test', 'project', 'path');
 
@@ -31,7 +33,7 @@ describe('build', () => {
         build.__set__('__dirname', path.join('/test', 'dir'));
 
         it('should generate appropriate args if a single buildFlag is passed in', () => {
-            const args = getXcodeBuildArgs(testProjectPath, 'TestConfiguration', '', { device: true, buildFlag: '' });
+            const args = getXcodeBuildArgs(testProjectPath, 'TestConfiguration', { device: true, buildFlag: '' });
             expect(args).toEqual([
                 '-workspace',
                 'App.xcworkspace',
@@ -61,7 +63,7 @@ describe('build', () => {
                 '-resultBundlePath="/tmp/result bundle/file"'
             ];
 
-            const args = getXcodeBuildArgs(testProjectPath, 'TestConfiguration', '', { device: true, buildFlag: buildFlags });
+            const args = getXcodeBuildArgs(testProjectPath, 'TestConfiguration', { device: true, buildFlag: buildFlags });
             expect(args).toEqual([
                 '-workspace',
                 'TestWorkspaceFlag',
@@ -83,7 +85,7 @@ describe('build', () => {
         });
 
         it('should generate appropriate args for device', () => {
-            const args = getXcodeBuildArgs(testProjectPath, 'TestConfiguration', '', { device: true });
+            const args = getXcodeBuildArgs(testProjectPath, 'TestConfiguration', { device: true });
             expect(args).toEqual([
                 '-workspace',
                 'App.xcworkspace',
@@ -101,7 +103,7 @@ describe('build', () => {
         });
 
         it('should generate appropriate args for simulator', () => {
-            const args = getXcodeBuildArgs(testProjectPath, 'TestConfiguration', 'iPhone 5s', { device: false });
+            const args = getXcodeBuildArgs(testProjectPath, 'TestConfiguration', { device: false });
             expect(args).toEqual([
                 '-workspace',
                 'App.xcworkspace',
@@ -112,7 +114,7 @@ describe('build', () => {
                 '-sdk',
                 'iphonesimulator',
                 '-destination',
-                'platform=iOS Simulator,name=iPhone 5s',
+                'generic/platform=iOS Simulator',
                 'build'
             ]);
             expect(args.length).toEqual(11);
@@ -129,7 +131,7 @@ describe('build', () => {
                 'SHARED_PRECOMPS_DIR=TestSharedPrecompsDirFlag'
             ];
 
-            const args = getXcodeBuildArgs(testProjectPath, 'TestConfiguration', 'iPhone 5s', { device: false, buildFlag: buildFlags });
+            const args = getXcodeBuildArgs(testProjectPath, 'TestConfiguration', { device: false, buildFlag: buildFlags });
             expect(args).toEqual([
                 '-workspace',
                 'TestWorkspaceFlag',
@@ -153,7 +155,7 @@ describe('build', () => {
         it('should add matched flags that are not overriding for device', () => {
             const buildFlags = '-sdk TestSdkFlag';
 
-            const args = getXcodeBuildArgs(testProjectPath, 'TestConfiguration', '', { device: true, buildFlag: buildFlags });
+            const args = getXcodeBuildArgs(testProjectPath, 'TestConfiguration', { device: true, buildFlag: buildFlags });
             expect(args).toEqual([
                 '-workspace',
                 'App.xcworkspace',
@@ -175,7 +177,7 @@ describe('build', () => {
         it('should add matched flags that are not overriding for simulator', () => {
             const buildFlags = '-archivePath TestArchivePathFlag';
 
-            const args = getXcodeBuildArgs(testProjectPath, 'TestConfiguration', 'iPhone 5s', { device: false, buildFlag: buildFlags });
+            const args = getXcodeBuildArgs(testProjectPath, 'TestConfiguration', { device: false, buildFlag: buildFlags });
             expect(args).toEqual([
                 '-workspace',
                 'App.xcworkspace',
@@ -186,7 +188,7 @@ describe('build', () => {
                 '-sdk',
                 'iphonesimulator',
                 '-destination',
-                'platform=iOS Simulator,name=iPhone 5s',
+                'generic/platform=iOS Simulator',
                 'build',
                 '-archivePath',
                 'TestArchivePathFlag'
@@ -203,7 +205,7 @@ describe('build', () => {
                 authenticationKeyIssuerID: '00000000-0000-0000-0000-000000000000'
             };
 
-            const args = getXcodeBuildArgs(testProjectPath, 'TestConfiguration', '', buildOpts);
+            const args = getXcodeBuildArgs(testProjectPath, 'TestConfiguration', buildOpts);
             expect(args).toEqual([
                 '-workspace',
                 'App.xcworkspace',
@@ -232,7 +234,7 @@ describe('build', () => {
                 catalyst: true
             };
 
-            const args = getXcodeBuildArgs(testProjectPath, 'TestConfiguration', '', buildOpts);
+            const args = getXcodeBuildArgs(testProjectPath, 'TestConfiguration', buildOpts);
             expect(args).toEqual([
                 '-workspace',
                 'App.xcworkspace',
@@ -479,53 +481,23 @@ describe('build', () => {
         });
     });
 
-    describe('getDefaultSimulatorTarget method', () => {
-        it('should find iPhone X as the default simulator target.', () => {
-            const mockedEmulators = [{
-                name: 'iPhone 7',
-                identifier: 'com.apple.CoreSimulator.SimDeviceType.iPhone-7',
-                simIdentifier: 'iPhone-7'
-            },
-            {
-                name: 'iPhone 8',
-                identifier: 'com.apple.CoreSimulator.SimDeviceType.iPhone-8',
-                simIdentifier: 'iPhone-8'
-            },
-            {
-                name: 'iPhone X',
-                identifier: 'com.apple.CoreSimulator.SimDeviceType.iPhone-X',
-                simIdentifier: 'iPhone-X'
-            }];
-
-            // This method will require a module that supports the run method.
-            build.__set__('require', () => ({
-                run: () => Promise.resolve(mockedEmulators)
-            }));
-
-            const getDefaultSimulatorTarget = build.__get__('getDefaultSimulatorTarget');
-
-            return getDefaultSimulatorTarget().then(actual => {
-                expect(actual).toEqual({
-                    name: 'iPhone X',
-                    identifier: 'com.apple.CoreSimulator.SimDeviceType.iPhone-X',
-                    simIdentifier: 'iPhone-X'
-                });
-            });
+    describe('run method', () => {
+        it('should not accept debug and release options together', () => {
+            return expectAsync(realBuild.run({ debug: true, release: true }))
+                .toBeRejectedWithError(CordovaError, 'Cannot specify "debug" and "release" options together.');
         });
 
-        it('should handle the case of no simulators being available', () => {
-            // This method will require a module that supports the run method.
-            build.__set__('require', () => ({
-                run: () => Promise.resolve([])
-            }));
+        it('should not accept device and emulator options together', () => {
+            return expectAsync(realBuild.run({ device: true, emulator: true }))
+                .toBeRejectedWithError(CordovaError, 'Cannot specify "device" and "emulator" options together.');
+        });
 
-            const getDefaultSimulatorTarget = build.__get__('getDefaultSimulatorTarget');
+        it('should not accept a build config file that does not exist', () => {
+            spyOn(fs, 'existsSync').and.returnValue(false);
+            const buildConfig = './some/config/path';
 
-            return getDefaultSimulatorTarget().then(sim => {
-                return Promise.reject(new Error('Should not resolve if no simulators are present'));
-            }, (err) => {
-                expect(err).toBeInstanceOf(CordovaError);
-            });
+            return expectAsync(realBuild.run({ buildConfig: './some/config/path' }))
+                .toBeRejectedWithError(CordovaError, `Build config file does not exist: ${buildConfig}`);
         });
     });
 });
