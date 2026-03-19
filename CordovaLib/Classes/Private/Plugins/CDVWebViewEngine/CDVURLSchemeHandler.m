@@ -183,10 +183,9 @@ static const NSUInteger FILE_BUFFER_SIZE = 1024 * 1024 * 4; // 4 MiB
         [self.handlerMap removeObjectForKey:urlSchemeTask];
     }
 
-    if ([plugin isEqual:[NSNull null]]) {
-        // NSNull means we own this task, so we need to mark it as finished
-        [urlSchemeTask didFinish];
-    } else if ([plugin respondsToSelector:@selector(stopSchemeTask:)]) {
+    // After stopURLSchemeTask is invoked, WKURLSchemeTask must not receive
+    // additional callbacks from this handler.
+    if (![plugin isEqual:[NSNull null]] && [plugin respondsToSelector:@selector(stopSchemeTask:)]) {
         [plugin stopSchemeTask:urlSchemeTask];
     }
 }
