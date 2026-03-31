@@ -33,7 +33,6 @@
 - (void)resetRequestId;
 - (void)enqueueCommandBatch:(NSString*)batchJSON;
 
-- (void)fetchCommandsFromJs;
 - (void)executePending;
 - (BOOL)execute:(CDVInvokedUrlCommand*)command;
 

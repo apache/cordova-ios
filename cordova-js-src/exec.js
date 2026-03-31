@@ -134,17 +134,13 @@ iOSExec.nativeEvalAndFetch = function (func) {
 
 function cordovaExec () {
     var cexec = require('cordova/exec');
-    var cexec_valid = (typeof cexec.nativeFetchMessages === 'function') && (typeof cexec.nativeEvalAndFetch === 'function') && (typeof cexec.nativeCallback === 'function');
+    var cexec_valid = (typeof cexec.nativeEvalAndFetch === 'function') && (typeof cexec.nativeCallback === 'function');
     return (cexec_valid && execProxy !== cexec) ? cexec : iOSExec;
 }
 
 function execProxy () {
     cordovaExec().apply(null, arguments);
 }
-
-execProxy.nativeFetchMessages = function () {
-    return cordovaExec().nativeFetchMessages.apply(null, arguments);
-};
 
 execProxy.nativeEvalAndFetch = function () {
     return cordovaExec().nativeEvalAndFetch.apply(null, arguments);
