@@ -125,6 +125,10 @@ NS_ASSUME_NONNULL_BEGIN
  [done setKeepCallbackAsBool:NO];
  [self.commandDelegate sendPluginResult:done callbackId:command.callbackId];
  @endcode
+
+ @Metadata {
+    @Available(Cordova, introduced: "1.0.0")
+ }
  */
 @property (nonatomic, strong) NSNumber *keepCallback;
 @property (nonatomic, strong) id associatedObject CDV_DEPRECATED(8.0.0, "");
@@ -152,6 +156,10 @@ NS_ASSUME_NONNULL_BEGIN
  Equivalent to setting `keepCallback` to `@YES` or `@NO` directly.
 
  @param bKeepCallback `YES` to retain the JS callback for subsequent results; `NO` to release it after delivery.
+
+ @Metadata {
+    @Available(Cordova, introduced: "1.0.0")
+ }
  */
 - (void)setKeepCallbackAsBool:(BOOL)bKeepCallback;
 
