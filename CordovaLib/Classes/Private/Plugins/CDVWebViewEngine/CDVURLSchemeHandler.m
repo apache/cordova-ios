@@ -73,81 +73,89 @@ static const NSUInteger FILE_BUFFER_SIZE = 1024 * 1024 * 4; // 4 MiB
     // We do this so that we can (in future) detect if the task is cancelled before we finished feeding it response data
     [self.handlerMap setObject:(id)[NSNull null] forKey:urlSchemeTask];
 
-    [self.viewController.commandDelegate runInBackground:^{
-        NSURL *fileURL = [self fileURLForRequestURL:req.URL];
-        NSError *error;
+    NSURL *fileURL = [self fileURLForRequestURL:req.URL];
+    NSError *error;
 
-        NSFileHandle *fileHandle = [NSFileHandle fileHandleForReadingFromURL:fileURL error:&error];
-        if (!fileHandle || error) {
-            if ([self taskActive:urlSchemeTask]) {
-                [urlSchemeTask didFailWithError:error];
-            }
-
-            @synchronized(self.handlerMap) {
-                [self.handlerMap removeObjectForKey:urlSchemeTask];
-            }
-            return;
+    NSFileHandle *fileHandle = [NSFileHandle fileHandleForReadingFromURL:fileURL error:&error];
+    if (!fileHandle || error) {
+        if ([self taskActive:urlSchemeTask]) {
+            [urlSchemeTask didFailWithError:error];
         }
 
-        NSInteger statusCode = 200; // Default to 200 OK status
-        NSString *mimeType = [self getMimeType:fileURL] ?: @"application/octet-stream";
-        NSNumber *fileLength;
-        [fileURL getResourceValue:&fileLength forKey:NSURLFileSizeKey error:nil];
+        @synchronized(self.handlerMap) {
+            [self.handlerMap removeObjectForKey:urlSchemeTask];
+        }
+        return;
+    }
 
-        NSNumber *responseSize = fileLength;
-        NSUInteger responseSent = 0;
+    NSInteger statusCode = 200; // Default to 200 OK status
+    NSString *mimeType = [self getMimeType:fileURL] ?: @"application/octet-stream";
+    NSNumber *fileLength;
+    [fileURL getResourceValue:&fileLength forKey:NSURLFileSizeKey error:nil];
 
-        NSMutableDictionary *headers = [NSMutableDictionary dictionaryWithCapacity:5];
-        headers[@"Content-Type"] = mimeType;
-        headers[@"Cache-Control"] = @"no-cache";
-        headers[@"Content-Length"] = [responseSize stringValue];
+    NSNumber *responseSize = fileLength;
+    NSMutableDictionary *headers = [NSMutableDictionary dictionaryWithCapacity:5];
+    headers[@"Content-Type"] = mimeType;
+    headers[@"Cache-Control"] = @"no-cache";
+    headers[@"Content-Length"] = [responseSize stringValue];
 
-        // Check for Range header
-        NSString *rangeHeader = [urlSchemeTask.request valueForHTTPHeaderField:@"Range"];
-        if (rangeHeader) {
-            NSRange range = NSMakeRange(NSNotFound, 0);
+    // Check for Range header
+    NSString *rangeHeader = [urlSchemeTask.request valueForHTTPHeaderField:@"Range"];
+    if (rangeHeader) {
+        NSRange range = NSMakeRange(NSNotFound, 0);
 
-            if ([rangeHeader hasPrefix:@"bytes="]) {
-                NSString *byteRange = [rangeHeader substringFromIndex:6];
-                NSArray<NSString *> *rangeParts = [byteRange componentsSeparatedByString:@"-"];
-                NSUInteger start = (NSUInteger)[rangeParts[0] integerValue];
-                NSUInteger end = rangeParts.count > 1 && ![rangeParts[1] isEqualToString:@""] ? (NSUInteger)[rangeParts[1] integerValue] : [fileLength unsignedIntegerValue] - 1;
-                range = NSMakeRange(start, end - start + 1);
-            }
+        if ([rangeHeader hasPrefix:@"bytes="]) {
+            NSString *byteRange = [rangeHeader substringFromIndex:6];
+            NSArray<NSString *> *rangeParts = [byteRange componentsSeparatedByString:@"-"];
+            NSUInteger start = (NSUInteger)[rangeParts[0] integerValue];
+            NSUInteger end = rangeParts.count > 1 && ![rangeParts[1] isEqualToString:@""] ? (NSUInteger)[rangeParts[1] integerValue] : [fileLength unsignedIntegerValue] - 1;
+            range = NSMakeRange(start, end - start + 1);
+        }
 
-            if (range.location != NSNotFound) {
-                // Ensure range is valid
-                if (range.location >= [fileLength unsignedIntegerValue] && [self taskActive:urlSchemeTask]) {
+        if (range.location != NSNotFound) {
+            // Ensure range is valid
+            if (range.location >= [fileLength unsignedIntegerValue]) {
+                if ([self taskActive:urlSchemeTask]) {
                     headers[@"Content-Range"] = [NSString stringWithFormat:@"bytes */%@", fileLength];
                     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:req.URL statusCode:416 HTTPVersion:@"HTTP/1.1" headerFields:headers];
                     [urlSchemeTask didReceiveResponse:response];
                     [urlSchemeTask didFinish];
-
-                    @synchronized(self.handlerMap) {
-                        [self.handlerMap removeObjectForKey:urlSchemeTask];
-                    }
-                    return;
                 }
 
-                [fileHandle seekToFileOffset:range.location];
-                responseSize = [NSNumber numberWithUnsignedInteger:range.length];
-                statusCode = 206; // Partial Content
-                headers[@"Content-Range"] = [NSString stringWithFormat:@"bytes %lu-%lu/%@", (unsigned long)range.location, (unsigned long)(range.location + range.length - 1), fileLength];
-                headers[@"Content-Length"] = [NSString stringWithFormat:@"%lu", (unsigned long)range.length];
-            }
-        }
+                [fileHandle closeFile];
 
-        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:req.URL statusCode:statusCode HTTPVersion:@"HTTP/1.1" headerFields:headers];
-        if ([self taskActive:urlSchemeTask]) {
-            [urlSchemeTask didReceiveResponse:response];
+                @synchronized(self.handlerMap) {
+                    [self.handlerMap removeObjectForKey:urlSchemeTask];
+                }
+                return;
+            }
+
+            [fileHandle seekToFileOffset:range.location];
+            responseSize = [NSNumber numberWithUnsignedInteger:range.length];
+            statusCode = 206; // Partial Content
+            headers[@"Content-Range"] = [NSString stringWithFormat:@"bytes %lu-%lu/%@", (unsigned long)range.location, (unsigned long)(range.location + range.length - 1), fileLength];
+            headers[@"Content-Length"] = [NSString stringWithFormat:@"%lu", (unsigned long)range.length];
         }
+    }
+
+    if (![self taskActive:urlSchemeTask]) {
+        [fileHandle closeFile];
+        return;
+    }
+
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:req.URL statusCode:statusCode HTTPVersion:@"HTTP/1.1" headerFields:headers];
+    [urlSchemeTask didReceiveResponse:response];
+
+    [self.viewController.commandDelegate runInBackground:^{
+        NSError *readError;
+        NSUInteger responseSent = 0;
 
         while ([self taskActive:urlSchemeTask] && responseSent < [responseSize unsignedIntegerValue]) {
             @autoreleasepool {
-                NSData *data = [self readFromFileHandle:fileHandle upTo:FILE_BUFFER_SIZE error:&error];
-                if (!data || error) {
+                NSData *data = [self readFromFileHandle:fileHandle upTo:FILE_BUFFER_SIZE error:&readError];
+                if (!data || readError) {
                     if ([self taskActive:urlSchemeTask]) {
-                        [urlSchemeTask didFailWithError:error];
+                        [urlSchemeTask didFailWithError:readError];
                     }
                     break;
                 }
