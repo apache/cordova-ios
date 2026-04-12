@@ -150,33 +150,41 @@ static const NSUInteger FILE_BUFFER_SIZE = 1024 * 1024 * 4; // 4 MiB
         NSError *readError;
         NSUInteger responseSent = 0;
 
-        while ([self taskActive:urlSchemeTask] && responseSent < [responseSize unsignedIntegerValue]) {
+        // Read file data on the background thread and dispatch each chunk to the
+        // main thread. Dispatching to the main thread serialises all
+        // WKURLSchemeTask callbacks with webView:stopURLSchemeTask:, which is
+        // also called on the main thread. This eliminates the race condition
+        // between the taskActive check and the actual callback invocation.
+        while (responseSent < [responseSize unsignedIntegerValue]) {
             @autoreleasepool {
                 NSData *data = [self readFromFileHandle:fileHandle upTo:FILE_BUFFER_SIZE error:&readError];
-                if (!data || readError) {
-                    if ([self taskActive:urlSchemeTask]) {
-                        [urlSchemeTask didFailWithError:readError];
-                    }
+                if (!data || readError || data.length == 0) {
                     break;
                 }
-
-                if ([self taskActive:urlSchemeTask]) {
-                    [urlSchemeTask didReceiveData:data];
-                }
-
                 responseSent += data.length;
+
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if ([self taskActive:urlSchemeTask]) {
+                        [urlSchemeTask didReceiveData:data];
+                    }
+                });
             }
         }
 
         [fileHandle closeFile];
+        NSError *capturedError = readError;
 
-        if ([self taskActive:urlSchemeTask]) {
-            [urlSchemeTask didFinish];
-        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (capturedError && [self taskActive:urlSchemeTask]) {
+                [urlSchemeTask didFailWithError:capturedError];
+            } else if ([self taskActive:urlSchemeTask]) {
+                [urlSchemeTask didFinish];
+            }
 
-        @synchronized(self.handlerMap) {
-            [self.handlerMap removeObjectForKey:urlSchemeTask];
-        }
+            @synchronized(self.handlerMap) {
+                [self.handlerMap removeObjectForKey:urlSchemeTask];
+            }
+        });
     }];
 }
 

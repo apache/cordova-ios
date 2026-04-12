@@ -212,6 +212,13 @@
 
     [commandDelegate runPendingBlock];
 
+    // The background block dispatches its final callbacks onto the main queue.
+    // Drain the main queue so those callbacks have a chance to run before
+    // we assert, making the test verify the stopped task stays silent.
+    XCTestExpectation *drained = [self expectationWithDescription:@"main queue drained"];
+    dispatch_async(dispatch_get_main_queue(), ^{ [drained fulfill]; });
+    [self waitForExpectationsWithTimeout:1.0 handler:nil];
+
     XCTAssertEqual(task.finishedCount, 0u);
     XCTAssertEqual(task.failedCount, 0u);
 }
