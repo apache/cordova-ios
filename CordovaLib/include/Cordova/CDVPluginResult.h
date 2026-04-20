@@ -90,6 +90,46 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong, readonly) NSNumber *status;
 @property (nonatomic, nullable, strong, readonly) id message;
+/**
+ Controls the lifetime of the JavaScript-side callback registered for this command.
+
+ When a plugin result is sent, this flag is forwarded through the WebKit message bridge to the
+ JavaScript bridge (`exec.js`), which passes it to `cordova.callbackFromNative()` in `cordova-js`.
+ There, the callback entry is removed from `cordova.callbacks` unless this flag is `YES`.
+
+ The native side itself holds no callback registry — lifecycle management is entirely in JavaScript.
+
+ - Set to `@YES` (or call `setKeepCallbackAsBool:YES`) for every intermediate result when a command
+   will produce multiple responses (e.g. event streams, progress updates, watchers).
+ - Set to `@NO` (or omit — the default is `@NO`) on the final result to release the callback.
+
+ Leaking callbacks (always sending `YES` without a terminating `NO`) will cause the entries
+ in `cordova.callbacks` to accumulate and the associated JavaScript closures to be retained
+ indefinitely.
+
+ As a special case, sending a result with status ``CDVCommandStatus_NO_RESULT`` and `keepCallback` set to `@NO`
+ removes the callback from the JavaScript registry without invoking the success or failure handler.
+
+ Example (event-stream plugin):
+
+ @code
+ // Intermediate result — keep callback alive for subsequent events
+ CDVPluginResult* event = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                        messageAsDictionary:@{ @"type": @"loadstart", @"url": urlString }];
+ [event setKeepCallbackAsBool:YES];
+ [self.commandDelegate sendPluginResult:event callbackId:command.callbackId];
+
+ // Final result — release the callback
+ CDVPluginResult* done = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                        messageAsDictionary:@{ @"type": @"exit" }];
+ [done setKeepCallbackAsBool:NO];
+ [self.commandDelegate sendPluginResult:done callbackId:command.callbackId];
+ @endcode
+
+ @Metadata {
+    @Available(Cordova, introduced: "1.0.0")
+ }
+ */
 @property (nonatomic, strong) NSNumber *keepCallback;
 @property (nonatomic, strong) id associatedObject CDV_DEPRECATED(8.0.0, "");
 
@@ -110,6 +150,17 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)setVerbose:(BOOL)verbose CDV_DEPRECATED(8.0.0, "");
 + (BOOL)isVerbose CDV_DEPRECATED(8.0.0, "");
 
+/**
+ Convenience setter for ``keepCallback`` using a primitive `BOOL` value.
+
+ Equivalent to setting `keepCallback` to `@YES` or `@NO` directly.
+
+ @param bKeepCallback `YES` to retain the JS callback for subsequent results; `NO` to release it after delivery.
+
+ @Metadata {
+    @Available(Cordova, introduced: "1.0.0")
+ }
+ */
 - (void)setKeepCallbackAsBool:(BOOL)bKeepCallback;
 
 - (NSString*)argumentsAsJSON;
