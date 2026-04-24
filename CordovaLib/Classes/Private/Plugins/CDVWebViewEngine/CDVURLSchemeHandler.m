@@ -73,102 +73,118 @@ static const NSUInteger FILE_BUFFER_SIZE = 1024 * 1024 * 4; // 4 MiB
     // We do this so that we can (in future) detect if the task is cancelled before we finished feeding it response data
     [self.handlerMap setObject:(id)[NSNull null] forKey:urlSchemeTask];
 
-    [self.viewController.commandDelegate runInBackground:^{
-        NSURL *fileURL = [self fileURLForRequestURL:req.URL];
-        NSError *error;
+    NSURL *fileURL = [self fileURLForRequestURL:req.URL];
+    NSError *error;
 
-        NSFileHandle *fileHandle = [NSFileHandle fileHandleForReadingFromURL:fileURL error:&error];
-        if (!fileHandle || error) {
-            if ([self taskActive:urlSchemeTask]) {
-                [urlSchemeTask didFailWithError:error];
-            }
-
-            @synchronized(self.handlerMap) {
-                [self.handlerMap removeObjectForKey:urlSchemeTask];
-            }
-            return;
-        }
-
-        NSInteger statusCode = 200; // Default to 200 OK status
-        NSString *mimeType = [self getMimeType:fileURL] ?: @"application/octet-stream";
-        NSNumber *fileLength;
-        [fileURL getResourceValue:&fileLength forKey:NSURLFileSizeKey error:nil];
-
-        NSNumber *responseSize = fileLength;
-        NSUInteger responseSent = 0;
-
-        NSMutableDictionary *headers = [NSMutableDictionary dictionaryWithCapacity:5];
-        headers[@"Content-Type"] = mimeType;
-        headers[@"Cache-Control"] = @"no-cache";
-        headers[@"Content-Length"] = [responseSize stringValue];
-
-        // Check for Range header
-        NSString *rangeHeader = [urlSchemeTask.request valueForHTTPHeaderField:@"Range"];
-        if (rangeHeader) {
-            NSRange range = NSMakeRange(NSNotFound, 0);
-
-            if ([rangeHeader hasPrefix:@"bytes="]) {
-                NSString *byteRange = [rangeHeader substringFromIndex:6];
-                NSArray<NSString *> *rangeParts = [byteRange componentsSeparatedByString:@"-"];
-                NSUInteger start = (NSUInteger)[rangeParts[0] integerValue];
-                NSUInteger end = rangeParts.count > 1 && ![rangeParts[1] isEqualToString:@""] ? (NSUInteger)[rangeParts[1] integerValue] : [fileLength unsignedIntegerValue] - 1;
-                range = NSMakeRange(start, end - start + 1);
-            }
-
-            if (range.location != NSNotFound) {
-                // Ensure range is valid
-                if (range.location >= [fileLength unsignedIntegerValue] && [self taskActive:urlSchemeTask]) {
-                    headers[@"Content-Range"] = [NSString stringWithFormat:@"bytes */%@", fileLength];
-                    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:req.URL statusCode:416 HTTPVersion:@"HTTP/1.1" headerFields:headers];
-                    [urlSchemeTask didReceiveResponse:response];
-                    [urlSchemeTask didFinish];
-
-                    @synchronized(self.handlerMap) {
-                        [self.handlerMap removeObjectForKey:urlSchemeTask];
-                    }
-                    return;
-                }
-
-                [fileHandle seekToFileOffset:range.location];
-                responseSize = [NSNumber numberWithUnsignedInteger:range.length];
-                statusCode = 206; // Partial Content
-                headers[@"Content-Range"] = [NSString stringWithFormat:@"bytes %lu-%lu/%@", (unsigned long)range.location, (unsigned long)(range.location + range.length - 1), fileLength];
-                headers[@"Content-Length"] = [NSString stringWithFormat:@"%lu", (unsigned long)range.length];
-            }
-        }
-
-        NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:req.URL statusCode:statusCode HTTPVersion:@"HTTP/1.1" headerFields:headers];
+    NSFileHandle *fileHandle = [NSFileHandle fileHandleForReadingFromURL:fileURL error:&error];
+    if (!fileHandle || error) {
         if ([self taskActive:urlSchemeTask]) {
-            [urlSchemeTask didReceiveResponse:response];
-        }
-
-        while ([self taskActive:urlSchemeTask] && responseSent < [responseSize unsignedIntegerValue]) {
-            @autoreleasepool {
-                NSData *data = [self readFromFileHandle:fileHandle upTo:FILE_BUFFER_SIZE error:&error];
-                if (!data || error) {
-                    if ([self taskActive:urlSchemeTask]) {
-                        [urlSchemeTask didFailWithError:error];
-                    }
-                    break;
-                }
-
-                if ([self taskActive:urlSchemeTask]) {
-                    [urlSchemeTask didReceiveData:data];
-                }
-
-                responseSent += data.length;
-            }
-        }
-
-        [fileHandle closeFile];
-
-        if ([self taskActive:urlSchemeTask]) {
-            [urlSchemeTask didFinish];
+            [urlSchemeTask didFailWithError:error];
         }
 
         @synchronized(self.handlerMap) {
             [self.handlerMap removeObjectForKey:urlSchemeTask];
         }
+        return;
+    }
+
+    NSInteger statusCode = 200; // Default to 200 OK status
+    NSString *mimeType = [self getMimeType:fileURL] ?: @"application/octet-stream";
+    NSNumber *fileLength;
+    [fileURL getResourceValue:&fileLength forKey:NSURLFileSizeKey error:nil];
+
+    NSNumber *responseSize = fileLength;
+    NSMutableDictionary *headers = [NSMutableDictionary dictionaryWithCapacity:5];
+    headers[@"Content-Type"] = mimeType;
+    headers[@"Cache-Control"] = @"no-cache";
+    headers[@"Content-Length"] = [responseSize stringValue];
+
+    // Check for Range header
+    NSString *rangeHeader = [urlSchemeTask.request valueForHTTPHeaderField:@"Range"];
+    if (rangeHeader) {
+        NSRange range = NSMakeRange(NSNotFound, 0);
+
+        if ([rangeHeader hasPrefix:@"bytes="]) {
+            NSString *byteRange = [rangeHeader substringFromIndex:6];
+            NSArray<NSString *> *rangeParts = [byteRange componentsSeparatedByString:@"-"];
+            NSUInteger start = (NSUInteger)[rangeParts[0] integerValue];
+            NSUInteger end = rangeParts.count > 1 && ![rangeParts[1] isEqualToString:@""] ? (NSUInteger)[rangeParts[1] integerValue] : [fileLength unsignedIntegerValue] - 1;
+            range = NSMakeRange(start, end - start + 1);
+        }
+
+        if (range.location != NSNotFound) {
+            // Ensure range is valid
+            if (range.location >= [fileLength unsignedIntegerValue]) {
+                if ([self taskActive:urlSchemeTask]) {
+                    headers[@"Content-Range"] = [NSString stringWithFormat:@"bytes */%@", fileLength];
+                    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:req.URL statusCode:416 HTTPVersion:@"HTTP/1.1" headerFields:headers];
+                    [urlSchemeTask didReceiveResponse:response];
+                    [urlSchemeTask didFinish];
+                }
+
+                [fileHandle closeFile];
+
+                @synchronized(self.handlerMap) {
+                    [self.handlerMap removeObjectForKey:urlSchemeTask];
+                }
+                return;
+            }
+
+            [fileHandle seekToFileOffset:range.location];
+            responseSize = [NSNumber numberWithUnsignedInteger:range.length];
+            statusCode = 206; // Partial Content
+            headers[@"Content-Range"] = [NSString stringWithFormat:@"bytes %lu-%lu/%@", (unsigned long)range.location, (unsigned long)(range.location + range.length - 1), fileLength];
+            headers[@"Content-Length"] = [NSString stringWithFormat:@"%lu", (unsigned long)range.length];
+        }
+    }
+
+    if (![self taskActive:urlSchemeTask]) {
+        [fileHandle closeFile];
+        return;
+    }
+
+    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:req.URL statusCode:statusCode HTTPVersion:@"HTTP/1.1" headerFields:headers];
+    [urlSchemeTask didReceiveResponse:response];
+
+    [self.viewController.commandDelegate runInBackground:^{
+        NSError *readError;
+        NSUInteger responseSent = 0;
+
+        // Read file data on the background thread and dispatch each chunk to the
+        // main thread. Dispatching to the main thread serialises all
+        // WKURLSchemeTask callbacks with webView:stopURLSchemeTask:, which is
+        // also called on the main thread. This eliminates the race condition
+        // between the taskActive check and the actual callback invocation.
+        while (responseSent < [responseSize unsignedIntegerValue]) {
+            @autoreleasepool {
+                NSData *data = [self readFromFileHandle:fileHandle upTo:FILE_BUFFER_SIZE error:&readError];
+                if (!data || readError || data.length == 0) {
+                    break;
+                }
+                responseSent += data.length;
+
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if ([self taskActive:urlSchemeTask]) {
+                        [urlSchemeTask didReceiveData:data];
+                    }
+                });
+            }
+        }
+
+        [fileHandle closeFile];
+        NSError *capturedError = readError;
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (capturedError && [self taskActive:urlSchemeTask]) {
+                [urlSchemeTask didFailWithError:capturedError];
+            } else if ([self taskActive:urlSchemeTask]) {
+                [urlSchemeTask didFinish];
+            }
+
+            @synchronized(self.handlerMap) {
+                [self.handlerMap removeObjectForKey:urlSchemeTask];
+            }
+        });
     }];
 }
 
@@ -183,10 +199,9 @@ static const NSUInteger FILE_BUFFER_SIZE = 1024 * 1024 * 4; // 4 MiB
         [self.handlerMap removeObjectForKey:urlSchemeTask];
     }
 
-    if ([plugin isEqual:[NSNull null]]) {
-        // NSNull means we own this task, so we need to mark it as finished
-        [urlSchemeTask didFinish];
-    } else if ([plugin respondsToSelector:@selector(stopSchemeTask:)]) {
+    // After stopURLSchemeTask is invoked, WKURLSchemeTask must not receive
+    // additional callbacks from this handler.
+    if (![plugin isEqual:[NSNull null]] && [plugin respondsToSelector:@selector(stopSchemeTask:)]) {
         [plugin stopSchemeTask:urlSchemeTask];
     }
 }
