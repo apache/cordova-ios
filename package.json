@@ -14,7 +14,7 @@
     "cordova:platform"
   ],
   "scripts": {
-    "prepare": "mkdir -p templates/project/www && cordova-js build > templates/project/www/cordova.js",
+    "prepare": "node -e \"require('fs').mkdirSync('templates/project/www', {recursive: true})\" && cordova-js build > templates/project/www/cordova.js",
     "pretest": "npm run lint",
     "test": "npm run cover && npm run test:xcode",
     "test:unit": "jasmine --config=tests/spec/unit.json",
