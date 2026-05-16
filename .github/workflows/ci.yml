@@ -42,7 +42,7 @@ jobs:
             node-version: 24.x
 
     env:
-      CDV_IOS_SIM: iPhone 16e
+      CDV_IOS_SIM: ${{ matrix.os == 'macos-26' && 'iPhone 17' || 'iPhone 16e' }}
 
     steps:
       - uses: actions/checkout@v6
