@@ -88,7 +88,7 @@
 
 @interface CDVTestURLSchemeTask : NSObject <WKURLSchemeTask>
 
-@property (nonatomic, strong) NSURLRequest* request;
+@property (nonatomic, copy) NSURLRequest* request;
 @property (nonatomic, strong) NSMutableArray<NSData *>* receivedData;
 @property (nonatomic, strong, nullable) NSURLResponse* response;
 @property (nonatomic, strong, nullable) NSError* error;
@@ -140,6 +140,7 @@
 
 @property AppDelegate* appDelegate;
 @property (nonatomic, strong) CDVViewController* viewController;
+@property (nonatomic, strong) WKWebView* testWebView;
 
 @end
 
@@ -152,10 +153,12 @@
     self.appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     [self.appDelegate createViewController];
     self.viewController = self.appDelegate.testViewController;
+    self.testWebView = [[WKWebView alloc] initWithFrame:CGRectZero];
 }
 
 - (void)tearDown
 {
+    self.testWebView = nil;
     [self.appDelegate destroyViewController];
     [super tearDown];
 }
@@ -186,7 +189,7 @@
     CDVURLSchemeHandler *handler = [[CDVURLSchemeHandler alloc] initWithViewController:self.viewController];
     CDVTestURLSchemeTask *task = [[CDVTestURLSchemeTask alloc] initWithURL:[NSURL URLWithString:@"app://localhost/index.html"]];
 
-    [handler webView:nil startURLSchemeTask:task];
+    [handler webView:self.testWebView startURLSchemeTask:task];
 
     XCTAssertEqual(task.responseCount, 1u);
     XCTAssertNotNil(task.response);
@@ -203,8 +206,8 @@
     CDVURLSchemeHandler *handler = [[CDVURLSchemeHandler alloc] initWithViewController:self.viewController];
     CDVTestURLSchemeTask *task = [[CDVTestURLSchemeTask alloc] initWithURL:[NSURL URLWithString:@"app://localhost/index.html"]];
 
-    [handler webView:nil startURLSchemeTask:task];
-    [handler webView:nil stopURLSchemeTask:task];
+    [handler webView:self.testWebView startURLSchemeTask:task];
+    [handler webView:self.testWebView stopURLSchemeTask:task];
 
     XCTAssertEqual(task.responseCount, 1u);
     XCTAssertEqual(task.finishedCount, 0u);
@@ -231,7 +234,7 @@
     CDVURLSchemeHandler *handler = [[CDVURLSchemeHandler alloc] initWithViewController:self.viewController];
     CDVTestURLSchemeTask *task = [[CDVTestURLSchemeTask alloc] initWithURL:[NSURL URLWithString:@"app://localhost/does-not-exist.html"]];
 
-    [handler webView:nil startURLSchemeTask:task];
+    [handler webView:self.testWebView startURLSchemeTask:task];
 
     XCTAssertEqual(task.responseCount, 0u);
     XCTAssertEqual(task.failedCount, 1u);
