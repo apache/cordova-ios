@@ -22,6 +22,7 @@
 
 extern const NSNotificationName CDVPageDidLoadNotification;
 extern const NSNotificationName CDVPluginHandleOpenURLNotification;
+extern const NSNotificationName CDVPluginContinueUserActivityNotification;
 extern const NSNotificationName CDVPluginResetNotification;
 extern const NSNotificationName CDVViewWillAppearNotification;
 extern const NSNotificationName CDVViewDidAppearNotification;

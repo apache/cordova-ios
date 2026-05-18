@@ -44,6 +44,7 @@
 
 const NSNotificationName CDVPageDidLoadNotification = @"CDVPageDidLoadNotification";
 const NSNotificationName CDVPluginHandleOpenURLNotification = @"CDVPluginHandleOpenURLNotification";
+const NSNotificationName CDVPluginContinueUserActivityNotification = @"CDVPluginContinueUserActivityNotification";
 const NSNotificationName CDVPluginHandleOpenURLWithAppSourceAndAnnotationNotification = @"CDVPluginHandleOpenURLWithAppSourceAndAnnotationNotification";
 const NSNotificationName CDVPluginResetNotification = @"CDVPluginResetNotification";
 const NSNotificationName CDVViewWillAppearNotification = @"CDVViewWillAppearNotification";

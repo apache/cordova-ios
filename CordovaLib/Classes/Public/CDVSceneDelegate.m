@@ -47,4 +47,9 @@
     }
 }
 
+- (void)scene:(UIScene *)scene continueUserActivity:(NSUserActivity *)userActivity
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:CDVPluginContinueUserActivityNotification object:userActivity];
+}
+
 @end
