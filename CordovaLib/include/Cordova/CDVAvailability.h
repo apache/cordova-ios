@@ -85,6 +85,8 @@
 #define __CORDOVA_7_1_1 70101
 #define __CORDOVA_8_0_0 80000
 #define __CORDOVA_8_0_1 80001
+#define __CORDOVA_8_1_0 80100
+#define __CORDOVA_8_1_1 80101
 /* coho:next-version,insert-before */
 #define __CORDOVA_NA 99999      /* not available */
 
