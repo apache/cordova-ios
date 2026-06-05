@@ -22,14 +22,25 @@ const path = require('node:path');
 const semver = require('semver');
 const VERSION = require(path.resolve(__dirname, '..', '..', 'package.json')).version;
 
+const pkgVersion = semver.coerce(VERSION).version;
+const versionDefine = `__CORDOVA_${pkgVersion.split('.').join('_')}`;
+
+const headerPath = path.resolve(__dirname, '..', '..', 'CordovaLib', 'include', 'Cordova', 'CDVAvailability.h');
+
 describe('CDVAvailability.h', () => {
+    let headerText = '';
+
+    beforeAll(() => {
+        headerText = fs.readFileSync(headerPath, 'utf8');
+    });
+
     it('should contain a definition for the current package version', () => {
-        const pkgVersion = semver.coerce(VERSION).version;
-        const versionDefine = `__CORDOVA_${pkgVersion.split('.').join('_')}`;
-
-        const headerPath = path.resolve(__dirname, '..', '..', 'CordovaLib', 'include', 'Cordova', 'CDVAvailability.h');
-        const headerText = fs.readFileSync(headerPath, 'utf8');
-
         expect(headerText).toMatch(versionDefine);
+    });
+
+    it('should define the current version as CORDOVA_VERSION_MIN_REQUIRED', () => {
+        const minRequired = `#define CORDOVA_VERSION_MIN_REQUIRED ${versionDefine}`;
+
+        expect(headerText).toMatch(minRequired);
     });
 });
