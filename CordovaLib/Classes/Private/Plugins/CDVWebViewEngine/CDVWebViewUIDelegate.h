@@ -43,6 +43,7 @@ typedef NS_ENUM(NSInteger, CDVWebViewPermissionGrantType) {
 @property (nonatomic, nullable, copy) NSString* title;
 @property (nonatomic, assign) BOOL allowNewWindows;
 @property (nonatomic, assign) CDVWebViewPermissionGrantType mediaPermissionGrantType;
+@property (nonatomic, assign) CDVWebViewPermissionGrantType geolocationPermissionGrantType;
 
 - (instancetype)initWithViewController:(CDVViewController*)vc;
 
