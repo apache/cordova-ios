@@ -17,24 +17,13 @@
     under the License.
 */
 
-import WebKit
-import Cordova
+#import <WebKit/WebKit.h>
+#import <XCTest/XCTest.h>
 
-class DeviceReadyScriptHandler : NSObject, WKScriptMessageHandler {
-    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        NotificationCenter.default.post(name: NSNotification.Name("CDVTestingDeviceReadyFired"), object: nil)
-    }
-}
+extern const NSNotificationName CDVTestingDeviceReadyFired;
 
-class ViewController: CDVViewController {
-    override func viewDidLoad() {
-        super.viewDidLoad()
+@interface TestNavigationDelegate : NSObject <WKNavigationDelegate>
+@property (nonatomic, copy) void (^didFinishNavigation)(WKWebView *, WKNavigation *);
 
-        if let wkWebView = self.webView as? WKWebView {
-            let controller = wkWebView.configuration.userContentController
-            let deviceReadyScriptHandler = DeviceReadyScriptHandler()
-
-            controller.add(deviceReadyScriptHandler, name: "cordovaTesting")
-        }
-    }
-}
+- (void)waitForDidFinishNavigation:(XCTestExpectation *)expectation;
+@end

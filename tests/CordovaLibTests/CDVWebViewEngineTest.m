@@ -23,8 +23,8 @@
 #import <Cordova/CDVWebViewProcessPoolFactory.h>
 #import <Cordova/CDVSettingsDictionary.h>
 #import <Cordova/CDVAvailability.h>
-
 #import "CordovaApp-Swift.h"
+#import "CDVTestHelpers.h"
 
 @interface CDVWebViewEngineTest : XCTestCase
 
@@ -41,40 +41,14 @@
 
 @end
 
-@interface TestNavigationDelegate : NSObject <WKNavigationDelegate>
-@property (nonatomic, copy) void (^didFinishNavigation)(WKWebView *, WKNavigation *);
-
-- (void)waitForDidFinishNavigation:(XCTestExpectation *)expectation;
-@end
-
 @interface WKWebView ()
 @property (nonatomic, readonly) pid_t _webProcessIdentifier;
-@end
-
-@implementation TestNavigationDelegate
-- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
-{
-    if (_didFinishNavigation)
-        _didFinishNavigation(webView, navigation);
-}
-
-- (void)waitForDidFinishNavigation:(XCTestExpectation *)expectation
-{
-    XCTAssertFalse(self.didFinishNavigation);
-
-    __weak TestNavigationDelegate *weakSelf = self;
-    self.didFinishNavigation = ^(WKWebView *_view, WKNavigation *_nav) {
-        [expectation fulfill];
-        weakSelf.didFinishNavigation = nil;
-    };
-}
 @end
 
 @implementation CDVWebViewEngineTest
 
 - (void)setUp {
     [super setUp];
-    // Put setup code here. This method is called before the invocation of each test method in the class.
 
     self.appDelegate = (AppDelegate*)[[UIApplication sharedApplication] delegate];
     [self.appDelegate createViewController];
@@ -86,7 +60,6 @@
 }
 
 - (void)tearDown {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
     [self.appDelegate destroyViewController];
     [super tearDown];
 }
