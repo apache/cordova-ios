@@ -37,3 +37,6 @@ npm-debug.log
 # ASF release workspace
 .asf-release/
 !.asf-release/.gitkeep
+
+# Swift Package Manager lockfile
+Package.resolved
