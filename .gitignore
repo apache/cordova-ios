@@ -31,8 +31,11 @@ npm-debug.log
 .nyc_output/
 **/www/cordova.js
 
-# Swift Package Manager (SPM) build artifacts
+# Swift Package Manager (SPM)
+# Build artifacts
 .build/
+# Dependency resolution
+Package.resolved
 
 # ASF release workspace
 .asf-release/
