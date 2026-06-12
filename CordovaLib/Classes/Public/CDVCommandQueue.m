@@ -91,23 +91,6 @@ static const double MAX_EXECUTION_TIME = .008; // Half of a 60fps frame.
     }
 }
 
-- (void)fetchCommandsFromJs
-{
-    __weak CDVCommandQueue* weakSelf = self;
-    NSString* js = @"cordova.require('cordova/exec').nativeFetchMessages()";
-
-    [_viewController.webViewEngine evaluateJavaScript:js
-                                    completionHandler:^(id obj, NSError* error) {
-        if ((error == nil) && [obj isKindOfClass:[NSString class]]) {
-            NSString* queuedCommandsJSON = (NSString*)obj;
-            CDV_EXEC_LOG(@"Exec: Flushed JS->native queue (hadCommands=%d).", [queuedCommandsJSON length] > 0);
-            [weakSelf enqueueCommandBatch:queuedCommandsJSON];
-            // this has to be called here now, because fetchCommandsFromJs is now async (previously: synchronous)
-            [self executePending];
-        }
-    }];
-}
-
 - (void)executePending
 {
     // Make us re-entrant-safe.
