@@ -403,7 +403,7 @@ static UIColor *defaultBackgroundColor(void) {
 {
     [super viewDidAppear:animated];
 
-#if TARGET_OS_MACCATALYST
+#if defined(TARGET_OS_MACCATALYST) && TARGET_OS_MACCATALYST
     BOOL hideTitlebar = [self.settings cordovaBoolSettingForKey:@"HideDesktopTitlebar" defaultValue:NO];
     if (hideTitlebar) {
         UIWindowScene *scene = self.view.window.windowScene;
@@ -577,7 +577,7 @@ static UIColor *defaultBackgroundColor(void) {
 
 - (void)scrollViewDidChangeAdjustedContentInset:(UIScrollView *)scrollView
 {
-#if !TARGET_OS_VISION
+#if !defined(TARGET_OS_VISION) || !TARGET_OS_VISION
     if (self.webView.hidden) {
         self.statusBar.hidden = true;
         return;
@@ -587,7 +587,7 @@ static UIColor *defaultBackgroundColor(void) {
 #endif
 }
 
-#if !TARGET_OS_VISION
+#if !defined(TARGET_OS_VISION) || !TARGET_OS_VISION
 - (BOOL)prefersStatusBarHidden
 {
     // The CDVStatusBar plugin overrides this in a category extension, and
@@ -731,7 +731,7 @@ static UIColor *defaultBackgroundColor(void) {
 
 - (void)createStatusBarView
 {
-#if !TARGET_OS_VISION
+#if !defined(TARGET_OS_VISION) || !TARGET_OS_VISION
     // If cordova-plugin-statusbar is loaded, we'll let it handle the status
     // bar to avoid introducing conflict
     if (NSClassFromString(@"CDVStatusBar") != nil)
@@ -889,7 +889,7 @@ static UIColor *defaultBackgroundColor(void) {
 
 - (void)showStatusBar:(BOOL)visible
 {
-#if !TARGET_OS_VISION
+#if !defined(TARGET_OS_VISION) || !TARGET_OS_VISION
     [self.statusBar setAlpha:(visible ? 1 : 0)];
     [self setNeedsStatusBarAppearanceUpdate];
 #endif
