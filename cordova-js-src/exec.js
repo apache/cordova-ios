@@ -143,7 +143,14 @@ function execProxy () {
 }
 
 execProxy.nativeFetchMessages = function () {
-    return cordovaExec().nativeFetchMessages.apply(null, arguments);
+    // The built-in WKWebView-based WebView does not implement `nativeFetchMessages`
+    // since it uses `postMessage` instead.
+    // The `nativeFetchMessages` logic is kept guarded in case a custom pluggable
+    // WebView engine still implements it. This logic is apart of the old JS/native
+    // command queue dispatching/polling path.
+    if (cordovaExec().nativeFetchMessages) {
+        return cordovaExec().nativeFetchMessages.apply(null, arguments);
+    }
 };
 
 execProxy.nativeEvalAndFetch = function () {
