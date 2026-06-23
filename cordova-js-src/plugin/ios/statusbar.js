@@ -26,6 +26,10 @@ var statusBar = {};
 const statusBarScript = document.createElement('script');
 document.head.appendChild(statusBarScript);
 
+/**
+ * Sets the visibility of the status bar. If cordova-plugin-statusbar is used
+ * the call will be forwarded to `window.StatusBar.show` or `window.StatusBar.hide` of the plugin.
+ */
 Object.defineProperty(statusBar, 'visible', {
     configurable: false,
     enumerable: true,
