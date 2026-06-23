@@ -66,10 +66,15 @@
 	for more details -jm */
 	function onDeviceReady()
 	{
-    // Used by unit tests to tell when the page is loaded.
-    window.pageIsLoaded = true;
+        // Used by unit tests to tell when the page is loaded.
+        window.pageIsLoaded = true;
+
 		// do your thing!
 		console.log("Cordova is working")
+
+        if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.cordovaTesting) {
+            window.webkit.messageHandlers.cordovaTesting.postMessage(null);
+        }
 	}
     
     </script>

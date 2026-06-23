@@ -46,9 +46,14 @@
     <preference name="Suppresses3DTouchGesture" value="false" />
     <!-- This settings is just used by the CDVViewControllerTest to assert which config file has been loaded -->
     <preference name="test_CDVConfigFile" value="config.xml" />
-    
+    <preference name="InspectableWebview" value="true" />
+
     <feature name="LocalStorage">
         <param name="ios-package" value="CDVLocalStorage"/>
+    </feature>
+    <feature name="Console">
+        <param name="ios-package" value="CDVLogger"/>
+        <param name="onload" value="true"/>
     </feature>
     <feature name="HandleOpenUrl">
         <param name="ios-package" value="CDVHandleOpenURL"/>
@@ -60,6 +65,10 @@
     </feature>
     <feature name="GestureHandler">
         <param name="ios-package" value="CDVGestureHandler"/>
+        <param name="onload" value="true"/>
+    </feature>
+    <feature name="StatusBarInternal">
+        <param name="ios-package" value="CDVStatusBarInternal"/>
         <param name="onload" value="true"/>
     </feature>
     <feature name="SwiftInit">

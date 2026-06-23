@@ -26,7 +26,8 @@ module.exports = defineConfig([
     globalIgnores([
         '**/coverage/',
         'templates/project/',
-        'tests/spec/fixtures/'
+        'tests/spec/fixtures/',
+        'tests/CordovaLibTests/'
     ]),
     ...nodeConfig,
     ...nodeTestConfig.map(config => ({

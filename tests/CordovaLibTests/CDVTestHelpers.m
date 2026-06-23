@@ -17,24 +17,25 @@
     under the License.
 */
 
-import WebKit
-import Cordova
+#import "CDVTestHelpers.h"
 
-class DeviceReadyScriptHandler : NSObject, WKScriptMessageHandler {
-    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        NotificationCenter.default.post(name: NSNotification.Name("CDVTestingDeviceReadyFired"), object: nil)
-    }
+const NSNotificationName CDVTestingDeviceReadyFired = @"CDVTestingDeviceReadyFired";
+
+@implementation TestNavigationDelegate
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
+{
+    if (_didFinishNavigation)
+        _didFinishNavigation(webView, navigation);
 }
 
-class ViewController: CDVViewController {
-    override func viewDidLoad() {
-        super.viewDidLoad()
+- (void)waitForDidFinishNavigation:(XCTestExpectation *)expectation
+{
+    XCTAssertFalse(self.didFinishNavigation);
 
-        if let wkWebView = self.webView as? WKWebView {
-            let controller = wkWebView.configuration.userContentController
-            let deviceReadyScriptHandler = DeviceReadyScriptHandler()
-
-            controller.add(deviceReadyScriptHandler, name: "cordovaTesting")
-        }
-    }
+    __weak TestNavigationDelegate *weakSelf = self;
+    self.didFinishNavigation = ^(WKWebView *_view, WKNavigation *_nav) {
+        [expectation fulfill];
+        weakSelf.didFinishNavigation = nil;
+    };
 }
+@end

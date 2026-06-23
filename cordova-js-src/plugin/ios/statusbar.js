@@ -64,7 +64,7 @@ Object.defineProperty(statusBar, 'setBackgroundColor', {
             return;
         }
 
-        var rgbVals = rgbStr.match(/\d+/g).map(function (v) { return parseInt(v, 10); });
+        var rgbVals = rgbStr.match(/[\d.]+/g).map(function (v, i) { return (i < 3) ? parseInt(v, 10) : parseFloat(v); });
         if (rgbVals.length < 3) {
             return;
         }

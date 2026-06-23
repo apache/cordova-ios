@@ -29,6 +29,7 @@
   },
   "testTargets" : [
     {
+      "parallelizable" : true,
       "target" : {
         "containerPath" : "container:CordovaLibTests\/CordovaTests.xcodeproj",
         "identifier" : "C0FA7CB11E4BBBBE0077B045",
