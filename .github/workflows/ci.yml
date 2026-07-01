@@ -25,24 +25,47 @@ on:
     branches:
       - '*'
 
-permissions:
-  contents: read
-  security-events: write
-
 jobs:
+  codeql:
+    name: CodeQL Analysis
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+
+      - uses: github/codeql-action/init@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4.36.2
+        with:
+          languages: javascript
+          queries: security-and-quality
+          config: |
+            paths-ignore:
+              - coverage
+              - node_modules
+              - templates/project/www/cordova.js
+
+      - uses: github/codeql-action/analyze@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4.36.2
+
   darwin:
     name: NodeJS ${{ matrix.node-version }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+
+    permissions:
+      contents: read
+
     strategy:
       matrix:
-        node-version: [20.x, 22.x, 24.x]
-        os: [macos-15]
-        include:
-          - os: macos-26
-            node-version: 24.x
+        node-version: [20.x, 22.x, 24.x, 26.x]
+        os: [macos-26]
 
     env:
-      CDV_IOS_SIM: ${{ matrix.os == 'macos-26' && 'iPhone 17' || 'iPhone 16e' }}
+      CDV_IOS_SIM: iPhone 17
 
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -61,16 +84,6 @@ jobs:
           npm --version
           xcodebuild -version
 
-      - uses: github/codeql-action/init@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4.36.2
-        with:
-          languages: javascript
-          queries: security-and-quality
-          config: |
-            paths-ignore:
-              - coverage
-              - node_modules
-              - templates/project/www/cordova.js
-
       - name: Boot iOS simulator
         run: |
           xcrun simctl boot "$CDV_IOS_SIM"
@@ -83,8 +96,6 @@ jobs:
         env:
           CI: true
 
-      - uses: github/codeql-action/analyze@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4.36.2
-
       - uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
         if: success()
         with:
@@ -95,6 +106,10 @@ jobs:
   non-darwin:
     name: NodeJS ${{ matrix.node-version }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+
+    permissions:
+      contents: read
+
     strategy:
       matrix:
         node-version: [20.x, 22.x, 24.x, 26.x]
@@ -116,16 +131,6 @@ jobs:
           node --version
           npm --version
 
-      - uses: github/codeql-action/init@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4.36.2
-        with:
-          languages: javascript
-          queries: security-and-quality
-          config: |
-            paths-ignore:
-              - coverage
-              - node_modules
-              - templates/project/www/cordova.js
-
       - name: npm install and test
         timeout-minutes: 40
         run: |
@@ -134,8 +139,6 @@ jobs:
           npm run cover
         env:
           CI: true
-
-      - uses: github/codeql-action/analyze@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4.36.2
 
       - uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
         if: success()
