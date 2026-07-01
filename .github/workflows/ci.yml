@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-name: Node CI
+name: CI
 
 on:
   push:
@@ -95,7 +95,7 @@ jobs:
           CI: true
 
   test-node:
-    name: NodeJS ${{ matrix.node-version }} on ${{ matrix.os }}
+    name: NodeJS ${{ matrix.node-version }} Testing on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
 
     permissions:
