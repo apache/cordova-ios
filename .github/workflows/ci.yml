@@ -52,8 +52,8 @@ jobs:
 
       - uses: github/codeql-action/analyze@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4.36.2
 
-  darwin:
-    name: NodeJS ${{ matrix.node-version }} on ${{ matrix.os }}
+  test-native:
+    name: Native Testing on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
 
     permissions:
@@ -61,11 +61,10 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [20.x, 22.x, 24.x, 26.x]
-        os: [macos-26]
+        os: [macos-15, macos-26, macos-26-intel]
 
     env:
-      CDV_IOS_SIM: iPhone 17
+      CDV_IOS_SIM: ${{ matrix.os == 'macos-15' && 'iPhone 16e' || 'iPhone 17' }}
 
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -73,10 +72,9 @@ jobs:
           persist-credentials: false
           fetch-depth: 1
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: latest
 
       - name: Environment Information
         run: |
@@ -91,19 +89,12 @@ jobs:
       - name: npm install and test
         timeout-minutes: 40
         run: |
-          npm i -g ios-deploy
-          npm cit
+          npm ci
+          npm run test:xcode
         env:
           CI: true
 
-      - uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
-        if: success()
-        with:
-          name: ${{ runner.os }} node.js ${{ matrix.node-version }} (darwin)
-          token: ${{ secrets.CORDOVA_CODECOV_TOKEN }}
-          fail_ci_if_error: false
-
-  non-darwin:
+  test-node:
     name: NodeJS ${{ matrix.node-version }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
 
@@ -113,7 +104,7 @@ jobs:
     strategy:
       matrix:
         node-version: [20.x, 22.x, 24.x, 26.x]
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -121,8 +112,7 @@ jobs:
           persist-credentials: false
           fetch-depth: 1
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version: ${{ matrix.node-version }}
 
@@ -130,6 +120,11 @@ jobs:
         run: |
           node --version
           npm --version
+
+      - name: Setup ios-deploy for Darwin
+        if: runner.os == 'macOS'
+        run: |
+          npm i -g ios-deploy
 
       - name: npm install and test
         timeout-minutes: 40
@@ -143,6 +138,6 @@ jobs:
       - uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
         if: success()
         with:
-          name: ${{ runner.os }} node.js ${{ matrix.node-version }} (non-darwin)
+          name: ${{ runner.os }} node.js ${{ matrix.node-version }}
           token: ${{ secrets.CORDOVA_CODECOV_TOKEN }}
           fail_ci_if_error: false
