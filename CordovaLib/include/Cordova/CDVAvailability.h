@@ -87,6 +87,7 @@
 #define __CORDOVA_8_0_1 80001
 #define __CORDOVA_8_1_0 80100
 #define __CORDOVA_8_1_1 80101
+#define __CORDOVA_8_2_0 80200
 /* coho:next-version,insert-before */
 #define __CORDOVA_NA 99999      /* not available */
 
@@ -99,7 +100,7 @@
  */
 #ifndef CORDOVA_VERSION_MIN_REQUIRED
     /* coho:next-version-min-required,replace-after */
-    #define CORDOVA_VERSION_MIN_REQUIRED __CORDOVA_8_1_1
+    #define CORDOVA_VERSION_MIN_REQUIRED __CORDOVA_8_2_0
 #endif
 
 // TODO: Remove in Cordova iOS 9
