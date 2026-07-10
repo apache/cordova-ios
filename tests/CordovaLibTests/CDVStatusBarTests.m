@@ -34,6 +34,20 @@
 
 @implementation CDVStatusBarTests
 
+/**
+ * Wait until statusBarBackgroundColor is set natively, because calling the JS part would return immediately
+ * and not wait for the native part to finish.
+ */
+- (void)waitForStatusBarBackgroundColor {
+    NSPredicate *predicate = [NSPredicate predicateWithBlock:^BOOL(id _, NSDictionary *__) {
+        return self.viewController.statusBarBackgroundColor != nil;
+    }];
+    XCTestExpectation *colorExpectation = [[XCTNSPredicateExpectation alloc]
+        initWithPredicate:predicate
+        object:self.viewController];
+    [self waitForExpectations:@[colorExpectation] timeout:5];
+}
+
 - (void)setUp {
     [super setUp];
 
@@ -63,6 +77,7 @@
         [redExpectation fulfill];
     }];
     [self waitForExpectations:@[redExpectation] timeout:5];
+    [self waitForStatusBarBackgroundColor];
 
     [self.viewController.statusBarBackgroundColor getRed:&rgba[0] green:&rgba[1] blue:&rgba[2] alpha:&rgba[3]];
     XCTAssertEqual(rgba[0], 1.f);
@@ -85,6 +100,7 @@
         [redExpectation fulfill];
     }];
     [self waitForExpectations:@[redExpectation] timeout:5];
+    [self waitForStatusBarBackgroundColor];
 
     [self.viewController.statusBarBackgroundColor getRed:&rgba[0] green:&rgba[1] blue:&rgba[2] alpha:&rgba[3]];
     XCTAssertEqual(rgba[0], 1.f);
@@ -107,6 +123,7 @@
         [redExpectation fulfill];
     }];
     [self waitForExpectations:@[redExpectation] timeout:5];
+    [self waitForStatusBarBackgroundColor];
 
     [self.viewController.statusBarBackgroundColor getRed:&rgba[0] green:&rgba[1] blue:&rgba[2] alpha:&rgba[3]];
     XCTAssertEqual(rgba[0], 1.f);
@@ -129,6 +146,7 @@
         [redExpectation fulfill];
     }];
     [self waitForExpectations:@[redExpectation] timeout:5];
+    [self waitForStatusBarBackgroundColor];
 
     [self.viewController.statusBarBackgroundColor getRed:&rgba[0] green:&rgba[1] blue:&rgba[2] alpha:&rgba[3]];
     XCTAssertEqual(rgba[0], 1.f);
@@ -151,6 +169,7 @@
         [redExpectation fulfill];
     }];
     [self waitForExpectations:@[redExpectation] timeout:5];
+    [self waitForStatusBarBackgroundColor];
 
     [self.viewController.statusBarBackgroundColor getRed:&rgba[0] green:&rgba[1] blue:&rgba[2] alpha:&rgba[3]];
     XCTAssertEqual(rgba[0], 1.f);
@@ -173,6 +192,7 @@
         [redExpectation fulfill];
     }];
     [self waitForExpectations:@[redExpectation] timeout:5];
+    [self waitForStatusBarBackgroundColor];
 
     [self.viewController.statusBarBackgroundColor getRed:&rgba[0] green:&rgba[1] blue:&rgba[2] alpha:&rgba[3]];
     XCTAssertEqual(rgba[0], 1.f);
