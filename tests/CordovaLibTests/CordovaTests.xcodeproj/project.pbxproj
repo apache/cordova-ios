@@ -30,6 +30,7 @@
 		9017CA502FD8206D00F540FC /* www in Resources */ = {isa = PBXBuildFile; fileRef = 9017CA4F2FD8206D00F540FC /* www */; };
 		9017CA532FD820B800F540FC /* cordova.js in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9017CA522FD820B800F540FC /* cordova.js */; };
 		902530FC29A6DC53004AF1CF /* CDVPluginInitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 902530FA29A6DC53004AF1CF /* CDVPluginInitTests.m */; };
+		AB1671FE01D0FACE00170002 /* CDVSceneDelegateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AB1671FE01D0FACE00170001 /* CDVSceneDelegateTests.m */; };
 		9021AA402FD8E41C00A950DD /* CDVWebViewEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9021AA3F2FD8E41500A950DD /* CDVWebViewEngineTests.swift */; };
 		905C8BA82CF0756E007EECEF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 905C8BA72CF0756E007EECEF /* AppDelegate.swift */; };
 		9085EE302CF0617800603B73 /* Cordova.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0FA7CAC1E4BB6B30077B045 /* Cordova.framework */; };
@@ -105,6 +106,7 @@
 		9017CA4F2FD8206D00F540FC /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; path = www; sourceTree = "<group>"; };
 		9017CA522FD820B800F540FC /* cordova.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = cordova.js; path = ../../templates/project/www/cordova.js; sourceTree = "<group>"; };
 		902530FA29A6DC53004AF1CF /* CDVPluginInitTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVPluginInitTests.m; sourceTree = "<group>"; };
+		AB1671FE01D0FACE00170001 /* CDVSceneDelegateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CDVSceneDelegateTests.m; sourceTree = "<group>"; };
 		9021AA3F2FD8E41500A950DD /* CDVWebViewEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CDVWebViewEngineTests.swift; sourceTree = "<group>"; };
 		905C8BA72CF0756E007EECEF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9085EE2F2CF05B5900603B73 /* CordovaTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = CordovaTests.xctestplan; sourceTree = "<group>"; };
@@ -217,6 +219,7 @@
 				90D08FEA2F4E63CA00A9838F /* CDVURLSchemeHandlerTest.m */,
 				90A775DC2C6F256D00FC5BB0 /* CDVSettingsDictionaryTests.m */,
 				902530FA29A6DC53004AF1CF /* CDVPluginInitTests.m */,
+				AB1671FE01D0FACE00170001 /* CDVSceneDelegateTests.m */,
 				4E23F90123E175AD006CD852 /* CDVWebViewEngineTest.m */,
 				30D1B08B15A2B36D0060C291 /* CDVBase64Tests.m */,
 				30610C9119AD9B95000B3781 /* CDVCommandDelegateTests.m */,
@@ -349,6 +352,7 @@
 				90AE8F9C2EBF03F600FF0979 /* CDVWebViewEngineTest.m in Sources */,
 				C0FA7CB61E4BBBBE0077B045 /* CDVPluginResultJSONSerializationTests.m in Sources */,
 				902530FC29A6DC53004AF1CF /* CDVPluginInitTests.m in Sources */,
+				AB1671FE01D0FACE00170002 /* CDVSceneDelegateTests.m in Sources */,
 				90D08FED2F4E690700A9838F /* CDVSettingsDictionarySwiftTests.swift in Sources */,
 				C0FA7CB91E4BBBBE0077B045 /* CDVBase64Tests.m in Sources */,
 				90A775DD2C6F257500FC5BB0 /* CDVSettingsDictionaryTests.m in Sources */,
