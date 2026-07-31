@@ -187,6 +187,43 @@ result?.setKeepCallbackAs(true)
 self.commandDelegate.send(result, callbackId: callback)
 ```
 
+### Deprecating `CDVPluginResult.associatedObject`
+
+The `associatedObject` property on ``CDVPluginResult`` is now deprecated.
+
+Historically, this was commonly used as a lifetime-retention helper for legacy
+ Objective-C patterns such as constructing a string with
+ `initWithBytesNoCopy:...`, where the created `NSString` could depend on an
+ external `NSData` buffer remaining alive.
+
+In modern plugin code, prefer APIs that do not rely on external buffer
+ lifetimes.
+
+```objc
+// Old code
+NSString* payload = [[NSString alloc] initWithBytesNoCopy:(void*)[data bytes]
+                                                   length:[data length]
+                                                 encoding:NSUTF8StringEncoding
+                                             freeWhenDone:NO];
+CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                             messageAsString:payload];
+result.associatedObject = data;
+```
+
+```objc
+// New code
+NSString* payload = [[NSString alloc] initWithData:data
+                                           encoding:NSUTF8StringEncoding];
+CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                             messageAsString:payload];
+```
+
+For binary payloads, prefer message constructors that accept `NSData` directly,
+ such as `resultWithStatus:messageAsArrayBuffer:`.
+
+If you must retain auxiliary state, keep it in your plugin instance until after
+ sending the result, rather than attaching it to `CDVPluginResult`.
+
 ## Other Major Changes
 ### Deprecating AppDelegate category extensions
 
