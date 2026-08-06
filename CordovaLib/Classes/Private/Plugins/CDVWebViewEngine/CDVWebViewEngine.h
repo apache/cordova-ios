@@ -22,6 +22,9 @@
 
 @interface CDVWebViewEngine : CDVPlugin <CDVWebViewEngineProtocol, WKScriptMessageHandler, WKNavigationDelegate>
 
+// The canonical WKUIDelegate used by this engine.
+// Exposed as readonly for inspection, while the engine retains it internally
+// because WKWebView.UIDelegate is weak.
 @property (nonatomic, strong, readonly) id <WKUIDelegate> uiDelegate;
 
 - (void)allowsBackForwardNavigationGestures:(CDVInvokedUrlCommand*)command;
