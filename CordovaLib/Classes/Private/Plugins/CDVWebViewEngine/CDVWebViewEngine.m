@@ -43,9 +43,6 @@
 @property (nonatomic, readwrite) NSString *CDV_ASSETS_URL;
 @property (nonatomic, readwrite) Boolean cdvIsFileScheme;
 @property (nullable, nonatomic, strong, readwrite) WKWebViewConfiguration *configuration;
-// Canonical WKUIDelegate reference for this engine, including delegates
-// provided via updateWithInfo(). We retain it because WKWebView.UIDelegate is
-// weak and otherwise JavaScript alert/confirm/prompt handling can stop working.
 @property (nonatomic, strong, readwrite) id <WKUIDelegate> uiDelegate;
 
 @end
