@@ -43,6 +43,9 @@
 @property (nonatomic, readwrite) NSString *CDV_ASSETS_URL;
 @property (nonatomic, readwrite) Boolean cdvIsFileScheme;
 @property (nullable, nonatomic, strong, readwrite) WKWebViewConfiguration *configuration;
+// WKWebView.UIDelegate is weak; retain the assigned delegate to keep
+// JavaScript alert/confirm/prompt callbacks available.
+@property (nonatomic, strong, readwrite) id <WKUIDelegate> uiDelegate;
 
 @end
 
@@ -278,7 +281,10 @@
         uiDelegate.mediaPermissionGrantType = [self parsePermissionGrantType:[settings cordovaSettingForKey:@"MediaPermissionGrantType"]];
         uiDelegate.allowNewWindows = [settings cordovaBoolSettingForKey:@"AllowNewWindows" defaultValue:NO];
 
-        wkWebView.UIDelegate = uiDelegate;
+        // WKWebView.UIDelegate is weak, so we must retain our default delegate
+        // to keep JavaScript alert/confirm/prompt handlers alive.
+        self.uiDelegate = uiDelegate;
+        wkWebView.UIDelegate = self.uiDelegate;
     }
 
     if ([self.viewController conformsToProtocol:@protocol(WKNavigationDelegate)]) {
@@ -301,6 +307,7 @@
 {
     WKWebView* wkWebView = (WKWebView*)_engineWebView;
     [wkWebView.configuration.userContentController removeScriptMessageHandlerForName:CDV_BRIDGE_NAME];
+    self.uiDelegate = nil;
     _engineWebView = nil;
 
     [super dispose];
