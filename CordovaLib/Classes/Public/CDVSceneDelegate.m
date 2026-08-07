@@ -20,12 +20,60 @@
 #import <Cordova/CDVSceneDelegate.h>
 #import <Cordova/CDVPluginNotifications.h>
 
+@interface CDVSceneDelegate ()
+
+// URL contexts captured on a cold launch, held until the page loads so that
+// CDVHandleOpenURL has registered its observer before we post the notification.
+@property (nonatomic, strong, nullable) NSSet<UIOpenURLContext *> *launchURLContexts;
+@property (nonatomic, weak, nullable) UIScene *launchScene;
+
+@end
+
 @implementation CDVSceneDelegate
 
 - (void)scene:(UIScene *)scene willConnectToSession:(UISceneSession *)session options:(UISceneConnectionOptions *)connectionOptions
 {
-    // If the app was launched from a URL, that should also fire the CDVPluginOpenURLNotification
-    [self scene:scene openURLContexts:connectionOptions.URLContexts];
+    // If the app was launched from a URL, that should also fire the CDVPluginHandleOpenURLNotification.
+    //
+    // On a cold launch this runs during scene connection, which is *before*
+    // CDVHandleOpenURL registers its observer in -pluginInitialize. Posting the
+    // notification now would deliver it to no observer and the URL would be lost
+    // (see https://github.com/apache/cordova-ios/issues/1671). Buffer the URL
+    // contexts and replay them once the page has loaded, by which time the
+    // plugin observer exists.
+    if (connectionOptions.URLContexts.count > 0) {
+        self.launchScene = scene;
+        self.launchURLContexts = connectionOptions.URLContexts;
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(pageDidLoad:)
+                                                     name:CDVPageDidLoadNotification
+                                                   object:nil];
+    }
+}
+
+- (void)pageDidLoad:(NSNotification *)notification
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:CDVPageDidLoadNotification object:nil];
+
+    UIScene *scene = self.launchScene;
+    NSSet<UIOpenURLContext *> *contexts = self.launchURLContexts;
+    self.launchScene = nil;
+    self.launchURLContexts = nil;
+
+    if (scene != nil && contexts != nil) {
+        [self scene:scene openURLContexts:contexts];
+    }
+}
+
+- (void)sceneDidDisconnect:(UIScene *)scene
+{
+    // If the scene disconnects before the page loaded, tear down the pending
+    // launch-URL observer so it cannot fire for a defunct scene.
+    if (self.launchURLContexts != nil) {
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:CDVPageDidLoadNotification object:nil];
+        self.launchScene = nil;
+        self.launchURLContexts = nil;
+    }
 }
 
 - (void)scene:(UIScene *)scene openURLContexts:(NSSet<UIOpenURLContext *> *)URLContexts
