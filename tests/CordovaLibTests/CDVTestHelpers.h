@@ -22,8 +22,45 @@
 
 extern const NSNotificationName CDVTestingDeviceReadyFired;
 
+@class CDVViewController;
+@protocol CDVWebViewEngineProtocol;
+
 @interface TestNavigationDelegate : NSObject <WKNavigationDelegate>
 @property (nonatomic, copy) void (^didFinishNavigation)(WKWebView *, WKNavigation *);
 
 - (void)waitForDidFinishNavigation:(XCTestExpectation *)expectation;
+@end
+
+@interface XCTestCase (CordovaTestHelpers)
+
+/**
+ * Registers the test-only Cordova command queue barrier plugin.
+ *
+ * Some tests execute JavaScript that calls Cordova APIs. Those APIs often call
+ * cordova.exec, which sends work from JavaScript to native code asynchronously.
+ * XCTest should not assert native state until that native work has actually
+ * been handled. Register this plugin before using
+ * evaluateJavaScript:andWaitForCordovaCommandQueueWithWebViewEngine:timeout:.
+ */
+- (void)registerCordovaCommandQueueTestPluginForViewController:(CDVViewController *)viewController;
+
+/**
+ * Evaluates JavaScript and waits until all cordova.exec calls queued by that
+ * JavaScript have reached native code.
+ *
+ * WKWebView's evaluateJavaScript completion handler only tells us that the
+ * JavaScript expression finished evaluating. It does not guarantee that native
+ * plugin commands triggered by cordova.exec have already run. This helper
+ * appends a test-only no-op exec call after the provided JavaScript and waits
+ * until that no-op command is received natively. Since Cordova processes exec
+ * messages in order, receiving the no-op command means earlier exec calls from
+ * the same JavaScript evaluation have already reached native code.
+ *
+ * This is a synchronization helper for tests that need to read native state
+ * after invoking JavaScript APIs backed by Cordova plugins.
+ */
+- (void)evaluateJavaScript:(NSString *)javaScript
+andWaitForCordovaCommandQueueWithWebViewEngine:(id <CDVWebViewEngineProtocol>)webViewEngine
+                   timeout:(NSTimeInterval)timeout;
+
 @end

@@ -38,6 +38,17 @@ class ScriptHandlingViewController: ViewController, WKScriptMessageHandler {
 }
 
 class CDVWebViewEngineTests: XCTestCase {
+    @MainActor func testWebViewUIDelegateIsRetained() {
+        let vc = ViewController()
+        vc.webContentFolderName = "www"
+        vc.startPage = "index.html"
+
+        vc.loadViewIfNeeded()
+
+        let uiDelegate = (vc.webViewEngine as AnyObject).value(forKey: "uiDelegate")
+        XCTAssertNotNil(uiDelegate)
+    }
+
     @MainActor func testViewControllerScriptMessageHandler() {
         let vc = ScriptHandlingViewController()
         vc.webContentFolderName = "www"

@@ -62,11 +62,14 @@ const xcodeProject = xcode.project(pbxprojPath);
 
 ```js
 // New code
+const EventEmitter = require('node:events');
+const eventEmitter = new EventEmitter();
+
 const projectRoot = context.opts.projectRoot;
 const platformPath = path.join(projectRoot, 'platforms', 'ios');
 
 const cordova_ios = require('cordova-ios');
-const iosProject = new cordova_ios('ios', platformPath);
+const iosProject = new cordova_ios('ios', platformPath, eventEmitter);
 
 const xcodeProject = xcode.project(iosProject.locations.pbxproj);
 ```
