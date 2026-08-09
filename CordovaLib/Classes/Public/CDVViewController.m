@@ -209,6 +209,7 @@ static UIColor *defaultBackgroundColor(void) {
     }
 
     [self.statusBarBackground setBackgroundColor:self.statusBarBackgroundColor];
+    [self setNeedsStatusBarAppearanceUpdate];
 }
 
 - (void)setStatusBarWebViewColor:(UIColor *)color
@@ -216,6 +217,7 @@ static UIColor *defaultBackgroundColor(void) {
     _statusBarWebViewColor = color;
 
     [self.statusBarBackground setBackgroundColor:self.statusBarBackgroundColor];
+    [self setNeedsStatusBarAppearanceUpdate];
 }
 
 // Only for testing
@@ -906,6 +908,20 @@ static UIColor *defaultBackgroundColor(void) {
     [self.statusBarBackground setAlpha:(visible ? 1 : 0)];
     [self setNeedsStatusBarAppearanceUpdate];
 #endif
+}
+
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+    CGFloat red = 0.f;
+    CGFloat green = 0.f;
+    CGFloat blue = 0.f;
+
+    if (![self.statusBarBackgroundColor getRed:&red green:&green blue:&blue alpha:nil]) {
+        return UIStatusBarStyleDefault;
+    }
+
+    CGFloat luminance = 0.299f * red + 0.587f * green + 0.114f * blue;
+    return luminance > 0.5f ? UIStatusBarStyleDarkContent : UIStatusBarStyleLightContent;
 }
 
 - (void)parseSettingsWithParser:(id <NSXMLParserDelegate>)delegate

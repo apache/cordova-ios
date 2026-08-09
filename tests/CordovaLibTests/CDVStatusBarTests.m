@@ -162,4 +162,22 @@ andWaitForCordovaCommandQueueWithWebViewEngine:self.plugin
     XCTAssertEqual(rgba[3], 0.25f);
 }
 
+- (void)testStatusBarAppearanceFollowsBackgroundColor {
+    XCTestExpectation *loadExpectation = [[XCTNSNotificationExpectation alloc] initWithName:CDVTestingDeviceReadyFired];
+    [self.viewController loadStartPage];
+    [self waitForExpectations:@[loadExpectation] timeout:5];
+
+    [self evaluateJavaScript:@"window.statusbar.setBackgroundColor('#ffffff');"
+andWaitForCordovaCommandQueueWithWebViewEngine:self.plugin
+                     timeout:5];
+
+    XCTAssertEqual(self.viewController.preferredStatusBarStyle, UIStatusBarStyleDarkContent);
+
+    [self evaluateJavaScript:@"window.statusbar.setBackgroundColor('#000000');"
+andWaitForCordovaCommandQueueWithWebViewEngine:self.plugin
+                     timeout:5];
+
+    XCTAssertEqual(self.viewController.preferredStatusBarStyle, UIStatusBarStyleLightContent);
+}
+
 @end
