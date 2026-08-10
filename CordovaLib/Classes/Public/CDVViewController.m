@@ -912,6 +912,12 @@ static UIColor *defaultBackgroundColor(void) {
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
+    // Since iOS 18.5, the system automatically determines the status bar style based on the background color of the status bar
+    // so let the system handle it
+    if (@available(iOS 18.5, *)) {
+        return [super preferredStatusBarStyle];
+    }
+
     CGFloat red = 0.f;
     CGFloat green = 0.f;
     CGFloat blue = 0.f;

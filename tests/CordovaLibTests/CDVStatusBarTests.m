@@ -170,6 +170,13 @@ andWaitForCordovaCommandQueueWithWebViewEngine:self.plugin
     [self evaluateJavaScript:@"window.statusbar.setBackgroundColor('#ffffff');"
 andWaitForCordovaCommandQueueWithWebViewEngine:self.plugin
                      timeout:5];
+    
+    // Since iOS 18.5, the system automatically determines the status bar style based on the background color of the status bar
+    // Check this
+    if (@available(iOS 18.5, *)) {
+        XCTAssertEqual(self.viewController.preferredStatusBarStyle, [UIViewController new].preferredStatusBarStyle);
+        return;
+    }
 
     XCTAssertEqual(self.viewController.preferredStatusBarStyle, UIStatusBarStyleDarkContent);
 
