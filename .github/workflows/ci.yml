@@ -90,7 +90,7 @@ jobs:
         timeout-minutes: 40
         run: |
           npm ci
-          npm run test:xcode
+          npm run test:xcode -- -parallel-testing-enabled NO
         env:
           CI: true
 
