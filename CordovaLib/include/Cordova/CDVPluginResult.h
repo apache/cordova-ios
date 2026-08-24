@@ -131,6 +131,27 @@ NS_ASSUME_NONNULL_BEGIN
  }
  */
 @property (nonatomic, strong) NSNumber *keepCallback;
+/**
+ Deprecated helper previously used to retain an auxiliary object for the lifetime
+ of this plugin result.
+
+ A common legacy usage was retaining an `NSData` object when constructing a
+ `NSString` with `initWithBytesNoCopy:...`, where the string depended on the
+ original byte buffer remaining valid.
+
+ Prefer APIs that do not require external lifetime management (for example,
+ `[[NSString alloc] initWithData:encoding:]` or a message constructor that
+ accepts `NSData` directly, such as
+ ``resultWithStatus:messageAsArrayBuffer:``).
+
+ If you still need to retain additional state, hold it in your plugin instance
+ until after `sendPluginResult:callbackId:` returns rather than attaching it to
+ ``CDVPluginResult``.
+
+ @Metadata {
+     @Available(Cordova, introduced: "4.5.0", deprecated: "8.0.0")
+ }
+ */
 @property (nonatomic, strong) id associatedObject CDV_DEPRECATED(8.0.0, "");
 
 - (instancetype)init;
