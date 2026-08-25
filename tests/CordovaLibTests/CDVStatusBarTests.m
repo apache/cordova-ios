@@ -21,6 +21,7 @@
 #import <XCTest/XCTest.h>
 #import <Cordova/Cordova.h>
 #import "CDVWebViewEngine.h"
+#import "CDVViewController+Private.h"
 #import "CordovaApp-Swift.h"
 #import "CDVTestHelpers.h"
 
@@ -160,6 +161,21 @@ andWaitForCordovaCommandQueueWithWebViewEngine:self.plugin
     XCTAssertEqual(rgba[1], 0.f);
     XCTAssertEqual(rgba[2], 0.f);
     XCTAssertEqual(rgba[3], 0.25f);
+}
+
+- (void) testStatusBarVisibility {
+    UIView *statusBar = [self.viewController valueForKey:@"statusBar"];
+    XCTAssertNotNil(statusBar);
+
+    [self.viewController showStatusBar:NO];
+    XCTAssertTrue(self.viewController.prefersStatusBarHidden);
+    XCTAssertTrue(statusBar.hidden);
+    XCTAssertEqual(statusBar.alpha, 0.f);
+
+    [self.viewController showStatusBar:YES];
+    XCTAssertFalse(self.viewController.prefersStatusBarHidden);
+    XCTAssertFalse(statusBar.hidden);
+    XCTAssertEqual(statusBar.alpha, 1.f);
 }
 
 @end

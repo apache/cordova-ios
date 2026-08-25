@@ -752,8 +752,6 @@ static UIColor *defaultBackgroundColor(void) {
     [self.statusBar.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor].active = YES;
     [self.statusBar.topAnchor constraintEqualToAnchor:self.view.topAnchor].active = YES;
     [self.statusBar.bottomAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor].active = YES;
-
-    self.statusBar.hidden = YES;
 #endif
 }
 
@@ -896,6 +894,7 @@ static UIColor *defaultBackgroundColor(void) {
 - (void)showStatusBar:(BOOL)visible
 {
 #if !defined(TARGET_OS_VISION) || !TARGET_OS_VISION
+    self.statusBar.hidden = !visible;
     [self.statusBar setAlpha:(visible ? 1 : 0)];
     [self setNeedsStatusBarAppearanceUpdate];
 #endif
