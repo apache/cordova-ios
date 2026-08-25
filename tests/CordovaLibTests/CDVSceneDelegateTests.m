@@ -63,6 +63,7 @@
 @interface CDVSceneDelegateTests : XCTestCase
 @property (nonatomic, strong) CDVSceneDelegate *sceneDelegate;
 @property (nonatomic, strong) UIScene *placeholderScene;
+@property (nonatomic, strong) UISceneSession *placeholderSession;
 @end
 
 @implementation CDVSceneDelegateTests
@@ -71,9 +72,14 @@
 {
     [super setUp];
     self.sceneDelegate = [[CDVSceneDelegate alloc] init];
+
     // The scene object is only stored and passed back through; it is never
     // messaged, so any non-nil placeholder cast to UIScene * is sufficient.
     self.placeholderScene = (UIScene *)[NSObject new];
+
+    // You can't construct a UISceneSession directly, but you can workaround
+    // that by indirectly sending +alloc to the class instance
+    self.placeholderSession = [[[UISceneSession class] alloc] init];
 }
 
 - (void)tearDown
@@ -82,6 +88,7 @@
     [self.sceneDelegate sceneDidDisconnect:self.placeholderScene];
     self.sceneDelegate = nil;
     self.placeholderScene = nil;
+    self.placeholderSession = nil;
     [super tearDown];
 }
 
@@ -103,7 +110,7 @@
     notFiredYet.inverted = YES;
 
     [self.sceneDelegate scene:self.placeholderScene
-          willConnectToSession:nil
+          willConnectToSession:self.placeholderSession
                        options:[self connectionOptionsForURL:launchURL]];
 
     // Before the page loads, the open-URL notification must not have fired.
@@ -117,7 +124,7 @@
     NSURL *launchURL = [NSURL URLWithString:@"testscheme://path?foo=bar"];
 
     [self.sceneDelegate scene:self.placeholderScene
-          willConnectToSession:nil
+          willConnectToSession:self.placeholderSession
                        options:[self connectionOptionsForURL:launchURL]];
 
     XCTNSNotificationExpectation *openURLFired = [[XCTNSNotificationExpectation alloc]
@@ -138,7 +145,7 @@
     CDVFakeSceneConnectionOptions *options = [CDVFakeSceneConnectionOptions optionsWithURLContexts:[NSSet set]];
 
     [self.sceneDelegate scene:self.placeholderScene
-          willConnectToSession:nil
+          willConnectToSession:self.placeholderSession
                        options:options];
 
     XCTNSNotificationExpectation *notFired = [[XCTNSNotificationExpectation alloc]
@@ -157,7 +164,7 @@
     NSURL *launchURL = [NSURL URLWithString:@"testscheme://path?foo=bar"];
 
     [self.sceneDelegate scene:self.placeholderScene
-          willConnectToSession:nil
+          willConnectToSession:self.placeholderSession
                        options:[self connectionOptionsForURL:launchURL]];
 
     [self.sceneDelegate sceneDidDisconnect:self.placeholderScene];
