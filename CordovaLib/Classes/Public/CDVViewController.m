@@ -421,6 +421,9 @@ static UIColor *defaultBackgroundColor(void) {
 
         if ([self.webView respondsToSelector:@selector(scrollView)]) {
             UIScrollView *scrollView = [self.webView performSelector:@selector(scrollView)];
+            // The web view is already constrained below the Mac Catalyst title bar,
+            // so disable UIKit's automatic safe-area inset adjustment. The status
+            // bar view is hidden for this mode in scrollViewDidChangeAdjustedContentInset:.
             scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
         }
     }
@@ -583,6 +586,9 @@ static UIColor *defaultBackgroundColor(void) {
         return;
     }
 
+    // On Mac Catalyst, Cordova may manually constrain the web view below the title bar.
+    // In that case automatic scroll-view inset adjustment is disabled, so the synthetic
+    // status bar view should be hidden.
     self.statusBar.hidden = (scrollView.contentInsetAdjustmentBehavior == UIScrollViewContentInsetAdjustmentNever);
 #endif
 }
