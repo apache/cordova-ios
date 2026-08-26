@@ -40,7 +40,7 @@
     return context;
 }
 - (NSURL *)URL { return self.fakeURL; }
-- (UISceneOpenURLOptions *)options { return nil; }
+- (UISceneOpenURLOptions *)options { return [[[UISceneOpenURLOptions class] alloc] init]; }
 @end
 
 @interface CDVFakeSceneConnectionOptions : UISceneConnectionOptions
