@@ -149,6 +149,7 @@
     XCTAssertTrue([quotedString isEqualToString:[[result argumentsAsJSON] cdv_JSONFragment]]);
 }
 
+#ifndef __clang_analyzer__ // Silence a static analyzer warning about passing nil to messageAsString:
 - (void)testSerializingMessageAsStringThatIsNil
 {
     NSString* nilString = nil;
@@ -156,5 +157,6 @@
 
     XCTAssertTrue([[NSNull null] isEqual:[[result argumentsAsJSON] cdv_JSONFragment]]);
 }
+#endif
 
 @end
