@@ -578,6 +578,11 @@ static UIColor *defaultBackgroundColor(void) {
     }
 }
 
+/**
+ * This is called initially when the WKWebView is initialized and also when viewport-fit is changed.
+ * WebKit still doesn't expose _webView:didChangeSafeAreaShouldAffectObscuredInsets: as public API,
+ * so we need to react based on the scrollView delegate.
+ */
 - (void)scrollViewDidChangeAdjustedContentInset:(UIScrollView *)scrollView
 {
 #if !defined(TARGET_OS_VISION) || !TARGET_OS_VISION
@@ -586,6 +591,9 @@ static UIColor *defaultBackgroundColor(void) {
         return;
     }
 
+    // Detect changes on viewport-fit:
+    // viewport-fit=cover causes the contentInsetAdjustmentBehavior to be UIScrollViewContentInsetAdjustmentNever
+    //
     // On Mac Catalyst, Cordova may manually constrain the web view below the title bar.
     // In that case automatic scroll-view inset adjustment is disabled, so the synthetic
     // status bar view should be hidden.
