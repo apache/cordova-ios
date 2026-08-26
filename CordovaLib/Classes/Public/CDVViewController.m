@@ -578,6 +578,10 @@ static UIColor *defaultBackgroundColor(void) {
     }
 }
 
+/**
+ * We use this delegate method on the web view's scrollView to detect when the safe area insets are changed
+ * by the viewport-fit value.
+ */
 - (void)scrollViewDidChangeAdjustedContentInset:(UIScrollView *)scrollView
 {
 #if !defined(TARGET_OS_VISION) || !TARGET_OS_VISION
@@ -586,6 +590,9 @@ static UIColor *defaultBackgroundColor(void) {
         return;
     }
 
+    // Detect changes on viewport-fit:
+    // viewport-fit=cover causes the contentInsetAdjustmentBehavior to be UIScrollViewContentInsetAdjustmentNever
+    //
     // On Mac Catalyst, Cordova may manually constrain the web view below the title bar.
     // In that case automatic scroll-view inset adjustment is disabled, so the synthetic
     // status bar view should be hidden.
