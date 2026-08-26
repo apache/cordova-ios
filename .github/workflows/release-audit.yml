@@ -54,5 +54,4 @@ jobs:
       # Check node package licenses
       - uses: erisu/license-checker-action@04511f4c052b5773f11e1c65b42cda88235c62ae # v2.1.0
         with:
-          license-config: 'licence_checker.yml'
           include-asf-category-a: true
