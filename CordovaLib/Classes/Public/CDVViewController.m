@@ -50,7 +50,7 @@ static UIColor *defaultBackgroundColor(void) {
 
 @property (nonatomic, readwrite, strong) NSMutableArray* startupPluginNames;
 @property (nonatomic, readwrite, strong) UIView *launchView;
-@property (nonatomic, readwrite, strong) UIView *statusBar;
+@property (nonatomic, readwrite, strong) UIView *statusBarBackground;
 @property (readwrite, assign) BOOL initialized;
 
 @end
@@ -208,14 +208,14 @@ static UIColor *defaultBackgroundColor(void) {
         _statusBarBackgroundColor = color;
     }
 
-    [self.statusBar setBackgroundColor:self.statusBarBackgroundColor];
+    [self.statusBarBackground setBackgroundColor:self.statusBarBackgroundColor];
 }
 
 - (void)setStatusBarWebViewColor:(UIColor *)color
 {
     _statusBarWebViewColor = color;
 
-    [self.statusBar setBackgroundColor:self.statusBarBackgroundColor];
+    [self.statusBarBackground setBackgroundColor:self.statusBarBackgroundColor];
 }
 
 // Only for testing
@@ -364,7 +364,7 @@ static UIColor *defaultBackgroundColor(void) {
     }
 
     // Instantiate the status bar
-    if (!self.statusBar) {
+    if (!self.statusBarBackground) {
         [self createStatusBarView];
     }
 
@@ -386,7 +386,7 @@ static UIColor *defaultBackgroundColor(void) {
 
     [self.webView setBackgroundColor:self.backgroundColor];
     [self.launchView setBackgroundColor:self.splashBackgroundColor];
-    [self.statusBar setBackgroundColor:self.statusBarBackgroundColor];
+    [self.statusBarBackground setBackgroundColor:self.statusBarBackgroundColor];
 
     if (self.showInitialSplashScreen) {
         [self.launchView setAlpha:1];
@@ -582,14 +582,14 @@ static UIColor *defaultBackgroundColor(void) {
 {
 #if !defined(TARGET_OS_VISION) || !TARGET_OS_VISION
     if (self.webView.hidden) {
-        self.statusBar.hidden = true;
+        self.statusBarBackground.hidden = true;
         return;
     }
 
     // On Mac Catalyst, Cordova may manually constrain the web view below the title bar.
     // In that case automatic scroll-view inset adjustment is disabled, so the synthetic
     // status bar view should be hidden.
-    self.statusBar.hidden = (scrollView.contentInsetAdjustmentBehavior == UIScrollViewContentInsetAdjustmentNever);
+    self.statusBarBackground.hidden = (scrollView.contentInsetAdjustmentBehavior == UIScrollViewContentInsetAdjustmentNever);
 #endif
 }
 
@@ -598,7 +598,7 @@ static UIColor *defaultBackgroundColor(void) {
 {
     // The CDVStatusBar plugin overrides this in a category extension, and
     // should bypass this implementation entirely
-    return self.statusBar.alpha < 0.0001f;
+    return self.statusBarBackground.alpha < 0.0001f;
 }
 #endif
 
@@ -743,17 +743,17 @@ static UIColor *defaultBackgroundColor(void) {
     if (NSClassFromString(@"CDVStatusBar") != nil)
         return;
 
-    self.statusBar = [[UIView alloc] init];
-    self.statusBar.translatesAutoresizingMaskIntoConstraints = NO;
+    self.statusBarBackground = [[UIView alloc] init];
+    self.statusBarBackground.translatesAutoresizingMaskIntoConstraints = NO;
 
-    [self.view addSubview:self.statusBar];
+    [self.view addSubview:self.statusBarBackground];
 
-    [self.statusBar.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor].active = YES;
-    [self.statusBar.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor].active = YES;
-    [self.statusBar.topAnchor constraintEqualToAnchor:self.view.topAnchor].active = YES;
-    [self.statusBar.bottomAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor].active = YES;
+    [self.statusBarBackground.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor].active = YES;
+    [self.statusBarBackground.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor].active = YES;
+    [self.statusBarBackground.topAnchor constraintEqualToAnchor:self.view.topAnchor].active = YES;
+    [self.statusBarBackground.bottomAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor].active = YES;
 
-    self.statusBar.hidden = YES;
+    self.statusBarBackground.hidden = YES;
 #endif
 }
 
@@ -896,7 +896,7 @@ static UIColor *defaultBackgroundColor(void) {
 - (void)showStatusBar:(BOOL)visible
 {
 #if !defined(TARGET_OS_VISION) || !TARGET_OS_VISION
-    [self.statusBar setAlpha:(visible ? 1 : 0)];
+    [self.statusBarBackground setAlpha:(visible ? 1 : 0)];
     [self setNeedsStatusBarAppearanceUpdate];
 #endif
 }
