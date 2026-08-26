@@ -170,7 +170,7 @@ andWaitForCordovaCommandQueueWithWebViewEngine:self.plugin
     [self evaluateJavaScript:@"window.statusbar.setBackgroundColor('#ffffff');"
 andWaitForCordovaCommandQueueWithWebViewEngine:self.plugin
                      timeout:5];
-    
+
     // Since iOS 18.5, the system automatically determines the status bar style based on the background color of the status bar
     // Check this
     if (@available(iOS 18.5, *)) {
@@ -186,5 +186,33 @@ andWaitForCordovaCommandQueueWithWebViewEngine:self.plugin
 
     XCTAssertEqual(self.viewController.preferredStatusBarStyle, UIStatusBarStyleLightContent);
 }
+
+#if !defined(TARGET_OS_VISION) || !TARGET_OS_VISION
+- (void) testStatusBarHidden {
+    XCTestExpectation *loadExpectation = [[XCTNSNotificationExpectation alloc] initWithName:CDVTestingDeviceReadyFired];
+    [self.viewController loadStartPage];
+    [self waitForExpectations:@[loadExpectation] timeout:5];
+
+    XCTAssertEqual([self.viewController prefersStatusBarHidden], false);
+
+    [self evaluateJavaScript:@"window.statusbar.visible = false;"
+andWaitForCordovaCommandQueueWithWebViewEngine:self.plugin
+                     timeout:5];
+
+    XCTAssertEqual([self.viewController prefersStatusBarHidden], true);
+}
+
+- (void) testTransparentStatusBarBackgroundIsNotHidden {
+    XCTestExpectation *loadExpectation = [[XCTNSNotificationExpectation alloc] initWithName:CDVTestingDeviceReadyFired];
+    [self.viewController loadStartPage];
+    [self waitForExpectations:@[loadExpectation] timeout:5];
+
+    [self evaluateJavaScript:@"window.statusbar.setBackgroundColor('transparent');"
+andWaitForCordovaCommandQueueWithWebViewEngine:self.plugin
+                     timeout:5];
+
+    XCTAssertEqual([self.viewController prefersStatusBarHidden], false);
+}
+#endif
 
 @end

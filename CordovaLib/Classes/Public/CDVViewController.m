@@ -45,6 +45,7 @@ static UIColor *defaultBackgroundColor(void) {
     UIColor *_statusBarBackgroundColor;
     UIColor *_statusBarWebViewColor;
     UIColor *_statusBarDefaultColor;
+    BOOL _statusBarHidden;
     CDVSettingsDictionary* _settings;
 }
 
@@ -598,7 +599,11 @@ static UIColor *defaultBackgroundColor(void) {
     // On Mac Catalyst, Cordova may manually constrain the web view below the title bar.
     // In that case automatic scroll-view inset adjustment is disabled, so the synthetic
     // status bar view should be hidden.
-    self.statusBarBackground.hidden = (scrollView.contentInsetAdjustmentBehavior == UIScrollViewContentInsetAdjustmentNever);
+    if (_statusBarHidden) {
+        self.statusBarBackground.hidden = true;
+    } else {
+        self.statusBarBackground.hidden = (scrollView.contentInsetAdjustmentBehavior == UIScrollViewContentInsetAdjustmentNever);
+    }
 #endif
 }
 
@@ -607,7 +612,7 @@ static UIColor *defaultBackgroundColor(void) {
 {
     // The CDVStatusBar plugin overrides this in a category extension, and
     // should bypass this implementation entirely
-    return self.statusBarBackground.alpha < 0.0001f;
+    return _statusBarHidden;
 }
 #endif
 
@@ -905,7 +910,11 @@ static UIColor *defaultBackgroundColor(void) {
 - (void)showStatusBar:(BOOL)visible
 {
 #if !defined(TARGET_OS_VISION) || !TARGET_OS_VISION
-    [self.statusBarBackground setAlpha:(visible ? 1 : 0)];
+    _statusBarHidden = !visible;
+
+    UIScrollView *scrollView = [self.webView performSelector:@selector(scrollView)];
+    [self scrollViewDidChangeAdjustedContentInset:scrollView];
+
     [self setNeedsStatusBarAppearanceUpdate];
 #endif
 }
