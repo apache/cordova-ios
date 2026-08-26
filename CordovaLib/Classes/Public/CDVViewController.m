@@ -579,9 +579,8 @@ static UIColor *defaultBackgroundColor(void) {
 }
 
 /**
- * This is called initially when the WKWebView is initialized and also when viewport-fit is changed.
- * WebKit still doesn't expose _webView:didChangeSafeAreaShouldAffectObscuredInsets: as public API,
- * so we need to react based on the scrollView delegate.
+ * We use this delegate method on the web view's scrollView to detect when the safe area insets are changed
+ * by the viewport-fit value.
  */
 - (void)scrollViewDidChangeAdjustedContentInset:(UIScrollView *)scrollView
 {
