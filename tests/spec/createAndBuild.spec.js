@@ -16,6 +16,7 @@
     specific language governing permissions and limitations
     under the License.
 */
+/* global notApplicable */
 
 const EventEmitter = require('node:events');
 const fs = require('node:fs');
@@ -106,28 +107,36 @@ async function verifyCreateAndBuild (tmpDir, packageName, projectName) {
         .then(() => verifyBuild(tmpDir));
 }
 
-if (process.platform === 'darwin') {
-    describe('create and build', () => {
-        let tmpDir;
+const platform = process.platform;
 
-        beforeEach(function () {
-            tmpDir = makeTempDir();
-        });
+describe('create and build', () => {
+    let tmpDir;
 
-        afterEach(() => {
-            fs.rmSync(tmpDir, { recursive: true, force: true });
-        });
-
-        it('Test#001 : create project with ascii name, no spaces', () => {
-            const packageName = 'com.test.app1';
-            const projectName = 'testcreate';
-            return verifyCreateAndBuild(tmpDir, packageName, projectName);
-        }, 10 * 60 * 1000); // first build takes longer (probably cold caches)
-
-        it('Test#002 : create project with complicated name', () => {
-            const packageName = 'com.test.app2';
-            const projectName = '応応応応 hello & إثرا 用用用用';
-            return verifyCreateAndBuild(tmpDir, packageName, projectName);
-        }, 5 * 60 * 1000);
+    beforeEach(function () {
+        tmpDir = makeTempDir();
     });
-}
+
+    afterEach(() => {
+        fs.rmSync(tmpDir, { recursive: true, force: true });
+    });
+
+    it('Test#001 : create project with ascii name, no spaces', () => {
+        if (platform !== 'darwin') {
+            notApplicable('This test requires Xcode on macOS');
+        }
+
+        const packageName = 'com.test.app1';
+        const projectName = 'testcreate';
+        return verifyCreateAndBuild(tmpDir, packageName, projectName);
+    }, 10 * 60 * 1000); // first build takes longer (probably cold caches)
+
+    it('Test#002 : create project with complicated name', () => {
+        if (platform !== 'darwin') {
+            notApplicable('This test requires Xcode on macOS');
+        }
+
+        const packageName = 'com.test.app2';
+        const projectName = '応応応応 hello & إثرا 用用用用';
+        return verifyCreateAndBuild(tmpDir, packageName, projectName);
+    }, 5 * 60 * 1000);
+});
