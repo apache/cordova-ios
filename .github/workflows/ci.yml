@@ -40,7 +40,7 @@ jobs:
           persist-credentials: false
           fetch-depth: 1
 
-      - uses: github/codeql-action/init@5595ccaf912efad79be6eef63a5619ff05969be3 # v4.37.6
+      - uses: github/codeql-action/init@db488ddef3bf6cb639b32c2e9a7c0a7ea8271d28 # v4.37.8
         with:
           languages: javascript
           queries: security-and-quality
@@ -50,7 +50,7 @@ jobs:
               - node_modules
               - templates/project/www/cordova.js
 
-      - uses: github/codeql-action/analyze@5595ccaf912efad79be6eef63a5619ff05969be3 # v4.37.6
+      - uses: github/codeql-action/analyze@db488ddef3bf6cb639b32c2e9a7c0a7ea8271d28 # v4.37.8
 
   test-native:
     name: Native Testing on ${{ matrix.os }}
