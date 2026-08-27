@@ -58,9 +58,9 @@ Object.defineProperty(statusBar, 'visible', {
 /**
  * Sets the background color of the visible status bar.
  * Supports valid CSS color values, e.g. `rebeccapurple`, `#RRGGBBAA`, `rgb(255 0 153)`.
- * 
+ *
  * Note: Runtime support for all valid CSS color formats is fully functional since cordova-ios 8.1.1.
- * 
+ *
  * Note: This is intended for special cases only, and not a recommended API. The recommended way
  * to set the background colour of the status bar is with the `<meta name="theme-color">` tag.
  */
