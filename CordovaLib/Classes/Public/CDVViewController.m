@@ -367,7 +367,7 @@ static UIColor *defaultBackgroundColor(void) {
 
     // Instantiate the status bar
     if (!self.statusBarBackground) {
-        [self createStatusBarView];
+        [self createStatusBarBackgroundView];
     }
 
     // /////////////////
@@ -744,7 +744,7 @@ static UIColor *defaultBackgroundColor(void) {
     }
 }
 
-- (void)createStatusBarView
+- (void)createStatusBarBackgroundView
 {
 #if !defined(TARGET_OS_VISION) || !TARGET_OS_VISION
     // If cordova-plugin-statusbar is loaded, we'll let it handle the status
