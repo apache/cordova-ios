@@ -175,14 +175,14 @@ static UIColor *defaultBackgroundColor(void) {
 {
     _backgroundColor = color ?: defaultBackgroundColor();
 
-    [self.webView setBackgroundColor:self.backgroundColor];
+    self.webView.backgroundColor = self.backgroundColor;
 }
 
 - (void)setSplashBackgroundColor:(UIColor *)color
 {
     _splashBackgroundColor = color ?: self.backgroundColor;
 
-    [self.launchView setBackgroundColor:self.splashBackgroundColor];
+    self.launchView.backgroundColor = self.splashBackgroundColor;
 }
 
 - (UIColor *)statusBarBackgroundColor
@@ -209,7 +209,7 @@ static UIColor *defaultBackgroundColor(void) {
         _statusBarBackgroundColor = color;
     }
 
-    [self.statusBarBackgroundView setBackgroundColor:self.statusBarBackgroundColor];
+    self.statusBarBackgroundView.backgroundColor = self.statusBarBackgroundColor;
     [self setNeedsStatusBarAppearanceUpdate];
 }
 
@@ -217,7 +217,7 @@ static UIColor *defaultBackgroundColor(void) {
 {
     _statusBarWebViewColor = color;
 
-    [self.statusBarBackgroundView setBackgroundColor:self.statusBarBackgroundColor];
+    self.statusBarBackgroundView.backgroundColor = self.statusBarBackgroundColor;
     [self setNeedsStatusBarAppearanceUpdate];
 }
 
@@ -387,12 +387,12 @@ static UIColor *defaultBackgroundColor(void) {
 
     [self loadStartPage];
 
-    [self.webView setBackgroundColor:self.backgroundColor];
-    [self.launchView setBackgroundColor:self.splashBackgroundColor];
-    [self.statusBarBackgroundView setBackgroundColor:self.statusBarBackgroundColor];
+    self.webView.backgroundColor = self.backgroundColor;
+    self.launchView.backgroundColor = self.splashBackgroundColor;
+    self.statusBarBackgroundView.backgroundColor = self.statusBarBackgroundColor;
 
     if (self.showInitialSplashScreen) {
-        [self.launchView setAlpha:1];
+        self.launchView.alpha = 1;
     }
 }
 
@@ -700,7 +700,7 @@ static UIColor *defaultBackgroundColor(void) {
 
     UIView* view = [[UIView alloc] initWithFrame:webViewBounds];
     view.translatesAutoresizingMaskIntoConstraints = NO;
-    [view setAlpha:0];
+    view.alpha = 0;
 
     NSString* launchStoryboardName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"UILaunchStoryboardName"];
     if (launchStoryboardName != nil) {
@@ -899,7 +899,7 @@ static UIColor *defaultBackgroundColor(void) {
     CGFloat fadeDuration = fadeSplashScreenDuration/1000;
 
     [UIView animateWithDuration:fadeDuration animations:^{
-        [self.launchView setAlpha:(visible ? 1 : 0)];
+        self.launchView.alpha = (visible ? 1 : 0);
 
         if (!visible) {
             [self.webView becomeFirstResponder];
