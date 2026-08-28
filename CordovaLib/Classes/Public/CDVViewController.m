@@ -51,7 +51,7 @@ static UIColor *defaultBackgroundColor(void) {
 
 @property (nonatomic, readwrite, strong) NSMutableArray* startupPluginNames;
 @property (nonatomic, readwrite, strong) UIView *launchView;
-@property (nonatomic, readwrite, strong) UIView *statusBarBackground;
+@property (nonatomic, readwrite, strong) UIView *statusBarBackgroundView;
 @property (readwrite, assign) BOOL initialized;
 
 @end
@@ -209,7 +209,7 @@ static UIColor *defaultBackgroundColor(void) {
         _statusBarBackgroundColor = color;
     }
 
-    [self.statusBarBackground setBackgroundColor:self.statusBarBackgroundColor];
+    [self.statusBarBackgroundView setBackgroundColor:self.statusBarBackgroundColor];
     [self setNeedsStatusBarAppearanceUpdate];
 }
 
@@ -217,7 +217,7 @@ static UIColor *defaultBackgroundColor(void) {
 {
     _statusBarWebViewColor = color;
 
-    [self.statusBarBackground setBackgroundColor:self.statusBarBackgroundColor];
+    [self.statusBarBackgroundView setBackgroundColor:self.statusBarBackgroundColor];
     [self setNeedsStatusBarAppearanceUpdate];
 }
 
@@ -367,7 +367,7 @@ static UIColor *defaultBackgroundColor(void) {
     }
 
     // Instantiate the status bar
-    if (!self.statusBarBackground) {
+    if (!self.statusBarBackgroundView) {
         [self createStatusBarBackgroundView];
     }
 
@@ -389,7 +389,7 @@ static UIColor *defaultBackgroundColor(void) {
 
     [self.webView setBackgroundColor:self.backgroundColor];
     [self.launchView setBackgroundColor:self.splashBackgroundColor];
-    [self.statusBarBackground setBackgroundColor:self.statusBarBackgroundColor];
+    [self.statusBarBackgroundView setBackgroundColor:self.statusBarBackgroundColor];
 
     if (self.showInitialSplashScreen) {
         [self.launchView setAlpha:1];
@@ -589,7 +589,7 @@ static UIColor *defaultBackgroundColor(void) {
 {
 #if !defined(TARGET_OS_VISION) || !TARGET_OS_VISION
     if (self.webView.hidden) {
-        self.statusBarBackground.hidden = true;
+        self.statusBarBackgroundView.hidden = true;
         return;
     }
 
@@ -600,9 +600,9 @@ static UIColor *defaultBackgroundColor(void) {
     // In that case automatic scroll-view inset adjustment is disabled, so the synthetic
     // status bar view should be hidden.
     if (_statusBarHidden) {
-        self.statusBarBackground.hidden = true;
+        self.statusBarBackgroundView.hidden = true;
     } else {
-        self.statusBarBackground.hidden = (scrollView.contentInsetAdjustmentBehavior == UIScrollViewContentInsetAdjustmentNever);
+        self.statusBarBackgroundView.hidden = (scrollView.contentInsetAdjustmentBehavior == UIScrollViewContentInsetAdjustmentNever);
     }
 #endif
 }
@@ -757,17 +757,17 @@ static UIColor *defaultBackgroundColor(void) {
     if (NSClassFromString(@"CDVStatusBar") != nil)
         return;
 
-    self.statusBarBackground = [[UIView alloc] init];
-    self.statusBarBackground.translatesAutoresizingMaskIntoConstraints = NO;
+    self.statusBarBackgroundView = [[UIView alloc] init];
+    self.statusBarBackgroundView.translatesAutoresizingMaskIntoConstraints = NO;
 
-    [self.view addSubview:self.statusBarBackground];
+    [self.view addSubview:self.statusBarBackgroundView];
 
-    [self.statusBarBackground.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor].active = YES;
-    [self.statusBarBackground.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor].active = YES;
-    [self.statusBarBackground.topAnchor constraintEqualToAnchor:self.view.topAnchor].active = YES;
-    [self.statusBarBackground.bottomAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor].active = YES;
+    [self.statusBarBackgroundView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor].active = YES;
+    [self.statusBarBackgroundView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor].active = YES;
+    [self.statusBarBackgroundView.topAnchor constraintEqualToAnchor:self.view.topAnchor].active = YES;
+    [self.statusBarBackgroundView.bottomAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor].active = YES;
 
-    self.statusBarBackground.hidden = YES;
+    self.statusBarBackgroundView.hidden = YES;
 #endif
 }
 
