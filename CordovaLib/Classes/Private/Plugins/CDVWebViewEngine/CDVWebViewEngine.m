@@ -278,6 +278,7 @@
 
         uiDelegate.title = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
         uiDelegate.mediaPermissionGrantType = [self parsePermissionGrantType:[settings cordovaSettingForKey:@"MediaPermissionGrantType"]];
+        uiDelegate.geolocationPermissionGrantType = [self parsePermissionGrantType:[settings cordovaSettingForKey:@"GeolocationPermissionGrantType"]];
         uiDelegate.allowNewWindows = [settings cordovaBoolSettingForKey:@"AllowNewWindows" defaultValue:NO];
 
         // Assigning to self.uiDelegate keeps a strong reference to the delegate,
