@@ -45,17 +45,30 @@
 
 @interface CDVFakeSceneConnectionOptions : UISceneConnectionOptions
 @property (nonatomic, strong) NSSet<UIOpenURLContext *> *fakeURLContexts;
+@property (nonatomic, strong) NSSet<NSUserActivity *> *fakeUserActivities;
 + (instancetype)optionsWithURLContexts:(NSSet<UIOpenURLContext *> *)contexts;
++ (instancetype)optionsWithUserActivities:(NSSet<NSUserActivity *> *)userActivities;
++ (instancetype)optionsWithURLContexts:(NSSet<UIOpenURLContext *> *)contexts userActivities:(NSSet<NSUserActivity *> *)userActivities;
 @end
 
 @implementation CDVFakeSceneConnectionOptions
 + (instancetype)optionsWithURLContexts:(NSSet<UIOpenURLContext *> *)contexts
 {
+    return [self optionsWithURLContexts:contexts userActivities:[NSSet set]];
+}
++ (instancetype)optionsWithUserActivities:(NSSet<NSUserActivity *> *)userActivities
+{
+    return [self optionsWithURLContexts:[NSSet set] userActivities:userActivities];
+}
++ (instancetype)optionsWithURLContexts:(NSSet<UIOpenURLContext *> *)contexts userActivities:(NSSet<NSUserActivity *> *)userActivities
+{
     CDVFakeSceneConnectionOptions *options = class_createInstance(self, 0);
     options.fakeURLContexts = contexts;
+    options.fakeUserActivities = userActivities;
     return options;
 }
 - (NSSet<UIOpenURLContext *> *)URLContexts { return self.fakeURLContexts; }
+- (NSSet<NSUserActivity *> *)userActivities { return self.fakeUserActivities; }
 @end
 
 #pragma mark -
@@ -96,6 +109,21 @@
 {
     CDVFakeOpenURLContext *context = [CDVFakeOpenURLContext contextWithURL:url];
     return [CDVFakeSceneConnectionOptions optionsWithURLContexts:[NSSet setWithObject:context]];
+}
+
+// A universal link is delivered as an NSUserActivity of type
+// NSUserActivityTypeBrowsingWeb, which — unlike the classes faked above — can be
+// constructed directly.
+- (NSUserActivity *)browsingUserActivityForURL:(NSURL *)url
+{
+    NSUserActivity *userActivity = [[NSUserActivity alloc] initWithActivityType:NSUserActivityTypeBrowsingWeb];
+    userActivity.webpageURL = url;
+    return userActivity;
+}
+
+- (CDVFakeSceneConnectionOptions *)connectionOptionsForUserActivity:(NSUserActivity *)userActivity
+{
+    return [CDVFakeSceneConnectionOptions optionsWithUserActivities:[NSSet setWithObject:userActivity]];
 }
 
 // A cold-launch URL must NOT be posted during scene connection, because
@@ -195,6 +223,136 @@
     [self.sceneDelegate scene:self.placeholderScene openURLContexts:[NSSet setWithObject:context]];
 
     [self waitForExpectations:@[openURLFired] timeout:1.0];
+}
+
+// A universal link that launches the app arrives in connectionOptions.userActivities,
+// and -scene:continueUserActivity: is never called for it. Like the launch URL it must
+// NOT be posted during scene connection, because the plugin observers do not exist yet.
+- (void)testColdLaunchUserActivityIsBufferedUntilPageDidLoad
+{
+    NSUserActivity *launchUserActivity = [self browsingUserActivityForURL:[NSURL URLWithString:@"https://example.com/path?foo=bar"]];
+
+    XCTNSNotificationExpectation *notFiredYet = [[XCTNSNotificationExpectation alloc]
+        initWithName:CDVPluginContinueUserActivityNotification];
+    notFiredYet.inverted = YES;
+
+    [self.sceneDelegate scene:self.placeholderScene
+          willConnectToSession:self.placeholderSession
+                       options:[self connectionOptionsForUserActivity:launchUserActivity]];
+
+    // Before the page loads, the continue-user-activity notification must not have fired.
+    [self waitForExpectations:@[notFiredYet] timeout:0.3];
+}
+
+// Once CDVPageDidLoadNotification fires (the plugin observer now exists), the
+// buffered launch activity must be replayed as CDVPluginContinueUserActivityNotification.
+- (void)testColdLaunchUserActivityIsReplayedAfterPageDidLoad
+{
+    NSUserActivity *launchUserActivity = [self browsingUserActivityForURL:[NSURL URLWithString:@"https://example.com/path?foo=bar"]];
+
+    [self.sceneDelegate scene:self.placeholderScene
+          willConnectToSession:self.placeholderSession
+                       options:[self connectionOptionsForUserActivity:launchUserActivity]];
+
+    XCTNSNotificationExpectation *userActivityFired = [[XCTNSNotificationExpectation alloc]
+        initWithName:CDVPluginContinueUserActivityNotification];
+    userActivityFired.handler = ^BOOL(NSNotification *notification) {
+        return [notification.object isEqual:launchUserActivity];
+    };
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:CDVPageDidLoadNotification object:nil];
+
+    [self waitForExpectations:@[userActivityFired] timeout:1.0];
+}
+
+// A launch with no user activities must never post a continue-user-activity
+// notification, even after a page load (nothing to deliver).
+- (void)testLaunchWithoutUserActivityDoesNotPostContinueUserActivity
+{
+    CDVFakeSceneConnectionOptions *options = [CDVFakeSceneConnectionOptions optionsWithUserActivities:[NSSet set]];
+
+    [self.sceneDelegate scene:self.placeholderScene
+          willConnectToSession:self.placeholderSession
+                       options:options];
+
+    XCTNSNotificationExpectation *notFired = [[XCTNSNotificationExpectation alloc]
+        initWithName:CDVPluginContinueUserActivityNotification];
+    notFired.inverted = YES;
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:CDVPageDidLoadNotification object:nil];
+
+    [self waitForExpectations:@[notFired] timeout:0.3];
+}
+
+// If the scene disconnects before the page loads, the pending observer must be
+// torn down so a later page-load cannot replay an activity for a defunct scene.
+- (void)testSceneDisconnectBeforePageLoadCancelsPendingUserActivity
+{
+    NSUserActivity *launchUserActivity = [self browsingUserActivityForURL:[NSURL URLWithString:@"https://example.com/path?foo=bar"]];
+
+    [self.sceneDelegate scene:self.placeholderScene
+          willConnectToSession:self.placeholderSession
+                       options:[self connectionOptionsForUserActivity:launchUserActivity]];
+
+    [self.sceneDelegate sceneDidDisconnect:self.placeholderScene];
+
+    XCTNSNotificationExpectation *notFired = [[XCTNSNotificationExpectation alloc]
+        initWithName:CDVPluginContinueUserActivityNotification];
+    notFired.inverted = YES;
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:CDVPageDidLoadNotification object:nil];
+
+    [self waitForExpectations:@[notFired] timeout:0.3];
+}
+
+// The warm path (app already running) posts immediately and is unaffected by the
+// cold-launch buffering.
+- (void)testWarmContinueUserActivityPostsImmediately
+{
+    NSUserActivity *warmUserActivity = [self browsingUserActivityForURL:[NSURL URLWithString:@"https://example.com/warm"]];
+
+    XCTNSNotificationExpectation *userActivityFired = [[XCTNSNotificationExpectation alloc]
+        initWithName:CDVPluginContinueUserActivityNotification];
+    userActivityFired.handler = ^BOOL(NSNotification *notification) {
+        return [notification.object isEqual:warmUserActivity];
+    };
+
+    [self.sceneDelegate scene:self.placeholderScene continueUserActivity:warmUserActivity];
+
+    [self waitForExpectations:@[userActivityFired] timeout:1.0];
+}
+
+// A launch can carry both a URL and a user activity; buffering one must not
+// discard the other.
+- (void)testColdLaunchWithBothURLAndUserActivityReplaysBoth
+{
+    NSURL *launchURL = [NSURL URLWithString:@"testscheme://path?foo=bar"];
+    NSUserActivity *launchUserActivity = [self browsingUserActivityForURL:[NSURL URLWithString:@"https://example.com/path?foo=bar"]];
+
+    CDVFakeOpenURLContext *context = [CDVFakeOpenURLContext contextWithURL:launchURL];
+    CDVFakeSceneConnectionOptions *options = [CDVFakeSceneConnectionOptions
+        optionsWithURLContexts:[NSSet setWithObject:context]
+                userActivities:[NSSet setWithObject:launchUserActivity]];
+
+    [self.sceneDelegate scene:self.placeholderScene
+          willConnectToSession:self.placeholderSession
+                       options:options];
+
+    XCTNSNotificationExpectation *openURLFired = [[XCTNSNotificationExpectation alloc]
+        initWithName:CDVPluginHandleOpenURLNotification];
+    openURLFired.handler = ^BOOL(NSNotification *notification) {
+        return [notification.object isEqual:launchURL];
+    };
+
+    XCTNSNotificationExpectation *userActivityFired = [[XCTNSNotificationExpectation alloc]
+        initWithName:CDVPluginContinueUserActivityNotification];
+    userActivityFired.handler = ^BOOL(NSNotification *notification) {
+        return [notification.object isEqual:launchUserActivity];
+    };
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:CDVPageDidLoadNotification object:nil];
+
+    [self waitForExpectations:@[openURLFired, userActivityFired] timeout:1.0];
 }
 
 @end
