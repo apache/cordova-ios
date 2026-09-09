@@ -20,6 +20,10 @@
 #import "CDVWebViewUIDelegate.h"
 #import <Cordova/CDVViewController.h>
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 270000
+#import <objc/runtime.h>
+#endif
+
 @interface CDVWebViewUIDelegate ()
 
 @property (nonatomic, weak) CDVViewController *viewController;
@@ -30,6 +34,42 @@
 {
     NSMutableArray<UIViewController *> *windows;
 }
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 270000
++ (void)load {
+    // iOS 27 makes public a delegate method for determining whether
+    // geolocation should be allowed for a given origin:
+    //
+    // - webView:requestGeolocationPermissionForOrigin:initiatedByFrame:decisionHandler:
+    //
+    // This removes one of the main reasons for apps to need the geolocation
+    // plugin.
+    //
+    // The same API exists as private API (prefixed with an underscore) as far
+    // back as iOS 15, but we're not allowed to implement it directly.  Since
+    // it's solifidied now into public API, we can be assured that the private
+    // API signature won't change in future iOS versions, so we can grab the
+    // implementation of the public API and dynamically inject it with the
+    // private API method signature.
+    //
+    // Is this best practice? No.
+    // Is this safe? Probably.
+    // Is this useful for apps that use geolocation? Definitely.
+    if (@available(iOS 27.0, *)) {
+        /* Do nothing - iOS 27 supports the public API delegate method */
+    } else if (@available(iOS 15.0, *)) {
+        /* Alias the public API delegate method to the private API */
+        Class class = [self class];
+
+        SEL publicSelector = @selector(webView:requestGeolocationPermissionForOrigin:initiatedByFrame:decisionHandler:);
+        SEL privateSelector = NSSelectorFromString([NSString stringWithFormat:@"_%@", NSStringFromSelector(publicSelector)]);
+
+        Method publicMethod = class_getInstanceMethod(class, publicSelector);
+
+        class_addMethod(class, privateSelector, method_getImplementation(publicMethod), method_getTypeEncoding(publicMethod));
+    }
+}
+#endif
 
 - (instancetype)initWithViewController:(CDVViewController *)vc
 {
@@ -159,11 +199,11 @@
     // We do not allow closing the primary WebView
 }
 
-- (void)webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(nonnull WKSecurityOrigin *)origin initiatedByFrame:(nonnull WKFrameInfo *)frame type:(WKMediaCaptureType)type decisionHandler:(nonnull void (^)(WKPermissionDecision))decisionHandler
-  API_AVAILABLE(ios(15.0))
+- (void)webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(nonnull WKSecurityOrigin *)origin initiatedByFrame:(nonnull WKFrameInfo *)frame type:(WKMediaCaptureType)type decisionHandler:(CDV_SWIFT_UI_ACTOR void (^)(WKPermissionDecision))decisionHandler
+  API_AVAILABLE(ios(15.0), macos(12.0))
 {
     WKPermissionDecision decision;
-    
+
     if (_mediaPermissionGrantType == CDVWebViewPermissionGrantType_Prompt) {
         decision = WKPermissionDecisionPrompt;
     }
@@ -176,12 +216,40 @@
     else {
         if ([origin.host isEqualToString:webView.URL.host]) {
             decision = WKPermissionDecisionGrant;
-        }
-        else {
-            decision =_mediaPermissionGrantType == CDVWebViewPermissionGrantType_GrantIfSameHost_ElsePrompt ? WKPermissionDecisionPrompt : WKPermissionDecisionDeny;
+        } else if (_mediaPermissionGrantType == CDVWebViewPermissionGrantType_GrantIfSameHost_ElsePrompt) {
+            decision = WKPermissionDecisionPrompt;
+        } else {
+            decision = WKPermissionDecisionDeny;
         }
     }
-    
+
+    decisionHandler(decision);
+}
+
+- (void)webView:(WKWebView *)webView requestGeolocationPermissionForOrigin:(WKSecurityOrigin*)origin initiatedByFrame:(WKFrameInfo *)frame decisionHandler:(CDV_SWIFT_UI_ACTOR void (^)(WKPermissionDecision decision))decisionHandler
+    API_AVAILABLE(ios(27.0), macos(27.0), visionos(27.0))
+{
+    WKPermissionDecision decision;
+
+    if (_geolocationPermissionGrantType == CDVWebViewPermissionGrantType_Prompt) {
+        decision = WKPermissionDecisionPrompt;
+    }
+    else if (_geolocationPermissionGrantType == CDVWebViewPermissionGrantType_Deny) {
+        decision = WKPermissionDecisionDeny;
+    }
+    else if (_geolocationPermissionGrantType == CDVWebViewPermissionGrantType_Grant) {
+        decision = WKPermissionDecisionGrant;
+    }
+    else {
+        if ([origin.host isEqualToString:webView.URL.host]) {
+            decision = WKPermissionDecisionGrant;
+        } else if (_geolocationPermissionGrantType == CDVWebViewPermissionGrantType_GrantIfSameHost_ElsePrompt) {
+            decision = WKPermissionDecisionPrompt;
+        } else {
+            decision = WKPermissionDecisionDeny;
+        }
+    }
+
     decisionHandler(decision);
 }
 
