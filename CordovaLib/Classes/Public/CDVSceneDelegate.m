@@ -25,6 +25,7 @@
 // URL contexts captured on a cold launch, held until the page loads so that
 // CDVHandleOpenURL has registered its observer before we post the notification.
 @property (nonatomic, strong, nullable) NSSet<UIOpenURLContext *> *launchURLContexts;
+@property (nonatomic, strong, nullable) NSUserActivity *launchUserActivity;
 @property (nonatomic, weak, nullable) UIScene *launchScene;
 
 @end
@@ -44,6 +45,18 @@
     if (connectionOptions.URLContexts.count > 0) {
         self.launchScene = scene;
         self.launchURLContexts = connectionOptions.URLContexts;
+    }
+
+    // A universal link launch arrives as a user activity rather than a URL, and
+    // connectionOptions.userActivities is the only place it appears: -scene:continueUserActivity:
+    // is called for an app that is already running, never for one being launched. Buffer it the
+    // same way, so a cold launch reaches the plugins that handle it.
+    if (connectionOptions.userActivities.count > 0) {
+        self.launchScene = scene;
+        self.launchUserActivity = connectionOptions.userActivities.anyObject;
+    }
+
+    if (self.launchURLContexts != nil || self.launchUserActivity != nil) {
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(pageDidLoad:)
                                                      name:CDVPageDidLoadNotification
@@ -57,11 +70,17 @@
 
     UIScene *scene = self.launchScene;
     NSSet<UIOpenURLContext *> *contexts = self.launchURLContexts;
+    NSUserActivity *userActivity = self.launchUserActivity;
     self.launchScene = nil;
     self.launchURLContexts = nil;
+    self.launchUserActivity = nil;
 
     if (scene != nil && contexts != nil) {
         [self scene:scene openURLContexts:contexts];
+    }
+
+    if (scene != nil && userActivity != nil) {
+        [self scene:scene continueUserActivity:userActivity];
     }
 }
 
@@ -69,10 +88,11 @@
 {
     // If the scene disconnects before the page loaded, tear down the pending
     // launch-URL observer so it cannot fire for a defunct scene.
-    if (self.launchURLContexts != nil) {
+    if (self.launchURLContexts != nil || self.launchUserActivity != nil) {
         [[NSNotificationCenter defaultCenter] removeObserver:self name:CDVPageDidLoadNotification object:nil];
         self.launchScene = nil;
         self.launchURLContexts = nil;
+        self.launchUserActivity = nil;
     }
 }
 
