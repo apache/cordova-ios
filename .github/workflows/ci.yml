@@ -61,7 +61,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-15, macos-26, macos-26-intel]
+        os: [macos-15, macos-26, macos-26-intel, xcode-27]
 
     env:
       CDV_IOS_SIM: ${{ matrix.os == 'macos-15' && 'iPhone 16e' || 'iPhone 17' }}
