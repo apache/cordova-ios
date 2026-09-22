@@ -147,8 +147,8 @@ describe('SwiftPackage', () => {
         it('should replace plugin variables in the package file', () => {
             pkg.addPlugin(my_plugin, {
                 variables: {
-                    SDK_VERSION: '0.0.1',
-                },
+                    SDK_VERSION: '0.0.1'
+                }
             });
 
             const pkgPath = path.join(tmpDir.name, 'packages', 'my-plugin', 'Package.swift');
