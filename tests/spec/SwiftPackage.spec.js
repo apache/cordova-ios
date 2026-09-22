@@ -144,6 +144,18 @@ describe('SwiftPackage', () => {
             expect(content).toContain('.product(name: "my-plugin", package: "my-plugin")');
         });
 
+        it('should replace plugin variables in the package file', () => {
+            pkg.addPlugin(my_plugin, {
+                variables: {
+                    SDK_VERSION: '0.0.1',
+                },
+            });
+
+            const pkgPath = path.join(tmpDir.name, 'packages', 'my-plugin', 'Package.swift');
+            const content = fs.readFileSync(pkgPath, 'utf8');
+            expect(content).toContain('.package(url: "https://github.com/apache/sdk.git", exact: "0.0.1")');
+        });
+
         it('should copy the plugin into the packages directory', () => {
             pkg.addPlugin(my_plugin);
 

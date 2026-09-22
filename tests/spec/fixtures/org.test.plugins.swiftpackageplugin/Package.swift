@@ -31,7 +31,8 @@ let package = Package(
         .library(name: "PackagePlugin", targets: ["PackagePlugin"])
     ],
     dependencies: [
-        .package(url: "https://github.com/apache/cordova-ios.git", branch: "master")
+        .package(url: "https://github.com/apache/cordova-ios.git", branch: "master"),
+        .package(url: "https://github.com/apache/sdk.git", exact: "$SDK_VERSION")
     ],
     targets: [
         .target(
