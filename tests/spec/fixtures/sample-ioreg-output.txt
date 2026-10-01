@@ -24,6 +24,72 @@
   |   "IOKitDiagnostics" = {"Foobar"="Foobar"}
   | }
   |
+  +-o AppleT6000USBXHCI@02000000  <class AppleT6000USBXHCI, id 0x100000473, registered, matched, active, busy 0 (598 ms), retain 98>
+  | | {
+  | |   "IOClass" = "AppleT6000USBXHCI"
+  | |   "kUSBSleepPortCurrentLimit" = 3000
+  | |   "UsbHostControllerSoftRetryPolicy" = 0
+  | |   "IOPersonalityPublisher" = "com.apple.driver.usb.AppleSynopsysUSB40XHCI"
+  | |   "IOMatchedAtBoot" = Yes
+  | |   "IOPowerManagement" = {"ChildrenPowerState"=3,"DevicePowerState"=0,"CurrentPowerState"=3,"CapabilityFlags"=32768,"MaxPowerState"=3,"DriverPowerState"=0}
+  | |   "IOProviderClass" = "AppleARMIODevice"
+  | |   "IOProbeScore" = 10002
+  | |   "locationID" = 33554432
+  | |   "kUSBWakePortCurrentLimit" = 3000
+  | |   "IONameMatch" = "usb-drd,t6000"
+  | |   "CFBundleIdentifierKernel" = "com.apple.driver.usb.AppleSynopsysUSB40XHCI"
+  | |   "UsbHostControllerDeferRegisterService" = Yes
+  | |   "IOMatchCategory" = "usb-host"
+  | |   "CFBundleIdentifier" = "com.apple.driver.usb.AppleSynopsysUSB40XHCI"
+  | |   "Revision" = <0103>
+  | |   "IONameMatched" = "usb-drd,t6000"
+  | |   "UsbHostControllerUSB4LPMPolicy" = 1
+  | |   "UsbHostControllerTierLimit" = 6
+  | |   "controller-statistics" = {"kControllerStatIOCount"=46575,"kControllerStatPowerStateTime"={"kPowerStateInitialize"="0ms (0%)","kPowerStateOff"="327655037ms (97%)","kPowerStateSle$
+  | |   "kUSBSleepSupported" = Yes
+  | | }
+  | |
+  | +-o iPad@02100000  <class IOUSBHostDevice, id 0x1003271c8, registered, matched, active, busy 0 (276 ms), retain 62>
+  |     {
+  |       "kUSBSerialNumberString" = "IPADMINI_UDID"
+  |       "bDeviceClass" = 0
+  |       "UsbAppleDeviceECID" = 6259374711472158
+  |       "bDeviceSubClass" = 0
+  |       "iSerialNumber" = 3
+  |       "UsbPowerSinkCapability" = 2400
+  |       "IOServiceDEXTEntitlements" = (("com.apple.developer.driverkit.transport.usb"))
+  |       "iProduct" = 2
+  |       "USB Serial Number" = "IPADMINI_UDID"
+  |       "USB Vendor Name" = "Apple Inc."
+  |       "USBSpeed" = 3
+  |       "IOPowerManagement" = {"PowerOverrideOn"=Yes,"DevicePowerState"=2,"CurrentPowerState"=2,"CapabilityFlags"=32768,"MaxPowerState"=2,"DriverPowerState"=0}
+  |       "bNumConfigurations" = 5
+  |       "kUSBProductString" = "iPad"
+  |       "kCDCDoNotMatchThisDevice" = Yes
+  |       "kCallInterfaceOpenWithGate" = Yes
+  |       "kUSBVendorString" = "Apple Inc."
+  |       "USB Product Name" = "iPad"
+  |       "iManufacturer" = 1
+  |       "idVendor" = 1452
+  |       "Device Speed" = 2
+  |       "kUSBCurrentConfiguration" = 5
+  |       "idProduct" = 4779
+  |       "bcdDevice" = 5121
+  |       "UsbDeviceSignature" = <ac05ab120114303030303831313030303136334344453345333138303145000000060101010100010200030000fffe02fffd01020d000a0001>
+  |       "sessionID" = 7864622857660
+  |       "USB Address" = 1
+  |       "kUSBPreferredConfiguration" = 3
+  |       "IOCFPlugInTypes" = {"9dc7b780-9ec0-11d4-a54f-000a27052861"="IOUSBHostFamily.kext/Contents/PlugIns/IOUSBLib.bundle"}
+  |       "SupportsIPhoneOS" = Yes
+  |       "USBPortType" = 0
+  |       "bDeviceProtocol" = 0
+  |       "locationID" = 34603008
+  |       "kUSBAddress" = 1
+  |       "bcdUSB" = 528
+  |       "IOGeneralInterest" = "IOCommand is not serializable"
+  |       "bMaxPacketSize0" = 64
+  |     }
+  |
   +-o AppleUSBXHCI Root Hub Simulation@14000000  <class AppleUSBRootHubDevice, id 0x100020cab, registered, matched, active, busy 0 (2 ms), retain 9>
     | {
     |   "iManufacturer" = 0
