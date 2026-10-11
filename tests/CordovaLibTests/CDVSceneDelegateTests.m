@@ -355,4 +355,51 @@
     [self waitForExpectations:@[openURLFired, userActivityFired] timeout:1.0];
 }
 
+// The application delegate's deprecated window is never set by an app on scenes. Anything that
+// still reads it must find the scene's window once the scene has connected.
+- (void)testConnectingGivesTheApplicationDelegateTheSceneWindow
+{
+    id<UIApplicationDelegate> appDelegate = UIApplication.sharedApplication.delegate;
+    if (![appDelegate respondsToSelector:@selector(setWindow:)]) {
+        XCTSkip(@"The test host's application delegate has no window property");
+    }
+
+    UIWindow *previousWindow = appDelegate.window;
+    [appDelegate setWindow:nil];
+
+    UIWindow *sceneWindow = [[UIWindow alloc] init];
+    self.sceneDelegate.window = sceneWindow;
+
+    [self.sceneDelegate scene:self.placeholderScene
+          willConnectToSession:self.placeholderSession
+                       options:[CDVFakeSceneConnectionOptions optionsWithURLContexts:[NSSet set]]];
+
+    XCTAssertEqual(appDelegate.window, sceneWindow);
+
+    [appDelegate setWindow:previousWindow];
+}
+
+// A window the delegate already has is left alone.
+- (void)testConnectingKeepsAnExistingApplicationDelegateWindow
+{
+    id<UIApplicationDelegate> appDelegate = UIApplication.sharedApplication.delegate;
+    if (![appDelegate respondsToSelector:@selector(setWindow:)]) {
+        XCTSkip(@"The test host's application delegate has no window property");
+    }
+
+    UIWindow *previousWindow = appDelegate.window;
+    UIWindow *existingWindow = [[UIWindow alloc] init];
+    [appDelegate setWindow:existingWindow];
+
+    self.sceneDelegate.window = [[UIWindow alloc] init];
+
+    [self.sceneDelegate scene:self.placeholderScene
+          willConnectToSession:self.placeholderSession
+                       options:[CDVFakeSceneConnectionOptions optionsWithURLContexts:[NSSet set]]];
+
+    XCTAssertEqual(appDelegate.window, existingWindow);
+
+    [appDelegate setWindow:previousWindow];
+}
+
 @end

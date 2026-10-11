@@ -34,6 +34,18 @@
 
 - (void)scene:(UIScene *)scene willConnectToSession:(UISceneSession *)session options:(UISceneConnectionOptions *)connectionOptions
 {
+    // CDVAppDelegate's deprecated `window` property is never assigned in an app that uses scenes,
+    // because the scene owns the window. Code that still reads the application delegate's window
+    // (a web view UI delegate presenting JavaScript alert/confirm/prompt, for one) then finds nil
+    // and presents nothing. Hand the delegate the scene's window.
+    id<UIApplicationDelegate> appDelegate = UIApplication.sharedApplication.delegate;
+    if (self.window != nil
+        && [appDelegate respondsToSelector:@selector(window)]
+        && [appDelegate respondsToSelector:@selector(setWindow:)]
+        && appDelegate.window == nil) {
+        [appDelegate setWindow:self.window];
+    }
+
     // If the app was launched from a URL, that should also fire the CDVPluginHandleOpenURLNotification.
     //
     // On a cold launch this runs during scene connection, which is *before*
