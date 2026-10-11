@@ -19,7 +19,8 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
-const bplist = require('bplist-parser');
+// Since bplist-parser 0.5.0, exports are read-only; spy on an isolated copy.
+const bplist = { ...require('bplist-parser') };
 const plist = require('plist');
 const devicectl = require('devicectl');
 const { CordovaError, events } = require('cordova-common');
@@ -45,18 +46,22 @@ describe('cordova/lib/run devicectl deployment', () => {
         // Unlike rewire, this preserves source locations in V8 coverage reports.
         const runPath = require.resolve('../../lib/run');
         const execaModule = require.cache[require.resolve('execa')];
+        const bplistModule = require.cache[require.resolve('bplist-parser')];
         const originalRun = require.cache[runPath];
         const originalExeca = execaModule.exports;
+        const originalBplist = bplistModule.exports;
         const originalGetDevice = simctlHelper.getDeviceFromDeviceTypeId;
         const originalStart = simctlHelper.startSimulator;
         try {
             execaModule.exports = (...args) => exec(...args);
+            bplistModule.exports = bplist;
             simctlHelper.getDeviceFromDeviceTypeId = (...args) => getDevice(...args);
             simctlHelper.startSimulator = (...args) => start(...args);
             delete require.cache[runPath];
             run = require('../../lib/run');
         } finally {
             execaModule.exports = originalExeca;
+            bplistModule.exports = originalBplist;
             simctlHelper.getDeviceFromDeviceTypeId = originalGetDevice;
             simctlHelper.startSimulator = originalStart;
             if (originalRun) require.cache[runPath] = originalRun;
