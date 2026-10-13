@@ -39,17 +39,20 @@ static UIColor *defaultBackgroundColor(void) {
     id <CDVCommandDelegate> _commandDelegate;
     NSMutableDictionary<NSString *, CDVPlugin *> *_pluginObjects;
     NSMutableDictionary<NSString *, NSString *> *_pluginsMap;
-    CDVCommandQueue* _commandQueue;
+    CDVCommandQueue *_commandQueue;
     UIColor *_backgroundColor;
     UIColor *_splashBackgroundColor;
     UIColor *_statusBarBackgroundColor;
     UIColor *_statusBarWebViewColor;
     UIColor *_statusBarDefaultColor;
     BOOL _statusBarHidden;
-    CDVSettingsDictionary* _settings;
+    CDVSettingsDictionary *_settings;
+    NSArray<NSLayoutConstraint *> *_topStatusBarConstraints;
+    NSArray<NSLayoutConstraint *> *_leftStatusBarConstraints;
+    NSArray<NSLayoutConstraint *> *_rightStatusBarConstraints;
 }
 
-@property (nonatomic, readwrite, strong) NSMutableArray* startupPluginNames;
+@property (nonatomic, readwrite, strong) NSMutableArray *startupPluginNames;
 @property (nonatomic, readwrite, strong) UIView *launchView;
 @property (nonatomic, readwrite, strong) UIView *statusBarBackgroundView;
 @property (readwrite, assign) BOOL initialized;
@@ -449,6 +452,30 @@ static UIColor *defaultBackgroundColor(void) {
 
 -(void)viewWillLayoutSubviews
 {
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 270100
+    if (@available(iOS 27.1, *)) {
+        if (self.traitCollection.verticalBarEdge == UIVerticalBarEdgeLeading) {
+            [NSLayoutConstraint deactivateConstraints:_topStatusBarConstraints];
+            [NSLayoutConstraint deactivateConstraints:_rightStatusBarConstraints];
+
+            [NSLayoutConstraint activateConstraints:_leftStatusBarConstraints];
+        } else if (self.traitCollection.verticalBarEdge == UIVerticalBarEdgeTrailing) {
+            [NSLayoutConstraint deactivateConstraints:_topStatusBarConstraints];
+            [NSLayoutConstraint deactivateConstraints:_leftStatusBarConstraints];
+
+            [NSLayoutConstraint activateConstraints:_rightStatusBarConstraints];
+        } else {
+            [NSLayoutConstraint deactivateConstraints:_rightStatusBarConstraints];
+            [NSLayoutConstraint deactivateConstraints:_leftStatusBarConstraints];
+            [NSLayoutConstraint activateConstraints:_topStatusBarConstraints];
+        }
+    }
+    else
+#endif
+    {
+        [NSLayoutConstraint activateConstraints:_topStatusBarConstraints];
+    }
+
     [super viewWillLayoutSubviews];
     [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:CDVViewWillLayoutSubviewsNotification object:nil]];
 }
@@ -699,6 +726,7 @@ static UIColor *defaultBackgroundColor(void) {
     webViewBounds.origin = self.view.bounds.origin;
 
     UIView* view = [[UIView alloc] initWithFrame:webViewBounds];
+    view.accessibilityIdentifier = @"LaunchView";
     view.translatesAutoresizingMaskIntoConstraints = NO;
     view.alpha = 0;
 
@@ -759,15 +787,31 @@ static UIColor *defaultBackgroundColor(void) {
 
     self.statusBarBackgroundView = [[UIView alloc] init];
     self.statusBarBackgroundView.translatesAutoresizingMaskIntoConstraints = NO;
+    self.statusBarBackgroundView.accessibilityIdentifier = @"StatusBarBackground";
+    self.statusBarBackgroundView.hidden = YES;
 
     [self.view addSubview:self.statusBarBackgroundView];
 
-    [self.statusBarBackgroundView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor].active = YES;
-    [self.statusBarBackgroundView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor].active = YES;
-    [self.statusBarBackgroundView.topAnchor constraintEqualToAnchor:self.view.topAnchor].active = YES;
-    [self.statusBarBackgroundView.bottomAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor].active = YES;
+    _topStatusBarConstraints = @[
+        [self.statusBarBackgroundView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
+        [self.statusBarBackgroundView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
+        [self.statusBarBackgroundView.topAnchor constraintEqualToAnchor:self.view.topAnchor],
+        [self.statusBarBackgroundView.bottomAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor]
+    ];
 
-    self.statusBarBackgroundView.hidden = YES;
+    _leftStatusBarConstraints = @[
+        [self.statusBarBackgroundView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
+        [self.statusBarBackgroundView.trailingAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.leadingAnchor],
+        [self.statusBarBackgroundView.topAnchor constraintEqualToAnchor:self.view.topAnchor],
+        [self.statusBarBackgroundView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor]
+    ];
+
+    _rightStatusBarConstraints = @[
+        [self.statusBarBackgroundView.leadingAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.trailingAnchor],
+        [self.statusBarBackgroundView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
+        [self.statusBarBackgroundView.topAnchor constraintEqualToAnchor:self.view.topAnchor],
+        [self.statusBarBackgroundView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor]
+    ];
 #endif
 }
 
