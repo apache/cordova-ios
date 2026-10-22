@@ -19,11 +19,11 @@
 #
 -->
 
-## Release Notes for Cordova (iOS) ##
+# Cordova-iOS Release Notes
 
 Cordova is a framework that enables developers to include the Cordova API in their iOS application projects easily, and also create new Cordova-based iOS application projects through the command-line.
 
-### 8.1.1
+## 8.1.1
 
 **Fixes:**
 
@@ -45,7 +45,7 @@ Cordova is a framework that enables developers to include the Cordova API in the
 * chore(deps-dev): bump tmp from 0.2.5 to 0.2.6 ([#1657](https://github.com/apache/cordova-ios/pull/1657)) [[7db38623](https://github.com/apache/cordova-ios/commit/7db38623)]
 * chore(workflow): more refactoring ([#1674](https://github.com/apache/cordova-ios/pull/1674)) [[eb65a51e](https://github.com/apache/cordova-ios/commit/eb65a51e)]
 
-### 8.1.0 (May 26, 2026)
+## 8.1.0 (May 26, 2026)
 
 **Fixes:**
 
@@ -89,7 +89,7 @@ Cordova is a framework that enables developers to include the Cordova API in the
 * [GH-1591](https://github.com/apache/cordova-ios/pull/1591) doc(readme): add Link to **iOS** Platform Guide
 * [GH-1588](https://github.com/apache/cordova-ios/pull/1588) chore: update release audit workflow & license headers
 
-### 8.0.1
+## 8.0.1
 
 **Fixes:**
 
@@ -117,7 +117,7 @@ Cordova is a framework that enables developers to include the Cordova API in the
 * [GH-1591](https://github.com/apache/cordova-ios/pull/1591) doc(readme): add Link to **iOS** Platform Guide
 * [GH-1588](https://github.com/apache/cordova-ios/pull/1588) chore: update release audit workflow & license headers
 
-### 8.0.0 (Nov 21, 2025)
+## 8.0.0 (Nov 21, 2025)
 
 Also see "8.0.0-beta.1" release notes below.
 
@@ -187,7 +187,7 @@ Also see "8.0.0-beta.1" release notes below.
 * [GH-1510](https://github.com/apache/cordova-ios/pull/1510) test: Update fixture project to match the template
 * [GH-1554](https://github.com/apache/cordova-ios/pull/1554) test: Upgrade rewire and reduce its usage
 
-### 8.0.0-beta.1 (Oct 17, 2024)
+## 8.0.0-beta.1 (Oct 17, 2024)
 
 **Breaking Changes:**
 
@@ -234,7 +234,7 @@ Also see "8.0.0-beta.1" release notes below.
 * [GH-1459](https://github.com/apache/cordova-ios/pull/1459) chore: Clean up ancient plist-to-config.xml cruft
 * [GH-1445](https://github.com/apache/cordova-ios/pull/1445) chore: bump version 8.0.0-dev
 
-### 7.1.1 (Jul 19, 2024)
+## 7.1.1 (Jul 19, 2024)
 
 **Fixes:**
 
@@ -248,7 +248,7 @@ Also see "8.0.0-beta.1" release notes below.
 * [GH-1426](https://github.com/apache/cordova-ios/pull/1426) chore: Update CordovaLib.xcodeproj fixture
 * [GH-1419](https://github.com/apache/cordova-ios/pull/1419) ci: update codecov@v4 w/ token
 
-### 7.1.0 (Apr 01, 2024)
+## 7.1.0 (Apr 01, 2024)
 
 **Features:**
 
@@ -273,14 +273,14 @@ Also see "8.0.0-beta.1" release notes below.
 * [GH-1412](https://github.com/apache/cordova-ios/pull/1412) ci: Fix ObjC testing with latest Xcode
 * [GH-1408](https://github.com/apache/cordova-ios/pull/1408) ci(gh-action): add Apache RAT & package license checker workflow w/ license header additions
 
-### 7.0.1 (Sep 03, 2023)
+## 7.0.1 (Sep 03, 2023)
 
 * [GH-1369](https://github.com/apache/cordova-ios/pull/1369) fix: `xcodebuild` version check to 11
 * [GH-1358](https://github.com/apache/cordova-ios/pull/1358) fix: ensure Xcode project file references use `path`
 * [GH-1368](https://github.com/apache/cordova-ios/pull/1368) fix: make code compile on Xcode 11
 * [GH-1360](https://github.com/apache/cordova-ios/pull/1360) fix: add missing cordova versions to `CDVAvailability.h`
 
-### 7.0.0 (Jul 07, 2023)
+## 7.0.0 (Jul 07, 2023)
 
 **Breaking:**
 
@@ -387,14 +387,14 @@ Also see "8.0.0-beta.1" release notes below.
 * [GH-1176](https://github.com/apache/cordova-ios/pull/1176) test(create): increase test timeout
 * [GH-1133](https://github.com/apache/cordova-ios/pull/1133) doc: `README` improvements (cleaup, xcode debugging, etc)
 
-### 6.3.0 (Apr 13, 2023)
+## 6.3.0 (Apr 13, 2023)
 
 * chore: npm audit fix
 * [GH-1302](https://github.com/apache/cordova-ios/pull/1302) fix: URL parsing for ATS in node 18
 * [GH-1258](https://github.com/apache/cordova-ios/pull/1258) fix: workaround for DisallowOverscroll on **iOS** 16
 * [GH-1300](https://github.com/apache/cordova-ios/pull/1300) feat: set webView.inspectable to true for Debug builds on **iOS** >= 16.4
 
-### 6.2.0 (Feb 01, 2021)
+## 6.2.0 (Feb 01, 2021)
 * [GH-1069](https://github.com/apache/cordova-ios/pull/1069) (chore): update dependencies for minor release
 * [GH-1067](https://github.com/apache/cordova-ios/pull/1067) fix: plugin podspec with no config elements
 * [GH-1014](https://github.com/apache/cordova-ios/pull/1014) fix(splashscreen): Don't show splashscreen when used as a lib
@@ -416,14 +416,16 @@ Also see "8.0.0-beta.1" release notes below.
 * [GH-936](https://github.com/apache/cordova-ios/pull/936) (ios) issue-912: fix deployment to device
 * [GH-932](https://github.com/apache/cordova-ios/pull/932) ci: add node 14 to workflow
 
-### 6.1.1 (Aug 28, 2020)
+## 6.1.1 (Aug 28, 2020)
+
 * [GH-976](https://github.com/apache/cordova-ios/pull/976) Update npm dependencies to pull in `cordova-common@4.0.2`
     * This should resolve several issues affecting Info.plist files, including [#764](https://github.com/apache/cordova-ios/issues/764) and [#775](https://github.com/apache/cordova-ios/issues/775)
 * [GH-973](https://github.com/apache/cordova-ios/pull/973) Append `startURL` to the initial url loaded
 * [GH-912](https://github.com/apache/cordova-ios/issues/912) fix deployment to device ([#936](https://github.com/apache/cordova-ios/pull/936))
 * [GH-932](https://github.com/apache/cordova-ios/pull/932) add node 14 to CI workflow
 
-### 6.1.0 (Jun 21, 2020)
+## 6.1.0 (Jun 21, 2020)
+
 * [GH-910](https://github.com/apache/cordova-ios/pull/910) Set `$PROJECT_NAME` properly when installing plugins
 * [GH-885](https://github.com/apache/cordova-ios/pull/885) Don't silently ignore creation of new windows
 * [GH-889](https://github.com/apache/cordova-ios/issues/899) Revert "(ios) Don't pre-fill orientation" ([#901](https://github.com/apache/cordova-ios/pull/901))
@@ -434,7 +436,7 @@ Also see "8.0.0-beta.1" release notes below.
 * [GH-888](https://github.com/apache/cordova-ios/pull/888) fix: author and tag podspec errors
 * [GH-882](https://github.com/apache/cordova-ios/pull/882) fix: Properly get version from `package.json`
 
-### 6.0.0 (May 28, 2020)
+## 6.0.0 (May 28, 2020)
 
 * [GH-875](https://github.com/apache/cordova-ios/pull/875) fix: remove `q` leftover
 * chore(`audit-license-headers`): add & correct license
@@ -497,11 +499,13 @@ Also see "8.0.0-beta.1" release notes below.
 * [GH-743](https://github.com/apache/cordova-ios/pull/743) chore: bump `node` requirement (>=10)
 * [GH-731](https://github.com/apache/cordova-ios/pull/731) CB-14135(ios): escape all single quotes from name in `Podfile`
 
-### 5.1.1 (Nov 28, 2019)
+## 5.1.1 (Nov 28, 2019)
+
 * [GH-726](https://github.com/apache/cordova-ios/pull/726) fix: make prepare wait for add to finish
 * [GH-728](https://github.com/apache/cordova-ios/pull/728) chore: delete some useless characters
 
-### 5.1.0 (Nov 22, 2019)
+## 5.1.0 (Nov 22, 2019)
+
 * [GH-719](https://github.com/apache/cordova-ios/pull/719) Add check for newer versions of cocoapods to avoid locking adding platforms on non synced pods repo
 * [GH-715](https://github.com/apache/cordova-ios/pull/715) feat: add optional compile-time decision for disabling `UIWebView`
 * [GH-712](https://github.com/apache/cordova-ios/pull/712) Update Xcode versions used in CI to latest minor release
@@ -519,7 +523,8 @@ Also see "8.0.0-beta.1" release notes below.
 * [GH-632](https://github.com/apache/cordova-ios/pull/632) Update jasmine & fix broken tests
 * [GH-622](https://github.com/apache/cordova-ios/pull/622) Remove outdated component/duo package manager package definition
 
-### 5.0.1 (Apr 18, 2019)
+## 5.0.1 (Apr 18, 2019)
+
 * [GH-596](https://github.com/apache/cordova-ios/pull/596) More logging for simulator selection and deployment
 * [GH-540](https://github.com/apache/cordova-ios/pull/540) Fix copy-www-build-step without shelljs
 * [GH-589](https://github.com/apache/cordova-ios/pull/589) Bump `ios-sim` dependency version to fix simulator listing
@@ -533,7 +538,8 @@ Also see "8.0.0-beta.1" release notes below.
 * [GH-528](https://github.com/apache/cordova-ios/pull/528) ignore Swift version settings of Cocoapods library on non-macOS environments
 * [GH-542](https://github.com/apache/cordova-ios/pull/542) Enabling `Defines Module` flag
 
-### 5.0.0 (Feb 07, 2019)
+## 5.0.0 (Feb 07, 2019)
+
 * [GH-515](https://github.com/apache/cordova-ios/pull/515) Remove Deprecated Local and Remote Push Notification Constants
 * [GH-512](https://github.com/apache/cordova-ios/pull/512) AppIcon and LaunchImage Updates
 * [GH-254](https://github.com/apache/cordova-ios/pull/254) Expose `CDVCommandStatus` enum to Swift
@@ -586,7 +592,8 @@ Also see "8.0.0-beta.1" release notes below.
 * [GH-351](https://github.com/apache/cordova-ios/pull/351) Prevent a memory leak when converting to JSON
 * [CB-13597](https://issues.apache.org/jira/browse/CB-13597) (ios) update podfile with **iOS** version 9.0
 
-### 4.5.5 (Jul 23, 2018)
+## 4.5.5 (Jul 23, 2018)
+
 * [CB-14145](https://issues.apache.org/jira/browse/CB-14145) - update dependencies to resolve `npm audit` issues, pinned in 4.5.x only ([GH-379](https://github.com/apache/cordova-ios/pull/379))
 * [GH-379](https://github.com/apache/cordova-ios/pull/379) - commit updated `node_modules` in `4.5.x` only
 * [GH-379](https://github.com/apache/cordova-ios/pull/379) - update and pin more added bundled dependencies in `4.5.x` only
@@ -594,29 +601,34 @@ Also see "8.0.0-beta.1" release notes below.
 * [GH-379](https://github.com/apache/cordova-ios/pull/379) - `.travis.yml` and `appveyor.yml` updates (`4.5.x`)
 * [CB-9366](https://issues.apache.org/jira/browse/CB-9366) - log `error.stack` in `cordova.js` (update from `cordova-js@4.2.4`) in `4.5.x`
 
-### 4.5.4 (Nov 15, 2017)
+## 4.5.4 (Nov 15, 2017)
+
 * [CB-13579](https://issues.apache.org/jira/browse/CB-13579) Updated checked in node_modules
 * [CB-13523](https://issues.apache.org/jira/browse/CB-13523) Add flag for Xcode-managed provisioning
 * Fix compile error when compile source as objective-c++
 * [CB-13505](https://issues.apache.org/jira/browse/CB-13505) (ios) adjust storyboard constraints
 
-### 4.5.3 (Oct 25, 2017)
+## 4.5.3 (Oct 25, 2017)
+
 * [CB-13493](https://issues.apache.org/jira/browse/CB-13493) Updated checked-in node_modules
 * [CB-13290](https://issues.apache.org/jira/browse/CB-13290) (ios) Update splash screen mapping for missing devices
 * [CB-13454](https://issues.apache.org/jira/browse/CB-13454) (ios) re-add icon-40@2x.png that was accidentally removed
 
-### 4.5.2 (Oct 09, 2017)
+## 4.5.2 (Oct 09, 2017)
+
 * [CB-13417](https://issues.apache.org/jira/browse/CB-13417) Updated checked in node_modules
 * [CB-12896](https://issues.apache.org/jira/browse/CB-12896) (ios) Update icon mapping
 * [CB-12895](https://issues.apache.org/jira/browse/CB-12895) : ignoring cordova.js file
 * [CB-13315](https://issues.apache.org/jira/browse/CB-13315) (ios) fixed bug building for **iOS** using Xcode 9
 
-### 4.5.1 (Sep 21, 2017)
+## 4.5.1 (Sep 21, 2017)
+
 * [CB-13310](https://issues.apache.org/jira/browse/CB-13310) Updated checked-in node_modules
 * [CB-13191](https://issues.apache.org/jira/browse/CB-13191) (ios) Support marketing icon (#337)
 * [CB-12888](https://issues.apache.org/jira/browse/CB-12888) - cordova emulate **iOS** doesn't work in **iOS** 11
 
-### 4.5.0 (Sep 06, 2017)
+## 4.5.0 (Sep 06, 2017)
+
 * [CB-13247](https://issues.apache.org/jira/browse/CB-13247) updated checked-in node_modules
 * [CB-13212](https://issues.apache.org/jira/browse/CB-13212) - Update `cordova-ios` with new cordova-common that parses new attribute for access tag
 * [CB-13240](https://issues.apache.org/jira/browse/CB-13240) - Update **iOS**-deploy dependency to 1.9.2
@@ -643,7 +655,8 @@ Also see "8.0.0-beta.1" release notes below.
 * Updated cordova-common to 2.1.0 and other bundled node_modules
 * Update bundled ios-sim to 6.0.0
 
-### 4.4.0 (Apr 22, 2017)
+## 4.4.0 (Apr 22, 2017)
+
 * [CB-12617](https://issues.apache.org/jira/browse/CB-12617) - (BREAKING) added engine strict for users with older node versions
 * [CB-12523](https://issues.apache.org/jira/browse/CB-12523) - (BREAKING) Remove iOS 8 support
 * [CB-12522](https://issues.apache.org/jira/browse/CB-12522) - (BREAKING) Remove node 0.x support in CI
@@ -674,7 +687,7 @@ Also see "8.0.0-beta.1" release notes below.
 * [CB-11810](https://issues.apache.org/jira/browse/CB-11810) - (ios) fix unable to load index page from frameworkpath
 * Removed no-longer-working and generally-unused `diagnose_project` script
 
-### 4.3.1 (Dec 01, 2016)
+## 4.3.1 (Dec 01, 2016)
 
 * [CB-12203](https://issues.apache.org/jira/browse/CB-12203) - Updated checked-in node_modules
 * [CB-12190](https://issues.apache.org/jira/browse/CB-12190) - create.spec tests fail when a device is connected
@@ -690,7 +703,7 @@ Also see "8.0.0-beta.1" release notes below.
 * [CB-9762](https://issues.apache.org/jira/browse/CB-9762) - Fix mobilespec 'cordova build' exception.
 * Updated bundled ios-sim to version 5.0.12
 
-### 4.3.0 (Oct 21, 2016)
+## 4.3.0 (Oct 21, 2016)
 
 * [CB-11863](https://issues.apache.org/jira/browse/CB-11863) - (BREAKING) Update xcodebuild minimum version to 7.0.0
 * [CB-11862](https://issues.apache.org/jira/browse/CB-11862) - (BREAKING) Update ios-deploy minimum version required to 1.9.0
@@ -736,7 +749,8 @@ Also see "8.0.0-beta.1" release notes below.
 * [CB-11535](https://issues.apache.org/jira/browse/CB-11535) [CB-10361](https://issues.apache.org/jira/browse/CB-10361) - ios: fix bug with remove frameworks
 
 
-### 4.2.1 (Jul 26, 2016)
+## 4.2.1 (Jul 26, 2016)
+
 * [CB-11627](https://issues.apache.org/jira/browse/CB-11627) updated `CDVAvailability.h` with new version
 * [CB-11627](https://issues.apache.org/jira/browse/CB-11627) added missing license header
 * [CB-11627](https://issues.apache.org/jira/browse/CB-11627) Updated checked-in `node_modules`
@@ -745,7 +759,8 @@ Also see "8.0.0-beta.1" release notes below.
 * [CB-11475](https://issues.apache.org/jira/browse/CB-11475) Ignore unsupported 60x60 icon
 * [CB-11426](https://issues.apache.org/jira/browse/CB-11426) Hardcoded path should not be in tests project.
 
-### 4.2.0 (Jun 16, 2016)
+## 4.2.0 (Jun 16, 2016)
+
 * `cordova-ios` now supports node 6!
 * [CB-11445](https://issues.apache.org/jira/browse/CB-11445) Updated checked-in `node_modules`
 * [CB-11424](https://issues.apache.org/jira/browse/CB-11424) `AppVeyor` test failures (path separator) on `cordova-ios` platform
@@ -769,7 +784,8 @@ Also see "8.0.0-beta.1" release notes below.
 * [CB-10964](https://issues.apache.org/jira/browse/CB-10964) Handle `build.json` file starting with a `BOM`
 * [CB-10942](https://issues.apache.org/jira/browse/CB-10942) - Cannot `<allow-navigation href="https://foo.bar" />` for links in that site, if you have `<allow-intent href="https://*" />`
 
-### 4.1.1 (Apr 01, 2016)
+## 4.1.1 (Apr 01, 2016)
+
 * [CB-11006](https://issues.apache.org/jira/browse/CB-11006) Updated CDV version macro to 4.1.1
 * [CB-11006](https://issues.apache.org/jira/browse/CB-11006) Added license to loggingHelper.js
 * [CB-11006](https://issues.apache.org/jira/browse/CB-11006) Updated checked-in node_modules
@@ -789,7 +805,8 @@ Also see "8.0.0-beta.1" release notes below.
 * [CB-10773](https://issues.apache.org/jira/browse/CB-10773) Correct FRAMEWORKS_SEARCH_PATHS on win32
 * [CB-10673](https://issues.apache.org/jira/browse/CB-10673) fixed conflicting plugin install issue with overlapped <source-file> tag using --force option. This closes #199.
 
-### 4.1.0 (Feb 24, 2016)
+## 4.1.0 (Feb 24, 2016)
+
 * [CB-10693](https://issues.apache.org/jira/browse/CB-10693) added missing header license
 * [CB-10530](https://issues.apache.org/jira/browse/CB-10530) Updated `cordova.js`. 
 * [CB-10530](https://issues.apache.org/jira/browse/CB-10530) App freezes sometimes directly after starting on **iOS**
@@ -812,7 +829,7 @@ Also see "8.0.0-beta.1" release notes below.
 * [CB-10162](https://issues.apache.org/jira/browse/CB-10162) update reference url for icon images
 * [CB-10162](https://issues.apache.org/jira/browse/CB-10162) correct the paths for **iOS** icon and splashscreen resources
 
-### 4.0.0 (Dec 04, 2015)
+## 4.0.0 (Dec 04, 2015)
 
 * [CB-10136](https://issues.apache.org/jira/browse/CB-10136) - error in cordova prepare (Platform API)
 * [CB-10048](https://issues.apache.org/jira/browse/CB-10048) - clobbering of <access> tags to ATS directives [CB-10057](https://issues.apache.org/jira/browse/CB-10057) - removing <access> tag does not remove ATS entry
@@ -941,7 +958,7 @@ Also see "8.0.0-beta.1" release notes below.
 * [CB-7182](https://issues.apache.org/jira/browse/CB-7182) - Running mobile-spec in an iOS 8 project but using UIWebView results in an exception
 * Split into Public and Private headers more clearly. Delete most deprectated symbols.
 
-### 3.9.2 (Oct 30, 2015)
+## 3.9.2 (Oct 30, 2015)
 
 * Adds deprecation warnings for upcoming 4.0.0 release
 * [CB-9721](https://issues.apache.org/jira/browse/CB-9721) Set ENABLE_BITCODE to NO in build.xcconfig
@@ -953,11 +970,11 @@ Also see "8.0.0-beta.1" release notes below.
 * [CB-9046](https://issues.apache.org/jira/browse/CB-9046) cordova run ios --emulator --target "iPhone-5, 7.1" (target with runtime) does not work
 * Blob schemes won't load in iframes
 
-### 3.9.1 (20150805) ###
+## 3.9.1 (20150805)
 
 * [CB-9453](https://issues.apache.org/jira/browse/CB-9453) Fixed Updating to iOS@3.9.0 not building 
 
-### 3.9.0 (20150728) ###
+## 3.9.0 (20150728)
 
 * [CB-8586](https://issues.apache.org/jira/browse/CB-8586) Update ios-deploy minimum version to 1.4.0
 * [CB-8485](https://issues.apache.org/jira/browse/CB-8485) Support for signed archive for iOS
@@ -977,7 +994,7 @@ Also see "8.0.0-beta.1" release notes below.
 * [CB-9088](https://issues.apache.org/jira/browse/CB-9088) Sms urls won't open in iframe
 * [CB-8621](https://issues.apache.org/jira/browse/CB-8621) Fix Q require in list-devices (Q -> q)
 
-### 3.8.0 (201502XX) ###
+## 3.8.0 (201502XX)
 
 * [CB-8436](https://issues.apache.org/jira/browse/CB-8436) Remove more bad quotes from build command
 * [CB-8436](https://issues.apache.org/jira/browse/CB-8436) Remove unneeded "" when composing xcodebuild arguments (closes #130)
@@ -1002,7 +1019,7 @@ Also see "8.0.0-beta.1" release notes below.
 * Have CordovaLib classes import CDVJSON_private.h rather than CDVJSON.h
 * Trim down checked-in node_module files to minimal set
 
-### 3.7.0 (20141106) ###
+## 3.7.0 (20141106)
 
 * [CB-7882](https://issues.apache.org/jira/browse/CB-7882) - viewDidUnload instance method is missing [super viewDidUnload] call
 * [CB-7872](https://issues.apache.org/jira/browse/CB-7872) - XCode 6.1's xcrun PackageApplication fails at packaging / resigning Cordova applications (closes #115)
@@ -1048,8 +1065,7 @@ Also see "8.0.0-beta.1" release notes below.
 * Updated cordova/build script to use specific SHARED_PRECOMPS_DIR variable.
 * Update .gitignore to not ignore .xcworkspace files
 
-
-### 3.6.3 (20140908) ###
+## 3.6.3 (20140908)
 
 * Updated default template.
 * [CB-7432](https://issues.apache.org/jira/browse/CB-7432) - iOS - Version script should be updated by coho at release time
@@ -1076,8 +1092,7 @@ Also see "8.0.0-beta.1" release notes below.
 * [CB-6729](https://issues.apache.org/jira/browse/CB-6729) - Update printDeprecationNotice to new name, and new warning for iOS < 6.0
 * [CB-5651](https://issues.apache.org/jira/browse/CB-5651) - [iOS] make visible the version of the Cordova native lib
 
-
-### 3.5.0 (20140522) ###
+## 3.5.0 (20140522)
 
 * [CB-6638](https://issues.apache.org/jira/browse/CB-6638) - Convert CordovaLibTests to XCTests
 * [CB-6579](https://issues.apache.org/jira/browse/CB-6579) - CDVWebViewDelegateTests are failing
@@ -1105,7 +1120,7 @@ Also see "8.0.0-beta.1" release notes below.
 * Update Xcode .pbxproj files according to Xcode 5.1 recommendations
 * Added NSLog notification for beginning backup to iCloud (closes #96)
  
-### 3.4.1 (201403XX) ###
+## 3.4.1 (201403XX)
  
 * Update Xcode .pbxproj files according to Xcode 5.1 recommendations
 * [CB-6327](https://issues.apache.org/jira/browse/CB-6327) Allow '.' in plugin feature names (and therefore callback ids)
@@ -1117,7 +1132,7 @@ Also see "8.0.0-beta.1" release notes below.
 * Validate that callback IDs are always well-formed
 * [CB-5018](https://issues.apache.org/jira/browse/CB-5018) - bin/create on iOS should use --arc by default
 
-### 3.4.0 (201402XX) ###
+## 3.4.0 (201402XX)
 
 * [CB-5794](https://issues.apache.org/jira/browse/CB-5794) iOS build script: 1. don't clean 2. recognize --emulator vs --device
 * [CB-4910](https://issues.apache.org/jira/browse/CB-4910) Update CLI project template to point to config.xml at the root now that it's not in www/ by default.
@@ -1138,11 +1153,11 @@ Also see "8.0.0-beta.1" release notes below.
 * [CB-5298](https://issues.apache.org/jira/browse/CB-5298) Have bin/create run bin/check_reqs.
 * [CB-5328](https://issues.apache.org/jira/browse/CB-5328) Fix .gitignore from cordova-ios excludes `platforms/cordova/build` file
 
-### 3.3.0 (20131214) ###
+## 3.3.0 (20131214)
 
 * No significant changes.
 
-### 3.2.0 (20131120) ###
+## 3.2.0 (20131120)
 
 * [CB-5124](https://issues.apache.org/jira/browse/CB-5124) - Remove splashscreen config.xml values from iOS Configuration Docs, move to plugin docs
 * [CB-5229](https://issues.apache.org/jira/browse/CB-5229) - cordova/emulate important improvements (stderr, check ios-sim before build)
@@ -1159,7 +1174,7 @@ Also see "8.0.0-beta.1" release notes below.
 * Make CDVWebViewDelegate able to load pages after a failed load.
 * Prevented automatic logging of whitelist failures.
 
-### 3.1.0 (20131001) ###
+## 3.1.0 (20131001)
 
 * [CB-3020](https://issues.apache.org/jira/browse/CB-3020) HideKeyboardFormAccessoryBar and KeyboardShrinksView show white bar instead of removing it
 * [CB-4799](https://issues.apache.org/jira/browse/CB-4799) Add update script for iOS.
@@ -1203,7 +1218,7 @@ Also see "8.0.0-beta.1" release notes below.
 * Update iOS whitelist tests
 * Fix ARC issue in start page tests (critical for Xcode5)
 
-### 3.0.0 (20130718) ###
+## 3.0.0 (20130718)
 
 * [CB-3999](https://issues.apache.org/jira/browse/CB-3999) Video Capture ignores duration option [iOS]
 * [CB-4202](https://issues.apache.org/jira/browse/CB-4202) [CB-3681](https://issues.apache.org/jira/browse/CB-3681) Remove Contact plugin unit tests
@@ -1233,7 +1248,7 @@ Also see "8.0.0-beta.1" release notes below.
 * Have create script include .gitignore file.
 * Removed all core plugins (including console logger) to their own repos (install them using cordova-cli or plugman)
 
-### 2.9.0 (201306XX) ###
+## 2.9.0 (201306XX)
 
 * [CB-3469](https://issues.apache.org/jira/browse/CB-3469) Add a version macro for 2.8.0.
 * [CB-3469](https://issues.apache.org/jira/browse/CB-3469) Adding missing license found by RAT
@@ -1260,9 +1275,7 @@ Also see "8.0.0-beta.1" release notes below.
 * Removing "build" from gitignore as one of our cli scripts is named build :)
 * Added/renamed CDVExifTests to test project.
 
-<br />
-
-### 2.8.0 (201305XX) ###
+## 2.8.0 (201305XX)
 
 * [CB-2840](https://issues.apache.org/jira/browse/CB-2840) Nil checks to avoid crash when network disconnected
 * [CB-3416](https://issues.apache.org/jira/browse/CB-3416) adding empty <plugins> element during deprecation window.
@@ -1294,9 +1307,7 @@ Also see "8.0.0-beta.1" release notes below.
 * [CB-2053](https://issues.apache.org/jira/browse/CB-2053) Update UIImagePickerController label to reflect video media type in CDVCamera
 * [CB-3530](https://issues.apache.org/jira/browse/CB-3530) PhoneGap app crashes on iOS with error "CDVWebViewDelegate: Navigation started when state=1"
 
-<br />
-
-### 2.7.0 (201304XX) ###
+## 2.7.0 (201304XX)
 
 * Fix NPE in InAppBrowser's error callback.
 * [CB-2849](https://issues.apache.org/jira/browse/CB-2849) Fix bin/create when CordovaLib parent dir has a space
@@ -1335,9 +1346,7 @@ Also see "8.0.0-beta.1" release notes below.
 * [CB-2698](https://issues.apache.org/jira/browse/CB-2698) Fix load detection when pages have redirects.
 * [CB-3295](https://issues.apache.org/jira/browse/CB-3295) Send InAppBrowser loadstart events when redirects occur
 
-<br />
-
-### 2.6.0 (20130401) ###
+## 2.6.0 (20130401)
 
 * [CB-2732](https://issues.apache.org/jira/browse/CB-2732) Only set camera device when allowed.
 * [CB-2848](https://issues.apache.org/jira/browse/CB-2848) ShowSplashScreenSpinner not used
@@ -1397,9 +1406,7 @@ Also see "8.0.0-beta.1" release notes below.
 * Added KeyboardShrinksView preference to CordovaLibTest config.xml
 * Added \__CORDOVA_IOS\__ macro
 
-< br />
-
-### 2.5.0 (20130301) ###
+## 2.5.0 (20130301)
 
 * [CB-2395](https://issues.apache.org/jira/browse/CB-2395) Fix CDVViewController UserAgent lock
 * [CB-2207](https://issues.apache.org/jira/browse/CB-2207) Use a custom script for www/ copying.
@@ -1451,9 +1458,7 @@ Also see "8.0.0-beta.1" release notes below.
 * function name was wrong (case sensitive)
 * Fix /bin/create script to work with GNU sed in path
 
-<br />
-
-### 2.4.0 (20130205) ###
+## 2.4.0 (20130205)
 
 * Make cordova_plist_to_config_xml able to handle binary plist files
 * Ran splashscreen images through ImageOptim.
@@ -1504,9 +1509,7 @@ Also see "8.0.0-beta.1" release notes below.
 * Added a native uri option to DestinationType.
 * Added a namespace prefix to a constant.
 
-<br />
-
-### 2.3.0 (20130107) ###
+## 2.3.0 (20130107)
 
 * [CB-1550](https://issues.apache.org/jira/browse/CB-1550) iOS build, debug, emulate scripts should check xcode version
 * [CB-1669](https://issues.apache.org/jira/browse/CB-1669) Issue an error when media.startRecord() is failing.
@@ -1566,9 +1569,7 @@ Also see "8.0.0-beta.1" release notes below.
 * Add local notification #define, and stubbed method in AppDelegate.m
 * Add appdelegate method didReceiveLocalNotification and repost to NSNotification defaultCenter
 
-<br />
-
-### 2.2.0 (20121031) ###
+## 2.2.0 (20121031)
 
 * [CB-622](https://issues.apache.org/jira/browse/CB-622) FileTransfer interface should provide progress monitoring
 * [CB-622](https://issues.apache.org/jira/browse/CB-622) Progress events for downloads
@@ -1644,9 +1645,7 @@ Also see "8.0.0-beta.1" release notes below.
 * Removed Cordova Settings File guide, added web shortcut to online doc.
 * Changed Cordova.plist BackupWebStorage setting from boolean to string (cloud, local, none)
 
-<br />
-
-### 2.1.0 (20120913) ###
+## 2.1.0 (20120913)
 
 * [CB-45](https://issues.apache.org/jira/browse/CB-45) Add support for full urls in white-list, extract hostname
 * [CB-274](https://issues.apache.org/jira/browse/CB-274) iOS Cordova Template Project is not compilable with default Apple's ARC compiler 3.0
@@ -1703,9 +1702,7 @@ Also see "8.0.0-beta.1" release notes below.
 * Deployment target for CordovaLib was not updated to 4.2 (we changed it in the template, but not the lib)
 * Fixed null dereference in FileTransfer upload when URL is invalid.
 
-<br />
-
-### 2.0.0 (20120720) ###
+## 2.0.0 (20120720)
 
 * [CB-38](https://issues.apache.org/jira/browse/CB-38) Add support for chunked uploads to FileTransfer plugin.
 * [CB-93](https://issues.apache.org/jira/browse/CB-93)  Only support iOS 4.2 and greater
@@ -1736,9 +1733,7 @@ Also see "8.0.0-beta.1" release notes below.
 * [CB-1095](https://issues.apache.org/jira/browse/CB-1095) Added "Hello Cordova" sample app as default
 * [CB-1099](https://issues.apache.org/jira/browse/CB-1099) Remove deprecated functions in CDVPlugin (verifyArguments, appViewController)
 
-<br />
-
-### 1.9.0 (20120629) ###
+## 1.9.0 (20120629)
 
 * Fixes [CB-915](https://issues.apache.org/jira/browse/CB-915) - Pause/resume events get fired twice
 * Fixes [CB-877](https://issues.apache.org/jira/browse/CB-877) - Opening a .doc file under iOS causes the file system API to break (and any other plugins that may use NSMutableArray pop)
@@ -1767,18 +1762,14 @@ Also see "8.0.0-beta.1" release notes below.
 * [CB-765](https://issues.apache.org/jira/browse/CB-765) Header Support iOS FileTransfer upload
 * Removed Upgrade Guide and Cleaver Guide from repo - they are all in http://docs.cordova.io now
 * [CB-863](https://issues.apache.org/jira/browse/CB-863) Splash screen on iOS not using localized UILaunchImageFile value
-  
-<br />
 
-### 1.8.1 (20120612) ###
+## 1.8.1 (20120612)
 
 * Fixes [CB-885](https://issues.apache.org/jira/browse/CB-885) - Crash when sliding the notification tray and/or tel link confirm dialog
 * Fixed [CB-506](https://issues.apache.org/jira/browse/CB-506) - images taken via Camera.getPicture do not get deleted
 * Implemented [CB-857](https://issues.apache.org/jira/browse/CB-857) - Add deprecation notice if user is running iOS lesser than 4.2
 
-<br />
-
-### 1.8.0 (20120605) ###
+## 1.8.0 (20120605)
 
 * Fixes [CB-819](https://issues.apache.org/jira/browse/CB-819) fail callback not invoked
 * [CB-794](https://issues.apache.org/jira/browse/CB-794) Add HTTP status code to FileTransferError object for iOS
@@ -1809,9 +1800,7 @@ Also see "8.0.0-beta.1" release notes below.
 * Fixes [CB-328](https://issues.apache.org/jira/browse/CB-328) - Cordova crashes on iOS 3.x devices
 * Fixes [CB-851](https://issues.apache.org/jira/browse/CB-851) - guide for using url schemes in iOS
 
-<br />
-
-### 1.7.0 (20120430) ###
+## 1.7.0 (20120430)
 
 * Fixed CB-183, [CB-54](https://issues.apache.org/jira/browse/CB-54) - ios camera targetWidth/Height don't match the documentation Fixes [CB-183](https://issues.apache.org/jira/browse/CB-183) and [CB-54](https://issues.apache.org/jira/browse/CB-54)
 * Fixed [CB-511](https://issues.apache.org/jira/browse/CB-511) Changed deviceproperties version to "cordova" property
@@ -1830,9 +1819,7 @@ Also see "8.0.0-beta.1" release notes below.
 * Re-fix [CB-347](https://issues.apache.org/jira/browse/CB-347) - localStorage / SQLDatabase Error after App update (timing issue for applying fix)
 * Adjust splash screen position based on orientation and status bar size
 
-<br />
-
-### 1.6.1 (20120416) ###
+## 1.6.1 (20120416)
 
 * Fixed [CB-496](https://issues.apache.org/jira/browse/CB-496) - Camera.getPicture - will always return FILE\_URI even though DATA\_URL specified
 * Fixed [CB-497](https://issues.apache.org/jira/browse/CB-497) - online and offline events are not being fired in 1.6.0
@@ -1840,9 +1827,8 @@ Also see "8.0.0-beta.1" release notes below.
 * Fixed [CB-302](https://issues.apache.org/jira/browse/CB-302) - orientation change event fired off twice on iOS 5.x
 * Fixed [CB-507](https://issues.apache.org/jira/browse/CB-507) - Remove excessive debug logging in execute delegate method in CDVViewController
 
-<br/>
+## 1.6.0 (20120409)
 
-### 1.6.0 (20120409) ###
 * Updates for Media API
 * Contacts updates for Unified JavaScript
 * Fixed Contacts.save return value and Notification.confirm
@@ -1895,9 +1881,7 @@ Also see "8.0.0-beta.1" release notes below.
 * Fixed [CB-377](https://issues.apache.org/jira/browse/CB-377) - add a check for PM_APP,  XC_APP, and DEVELOPER in the Makefile
 * REMOVED: navigator.splashscreen JavaScript interface (was unofficial) - use **cordova.exec(null, null, "SplashScreen", "hide", [])** OR **cordova.exec(null, null, "SplashScreen", "show", [])**
 
-<br/>
-
-### 1.5.0 (20120302) ###
+## 1.5.0 (20120302)
 
 * Fix NSLog crash in CDVWhitelist.m - parameter order reversed
 * Updated the Upgrade Guide for 1.4.1
@@ -1912,14 +1896,12 @@ Also see "8.0.0-beta.1" release notes below.
 * Default GCC_VERSION is com.apple.compilers.llvm.clang.1_0 now
 * Removed Xcode and iOS SDK checks in the installer (for the Xcode 4.3 install which goes under the /Applications folder)
 
-<br/>
+## 1.4.1 (20120201)
 
-### 1.4.1 (20120201) ###
 * Fixed [CB-212](https://issues.apache.org/jira/browse/CB-212) - iOS orientation switch broken in 1.4.0
 
-<br/>
+## 1.4.0 (20120130)
 
-### 1.4.0 (20120130) ###
 * Fixed [CB-143](https://issues.apache.org/jira/browse/CB-143) - Removing address from iOS contact causes crash
 * Fixed [CB-153](https://issues.apache.org/jira/browse/CB-153) - Camera default destination should be FILE_URI
 * Fixed [CB-7](https://issues.apache.org/jira/browse/CB-7) - Update source headers to apache license
@@ -1933,9 +1915,8 @@ Also see "8.0.0-beta.1" release notes below.
 * Updated the app icons, splash-screens, and template icons for the Xcode template to Cordova ones.
 * Added Battery core plugin to PhoneGap.plist
 
-<br />
+## 1.3.0 (20111219)
 
-### 1.3.0 (20111219) ###
 * added battery into PhoneGap framework compilation
 * Fixes [CB-101](https://issues.apache.org/jira/browse/CB-101) can't access media in documents://subDir
 * Added download method to filetransfer, interface is the same like on Android
@@ -1949,9 +1930,7 @@ Also see "8.0.0-beta.1" release notes below.
 * Fixed [CB-96](https://issues.apache.org/jira/browse/CB-96) PGWhitelist does not handle IPv4 host addresses with wild-cards
 * Added 'resign' and 'active' lifecycle events.
 
-<br />
-
-### 1.2.0 (20111103) ###
+## 1.2.0 (20111103)
 
 * Update for iOS 5 - Switched to using LLVM Compiler and fixed associated warnings. Added armv6 to architectures so can use devices running < iOS5
 * Fixed phonegap/phonegap-iphone#313 - return MediaError in error callback
@@ -1965,9 +1944,7 @@ Also see "8.0.0-beta.1" release notes below.
 * Connection plugin (Reachability) - stop/start notifier on pause/resume of app (attempt at Reachability crash fix)
 * Added OpenAllWhitelistURLsInWebView setting in PhoneGap.plist (to open all white-listed URLs in the PhoneGap webview)
 
-<br />
-
-### 1.1.0 (20110930) ###
+## 1.1.0 (20110930)
   
 * fixes issue #212 media play not always calling success callback
 * added support for W3C battery status events
@@ -2028,9 +2005,7 @@ Removed GetFunctionName.js (unused)
 * fixed #197 navigator.geolocation.getCurrentPosition timeouts when native app works
 * fixed #255 ability to play inline videos
 
-<br />
-
-### 1.0.0 (20110728) ###
+## 1.0.0 (20110728)
   
 * **CHANGED:** Update media implementation to match documentation. Significant modifications to match documentation. Using media.js from Android so significant changes to the code to match that architecture.  Created wrapper for AVAudioPlayer and Recorder to store the mediaId. Kept iOS only prepare() method but removed downloadCompleteCallback. Added seekTo method. 
 * **CHANGED:** Default-Landscape.png width increased to 1024px for #185 fix below 
@@ -2048,9 +2023,7 @@ Removed GetFunctionName.js (unused)
 * **ADDED:** Added warning log if splash-screen image is missing. 
 * **NOTE:** 1.0.0rc3 tagged in the repo is essentially this release 
 
-<br />
-
-### 1.0.0rc2 (20110719) ###
+## 1.0.0rc2 (20110719)
   
 * **FIX:** #167 Generated (by script) Xcode 3 template file fails in Xcode 4 
 * **FIX:** #162 better accessibility for timed audio  
@@ -2063,9 +2036,7 @@ Removed GetFunctionName.js (unused)
 * **CHANGED:** Sample splash screen images are annotated 
 * **REMOVED:** #165 Remove minification of phonegap.*.js file 
 
-<br />
-
-### 1.0.0rc1 (20110712) ###
+## 1.0.0rc1 (20110712)
   
 * **FIX:** Splash screen fixes for iPad 
 * **REMOVED:** Deprecated items **REMOVED:** Notification activityStart/activityStop, Notification loadingStart/loadingStop, Network.isReachable, debug.log, File.writeAsText, PhoneGapCommand base class for Plugins, unused Image and Movie plugins removed 
@@ -2083,9 +2054,7 @@ Removed GetFunctionName.js (unused)
 * **NEW:** Plugins: Ability to override handleOpenURL:(NSNotification*) to handle launch of the app from a custom URL 
 * **UPGRADERS:** Create a new project, and copy in the new phonegap-1.0.0rc1.*.js and PhoneGap.plist into your existing project 
 
-<br />
-
-### 0.9.6 (20110628) ###
+## 0.9.6 (20110628)
   
 * Xcode 3 Template includes the CoreMedia framework (as a weak reference for iOS 3.x) for the W3C Media Capture API 
 * Xcode 4 Template includes the CoreMedia framework (as a required reference, template spec limitation) for the W3C Network API. You must change this to an 'optional' reference to target iOS 3.x devices, if not they will crash. 
@@ -2098,9 +2067,7 @@ Removed GetFunctionName.js (unused)
 * **DEPRECATED:** Notification activityStart, activityStop, loadingStart, loadingStop core plugin functions will be removed in 1.0 and put in the plugins repo 
 * **DEPRECATED:** Plugin base class 'PhoneGapCommand' will be removed in 1.0, use the base class 'PGPlugin' instead
 
-<br />
-
-### 0.9.5.1 (20110524) ###
+## 0.9.5.1 (20110524)
   
 * Xcode 3 Template includes the CoreTelephony framework (as a weak reference for iOS 3.x) for the W3C Network Information API 
 * Xcode 4 Template includes the CoreTelephony framework (as a required reference, template spec limitation) for the W3C Network Information API. You must change this to an 'optional' reference to target iOS 3.x devices, if not they will crash. 
@@ -2113,9 +2080,7 @@ Removed GetFunctionName.js (unused)
 * Modified Xcode 3 Template (for compatibility with the Xcode 4 template) 
 * Installed PhoneGap static framework in */Users/Shared/PhoneGap/Frameworks/PhoneGap.framework* (for non-admin privilege users, this may change in further updates) 
 
-<br />
-
-### 0.9.5 (20110427) ### 
+## 0.9.5 (20110427)
   
 * Updated PhoneGap application template to handle project and PhoneGapLib locations with spaces in it 
 * Removed iPad template 
@@ -2126,57 +2091,39 @@ Removed GetFunctionName.js (unused)
 * Updated compiler of application template and PhoneGapLib to LLVM GCC 4.2 
 * Cleaned up static analyzer warnings. 
 
-<br />
-
-### 0.9.4 (20110203) ###
+## 0.9.4 (20110203)
   
 * phonegap.js is minified using the YUI compressor, and also renamed to phonegap.{ver}.min.js where {ver} is the version number of PhoneGapLib from the VERSION file 
 * the PhoneGap template is changed as well, at build time it will replace any references to 'src="phonegap.js"' to the new versioned js file (and copy the new phonegap.{ver}.min.js file). This replacement will look in all files in the 'www' folder. 
 * note that with the new PhoneGapLib phonegap.{ver}.min.js renaming, existing PhoneGap templates must copy the new "Copy PhoneGap JavaScript" post-build script from the new template (in Xcode, under Targets/[ProjectName]) 
 
-<br />
-
-### 20101102 ###
+## 20101102
   
 * Updated the Base SDK to "Latest iOS" (iOS 4.2 is the minimum to submit to the App Store) for the project files. This setting requires the latest Xcode 3.2.5 (included with the iOS 4.2 SDK) 
 
-<br />
-
-### 20101019 ### 
+## 20101019
   
 * Updated the Base SDK to iOS 4.1 (the minimum to submit to the App Store) for the project files 
 
-<br />
-
-### 20100902 ###  
+## 20100902
   
 * Updated the Base SDK to iOS 4.0 (the minimum to submit to the App Store) for the project files 
 * Added PhoneGapBuildSettings.xcconfig to the template. To override your PHONEGAPLIB folder on a project by project basis, modify the PHONEGAPLIB value in this file. 
 
-<br />
-
-### 20100416 ###
+## 20100416
   
 * Removed keys from PhoneGap.plist (AutoRotate, StartOrientation, RotateOrientation). 
 * To support orientation in your app: edit/add the UISupportedInterfaceOrientations (iPhone) or UISupportedInterfaceOrientations~ipad (iPad) key into your app's [appname]-Info.plist, with an array of strings that show what orientation your app supports. The supported values are: UIInterfaceOrientationPortrait, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationPortraitUpsideDown, UIInterfaceOrientationLandscapeRight.  
 * The first value in the array is the orientation that your app starts in. If you have more than one value in the array, it will autorotate (to the other supported orientations). 
 
-<br />
-
-### 20100406 ###
+## 20100406
   
 * added iPad universal xcodeproj file (3.2 OS required) 
 
-<br />
-
-### 20091103  
+## 20091103
   
 * fixed permissions and initial run problems 
 
-<br />
-
-### 20091030 ### 
+## 20091030
   
 * initial release 
-  
-<br />
