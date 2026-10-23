@@ -29,7 +29,7 @@ Cordova is a framework that enables developers to include the Cordova API in the
 
 * feat(devicectl): Use devicectl for deploying to iOS 17+ devices ([#1636](https://github.com/apache/cordova-ios/pull/1636)) [[8c2f680b](https://github.com/apache/cordova-ios/commit/8c2f680b)]
 * feat(statusbar): change dark/light appearance according to background color ([#1689](https://github.com/apache/cordova-ios/pull/1689)) [[c1d4cafa](https://github.com/apache/cordova-ios/commit/c1d4cafa)]
-* feat: Replace plugin variables with their actual values ([#1724](https://github.com/apache/cordova-ios/pull/1724)) [[97254540](https://github.com/apache/cordova-ios/commit/97254540)]
+* feat: Replace Package.swift plugin variables with their actual values ([#1724](https://github.com/apache/cordova-ios/pull/1724)) [[97254540](https://github.com/apache/cordova-ios/commit/97254540)]
 
 **Fixes:**
 
