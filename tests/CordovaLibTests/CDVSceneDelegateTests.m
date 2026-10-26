@@ -18,6 +18,7 @@
 */
 
 #import <XCTest/XCTest.h>
+#import <WebKit/WebKit.h>
 #import <Cordova/Cordova.h>
 #import <objc/runtime.h>
 
@@ -77,6 +78,7 @@
 @property (nonatomic, strong) CDVSceneDelegate *sceneDelegate;
 @property (nonatomic, strong) UIScene *placeholderScene;
 @property (nonatomic, strong) UISceneSession *placeholderSession;
+@property (nonatomic, strong) WKWebView *launchWebView;
 @end
 
 @implementation CDVSceneDelegateTests
@@ -86,9 +88,13 @@
     [super setUp];
     self.sceneDelegate = [[CDVSceneDelegate alloc] init];
 
-    // The scene object is only stored and passed back through; it is never
-    // messaged, so any non-nil placeholder cast to UIScene * is sufficient.
-    self.placeholderScene = (UIScene *)[NSObject new];
+    UIWindowScene *windowScene = (UIWindowScene *)UIApplication.sharedApplication.connectedScenes.anyObject;
+    self.placeholderScene = windowScene;
+    self.sceneDelegate.window = [[UIWindow alloc] initWithWindowScene:windowScene];
+    self.sceneDelegate.window.rootViewController = [UIViewController new];
+    self.launchWebView = [WKWebView new];
+    [self.sceneDelegate.window.rootViewController.view addSubview:self.launchWebView];
+    self.sceneDelegate.window.hidden = NO;
 
     // You can't construct a UISceneSession directly, but you can workaround
     // that by indirectly sending +alloc to the class instance
@@ -99,6 +105,8 @@
 {
     // Ensure no pending launch-URL observer leaks into the next test.
     [self.sceneDelegate sceneDidDisconnect:self.placeholderScene];
+    self.sceneDelegate.window.hidden = YES;
+    self.launchWebView = nil;
     self.sceneDelegate = nil;
     self.placeholderScene = nil;
     self.placeholderSession = nil;
@@ -161,7 +169,7 @@
         return [notification.object isEqual:launchURL];
     };
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:CDVPageDidLoadNotification object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:CDVPageDidLoadNotification object:self.launchWebView];
 
     [self waitForExpectations:@[openURLFired] timeout:1.0];
 }
@@ -180,7 +188,7 @@
         initWithName:CDVPluginHandleOpenURLNotification];
     notFired.inverted = YES;
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:CDVPageDidLoadNotification object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:CDVPageDidLoadNotification object:self.launchWebView];
 
     [self waitForExpectations:@[notFired] timeout:0.3];
 }
@@ -201,7 +209,7 @@
         initWithName:CDVPluginHandleOpenURLNotification];
     notFired.inverted = YES;
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:CDVPageDidLoadNotification object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:CDVPageDidLoadNotification object:self.launchWebView];
 
     [self waitForExpectations:@[notFired] timeout:0.3];
 }
@@ -260,7 +268,7 @@
         return [notification.object isEqual:launchUserActivity];
     };
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:CDVPageDidLoadNotification object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:CDVPageDidLoadNotification object:self.launchWebView];
 
     [self waitForExpectations:@[userActivityFired] timeout:1.0];
 }
@@ -279,7 +287,7 @@
         initWithName:CDVPluginContinueUserActivityNotification];
     notFired.inverted = YES;
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:CDVPageDidLoadNotification object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:CDVPageDidLoadNotification object:self.launchWebView];
 
     [self waitForExpectations:@[notFired] timeout:0.3];
 }
@@ -300,7 +308,7 @@
         initWithName:CDVPluginContinueUserActivityNotification];
     notFired.inverted = YES;
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:CDVPageDidLoadNotification object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:CDVPageDidLoadNotification object:self.launchWebView];
 
     [self waitForExpectations:@[notFired] timeout:0.3];
 }
@@ -350,9 +358,93 @@
         return [notification.object isEqual:launchUserActivity];
     };
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:CDVPageDidLoadNotification object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:CDVPageDidLoadNotification object:self.launchWebView];
 
     [self waitForExpectations:@[openURLFired, userActivityFired] timeout:1.0];
+}
+
+// A customized app can load an auxiliary Cordova window before its main page.
+// Its real navigation must not release the main window's pending launch links.
+- (void)testAuxiliaryWindowPageLoadDoesNotConsumeLaunchLinks
+{
+    NSURL *launchURL = [NSURL URLWithString:@"testscheme://main-window"];
+    NSUserActivity *activity = [self browsingUserActivityForURL:[NSURL URLWithString:@"https://example.com/main-window"]];
+    CDVFakeOpenURLContext *context = [CDVFakeOpenURLContext contextWithURL:launchURL];
+    CDVFakeSceneConnectionOptions *options = [CDVFakeSceneConnectionOptions
+        optionsWithURLContexts:[NSSet setWithObject:context] userActivities:[NSSet setWithObject:activity]];
+    [self.sceneDelegate scene:self.placeholderScene willConnectToSession:self.placeholderSession options:options];
+
+    __block NSUInteger earlyURLCount = 0;
+    __block NSUInteger earlyActivityCount = 0;
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    id urlObserver = [center addObserverForName:CDVPluginHandleOpenURLNotification object:launchURL queue:nil usingBlock:^(NSNotification *notification) {
+        earlyURLCount++;
+    }];
+    id activityObserver = [center addObserverForName:CDVPluginContinueUserActivityNotification object:activity queue:nil usingBlock:^(NSNotification *notification) {
+        earlyActivityCount++;
+    }];
+
+    UIWindow *auxiliaryWindow = [[UIWindow alloc] initWithWindowScene:(UIWindowScene *)self.placeholderScene];
+    CDVViewController *auxiliaryController = [CDVViewController new];
+    auxiliaryController.webContentFolderName = @"www";
+    auxiliaryController.startPage = @"index.html";
+    auxiliaryWindow.rootViewController = auxiliaryController;
+    [auxiliaryWindow makeKeyAndVisible];
+    [auxiliaryController loadViewIfNeeded];
+
+    XCTNSNotificationExpectation *auxiliaryLoaded = [[XCTNSNotificationExpectation alloc]
+        initWithName:CDVPageDidLoadNotification object:auxiliaryController.webView];
+    [self waitForExpectations:@[auxiliaryLoaded] timeout:10];
+
+    // A plugin in the main window may not have been created at this point.
+    // Register its observers only after the auxiliary page finishes loading.
+    [center removeObserver:urlObserver];
+    [center removeObserver:activityObserver];
+    XCTAssertEqual(earlyURLCount, 0u, @"The auxiliary page delivered the main window's URL too early");
+    XCTAssertEqual(earlyActivityCount, 0u, @"The auxiliary page delivered the main window's activity too early");
+    if (earlyURLCount != 0 || earlyActivityCount != 0) {
+        auxiliaryWindow.hidden = YES;
+        return;
+    }
+
+    XCTNSNotificationExpectation *urlDelivered = [[XCTNSNotificationExpectation alloc]
+        initWithName:CDVPluginHandleOpenURLNotification object:launchURL];
+    XCTNSNotificationExpectation *activityDelivered = [[XCTNSNotificationExpectation alloc]
+        initWithName:CDVPluginContinueUserActivityNotification object:activity];
+
+    CDVViewController *mainController = [CDVViewController new];
+    mainController.webContentFolderName = @"www";
+    mainController.startPage = @"index.html";
+    self.sceneDelegate.window.rootViewController = mainController;
+    [self.sceneDelegate.window makeKeyAndVisible];
+    [self waitForExpectations:@[urlDelivered, activityDelivered] timeout:10];
+    auxiliaryWindow.hidden = YES;
+}
+
+- (void)testSecondaryWebViewInRootCordovaWindowDoesNotReplayLaunchURL
+{
+    CDVViewController *mainController = [CDVViewController new];
+    mainController.webContentFolderName = @"www";
+    mainController.startPage = @"index.html";
+    self.sceneDelegate.window.rootViewController = mainController;
+    [mainController loadViewIfNeeded];
+
+    WKWebView *secondaryWebView = [WKWebView new];
+    [mainController.view addSubview:secondaryWebView];
+    NSURL *launchURL = [NSURL URLWithString:@"testscheme://root-cordova-window"];
+    [self.sceneDelegate scene:self.placeholderScene willConnectToSession:self.placeholderSession
+                       options:[self connectionOptionsForURL:launchURL]];
+
+    __block NSUInteger deliveryCount = 0;
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    id observer = [center addObserverForName:CDVPluginHandleOpenURLNotification object:launchURL queue:nil usingBlock:^(NSNotification *notification) {
+        deliveryCount++;
+    }];
+    [center postNotificationName:CDVPageDidLoadNotification object:secondaryWebView];
+    XCTAssertEqual(deliveryCount, 0u);
+    [center postNotificationName:CDVPageDidLoadNotification object:mainController.webView];
+    XCTAssertEqual(deliveryCount, 1u);
+    [center removeObserver:observer];
 }
 
 @end
