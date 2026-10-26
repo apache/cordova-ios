@@ -21,6 +21,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const childProcess = require('node:child_process');
 const devicectl = require('devicectl');
+const { events } = require('cordova-common');
 
 const list_devices = require('../../lib/listDevices');
 
@@ -80,7 +81,7 @@ describe('listDevices', () => {
 
         it('should trim and split standard output and return as array', () => {
             spawnMock.and.returnValue({ stdout: sampleData });
-            spyOn(devicectl, 'list').and.returnValue({ json: sampleDevicectl });
+            spyOn(devicectl, 'list').and.returnValue({ status: 0, json: sampleDevicectl });
 
             return list_devices.run()
                 .then(results => {
@@ -92,6 +93,37 @@ describe('listDevices', () => {
                         'THE_IPAD_SERIAL iPad'
                     ]);
                 });
+        });
+
+        for (const [failure, result] of Object.entries({
+            'a failed command': { status: 1, stderr: 'CoreDevice is unavailable' },
+            'a subprocess error': { status: null, error: new Error('xcrun failed') },
+            'missing JSON': { status: 0 },
+            'missing devices': { status: 0, json: { result: {} } },
+            'an invalid device list': { status: 0, json: { result: { devices: {} } } }
+        })) {
+            it(`should retain USB discovery after ${failure}`, async () => {
+                spawnMock.and.returnValue({ status: 0, stdout: sampleData });
+                spyOn(devicectl, 'list').and.returnValue(result);
+                spyOn(events, 'emit');
+
+                await expectAsync(list_devices.run()).toBeResolvedTo([
+                    'IPADMINI_UDID iPad',
+                    'THE_IPHONE_SERIAL iPhone',
+                    'THE_IPAD_SERIAL iPad'
+                ]);
+                expect(spawnMock).toHaveBeenCalledWith('ioreg', ['-p', 'IOUSB', '-l'], { encoding: 'utf8' });
+                expect(events.emit).toHaveBeenCalledWith('warn', jasmine.stringMatching(/devicectl: .+Falling back to USB discovery/));
+            });
+        }
+
+        it('should return an empty list when neither source has devices', async () => {
+            spawnMock.and.returnValue({ status: 0, stdout: '' });
+            spyOn(devicectl, 'list').and.returnValue({ status: 0, json: { result: { devices: [] } } });
+            spyOn(events, 'emit');
+
+            await expectAsync(list_devices.run()).toBeResolvedTo([]);
+            expect(events.emit).not.toHaveBeenCalled();
         });
     });
 });
