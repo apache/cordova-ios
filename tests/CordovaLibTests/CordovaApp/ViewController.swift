@@ -22,7 +22,7 @@ import Cordova
 
 class DeviceReadyScriptHandler : NSObject, WKScriptMessageHandler {
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        NotificationCenter.default.post(name: NSNotification.Name("CDVTestingDeviceReadyFired"), object: nil)
+        NotificationCenter.default.post(name: NSNotification.Name("CDVTestingDeviceReadyFired"), object: message.webView)
     }
 }
 

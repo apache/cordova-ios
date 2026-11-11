@@ -41,6 +41,8 @@
     [self.appDelegate createViewController];
     self.viewController = self.appDelegate.testViewController;
 
+    // Making the view controller visible already loads the start page. Each test
+    // waits for that WebView instead of starting another navigation.
     self.plugin = (CDVWebViewEngine *)self.viewController.webViewEngine;
     // StatusBar JavaScript APIs use cordova.exec to update native state. The
     // shared test helper registers a no-op native plugin that lets each test
@@ -57,8 +59,7 @@
 - (void) testStatusBarBackgroundColorNamedColor {
     CGFloat rgba[4] = {0.f, 0.f, 0.f, 0.f};
 
-    XCTestExpectation *loadExpectation = [[XCTNSNotificationExpectation alloc] initWithName:CDVTestingDeviceReadyFired];
-    [self.viewController loadStartPage];
+    XCTestExpectation *loadExpectation = [[XCTNSNotificationExpectation alloc] initWithName:CDVTestingDeviceReadyFired object:self.viewController.webView];
     [self waitForExpectations:@[loadExpectation] timeout:5];
 
     [self evaluateJavaScript:@"window.statusbar.setBackgroundColor('red');"
@@ -75,8 +76,7 @@ andWaitForCordovaCommandQueueWithWebViewEngine:self.plugin
 - (void) testStatusBarBackgroundColor3HexColor {
     CGFloat rgba[4] = {0.f, 0.f, 0.f, 0.f};
 
-    XCTestExpectation *loadExpectation = [[XCTNSNotificationExpectation alloc] initWithName:CDVTestingDeviceReadyFired];
-    [self.viewController loadStartPage];
+    XCTestExpectation *loadExpectation = [[XCTNSNotificationExpectation alloc] initWithName:CDVTestingDeviceReadyFired object:self.viewController.webView];
     [self waitForExpectations:@[loadExpectation] timeout:5];
 
     [self evaluateJavaScript:@"window.statusbar.setBackgroundColor('#f00');"
@@ -93,8 +93,7 @@ andWaitForCordovaCommandQueueWithWebViewEngine:self.plugin
 - (void) testStatusBarBackgroundColor6HexColor {
     CGFloat rgba[4] = {0.f, 0.f, 0.f, 0.f};
 
-    XCTestExpectation *loadExpectation = [[XCTNSNotificationExpectation alloc] initWithName:CDVTestingDeviceReadyFired];
-    [self.viewController loadStartPage];
+    XCTestExpectation *loadExpectation = [[XCTNSNotificationExpectation alloc] initWithName:CDVTestingDeviceReadyFired object:self.viewController.webView];
     [self waitForExpectations:@[loadExpectation] timeout:5];
 
     [self evaluateJavaScript:@"window.statusbar.setBackgroundColor('#ff0000');"
@@ -111,8 +110,7 @@ andWaitForCordovaCommandQueueWithWebViewEngine:self.plugin
 - (void) testStatusBarBackgroundColor8HexColor {
     CGFloat rgba[4] = {0.f, 0.f, 0.f, 0.f};
 
-    XCTestExpectation *loadExpectation = [[XCTNSNotificationExpectation alloc] initWithName:CDVTestingDeviceReadyFired];
-    [self.viewController loadStartPage];
+    XCTestExpectation *loadExpectation = [[XCTNSNotificationExpectation alloc] initWithName:CDVTestingDeviceReadyFired object:self.viewController.webView];
     [self waitForExpectations:@[loadExpectation] timeout:5];
 
     [self evaluateJavaScript:@"window.statusbar.setBackgroundColor('#ff000080');"
@@ -129,8 +127,7 @@ andWaitForCordovaCommandQueueWithWebViewEngine:self.plugin
 - (void) testStatusBarBackgroundColorRGB {
     CGFloat rgba[4] = {0.f, 0.f, 0.f, 0.f};
 
-    XCTestExpectation *loadExpectation = [[XCTNSNotificationExpectation alloc] initWithName:CDVTestingDeviceReadyFired];
-    [self.viewController loadStartPage];
+    XCTestExpectation *loadExpectation = [[XCTNSNotificationExpectation alloc] initWithName:CDVTestingDeviceReadyFired object:self.viewController.webView];
     [self waitForExpectations:@[loadExpectation] timeout:5];
 
     [self evaluateJavaScript:@"window.statusbar.setBackgroundColor('rgb(255, 0, 0)');"
@@ -147,8 +144,7 @@ andWaitForCordovaCommandQueueWithWebViewEngine:self.plugin
 - (void) testStatusBarBackgroundColorRGBA {
     CGFloat rgba[4] = {0.f, 0.f, 0.f, 0.f};
 
-    XCTestExpectation *loadExpectation = [[XCTNSNotificationExpectation alloc] initWithName:CDVTestingDeviceReadyFired];
-    [self.viewController loadStartPage];
+    XCTestExpectation *loadExpectation = [[XCTNSNotificationExpectation alloc] initWithName:CDVTestingDeviceReadyFired object:self.viewController.webView];
     [self waitForExpectations:@[loadExpectation] timeout:5];
 
     [self evaluateJavaScript:@"window.statusbar.setBackgroundColor('rgba(255, 0, 0, 0.25)');"
@@ -163,8 +159,7 @@ andWaitForCordovaCommandQueueWithWebViewEngine:self.plugin
 }
 
 - (void)testStatusBarAppearanceFollowsBackgroundColor {
-    XCTestExpectation *loadExpectation = [[XCTNSNotificationExpectation alloc] initWithName:CDVTestingDeviceReadyFired];
-    [self.viewController loadStartPage];
+    XCTestExpectation *loadExpectation = [[XCTNSNotificationExpectation alloc] initWithName:CDVTestingDeviceReadyFired object:self.viewController.webView];
     [self waitForExpectations:@[loadExpectation] timeout:5];
 
     [self evaluateJavaScript:@"window.statusbar.setBackgroundColor('#ffffff');"
@@ -189,8 +184,7 @@ andWaitForCordovaCommandQueueWithWebViewEngine:self.plugin
 
 #if !defined(TARGET_OS_VISION) || !TARGET_OS_VISION
 - (void) testStatusBarHidden {
-    XCTestExpectation *loadExpectation = [[XCTNSNotificationExpectation alloc] initWithName:CDVTestingDeviceReadyFired];
-    [self.viewController loadStartPage];
+    XCTestExpectation *loadExpectation = [[XCTNSNotificationExpectation alloc] initWithName:CDVTestingDeviceReadyFired object:self.viewController.webView];
     [self waitForExpectations:@[loadExpectation] timeout:5];
 
     XCTAssertEqual([self.viewController prefersStatusBarHidden], false);
@@ -203,8 +197,7 @@ andWaitForCordovaCommandQueueWithWebViewEngine:self.plugin
 }
 
 - (void) testTransparentStatusBarBackgroundIsNotHidden {
-    XCTestExpectation *loadExpectation = [[XCTNSNotificationExpectation alloc] initWithName:CDVTestingDeviceReadyFired];
-    [self.viewController loadStartPage];
+    XCTestExpectation *loadExpectation = [[XCTNSNotificationExpectation alloc] initWithName:CDVTestingDeviceReadyFired object:self.viewController.webView];
     [self waitForExpectations:@[loadExpectation] timeout:5];
 
     [self evaluateJavaScript:@"window.statusbar.setBackgroundColor('transparent');"
