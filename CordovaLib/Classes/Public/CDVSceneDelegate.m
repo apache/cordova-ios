@@ -18,6 +18,7 @@
 */
 
 #import <Cordova/CDVSceneDelegate.h>
+#import <Cordova/CDVViewController.h>
 #import <Cordova/CDVPluginNotifications.h>
 
 @interface CDVSceneDelegate ()
@@ -66,6 +67,22 @@
 
 - (void)pageDidLoad:(NSNotification *)notification
 {
+    UIView *webView = notification.object;
+    if (![webView isKindOfClass:[UIView class]]) {
+        return;
+    }
+
+    // An auxiliary Cordova window can finish loading before the launch window.
+    // Keep its notifications from releasing links before the main plugins exist.
+    UIViewController *rootViewController = self.window.rootViewController;
+    if ([rootViewController isKindOfClass:[CDVViewController class]]) {
+        if (((CDVViewController *)rootViewController).webView != webView) {
+            return;
+        }
+    } else if (self.window == nil || webView.window != self.window) {
+        return;
+    }
+
     [[NSNotificationCenter defaultCenter] removeObserver:self name:CDVPageDidLoadNotification object:nil];
 
     UIScene *scene = self.launchScene;
