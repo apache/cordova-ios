@@ -27,7 +27,12 @@ const statusBarScript = document.createElement('script');
 document.head.appendChild(statusBarScript);
 
 /**
- * Hides or shows the system status bar. No status bar will be visible at all when false is passed.
+ * Gets or sets the visibility of the system status bar. Assign true to show it
+ * or false to hide it.
+ *
+ * The getter returns the last value assigned in JavaScript (initially true).
+ * If cordova-plugin-statusbar is installed, reads use window.StatusBar.isVisible
+ * and writes call window.StatusBar.show() or window.StatusBar.hide().
  */
 Object.defineProperty(statusBar, 'visible', {
     configurable: false,
@@ -56,11 +61,15 @@ Object.defineProperty(statusBar, 'visible', {
 });
 
 /**
- * Sets the background color of the visible status bar.
- * Supports valid CSS color values, e.g. `rebeccapurple`, `#RRGGBBAA`, `rgb(255 0 153)`.
- * Alpha is supported since cordova-ios 8.1.1.
- * Note: This is intended for special cases only, and not a recommended API. The recommended way
- * to set the background colour of the status bar is with the `<meta name="theme-color">` tag.
+ * Sets the status bar background color. Accepts CSS colors that the web view
+ * computes as rgb() or rgba(), such as rebeccapurple, #RRGGBBAA, or rgb(255 0 153).
+ *
+ * For page-level colors, prefer the <meta name="theme-color"> tag. Use this
+ * method to explicitly override the status bar color at runtime.
+ *
+ * The built-in API supports alpha since cordova-ios 8.1.1. If
+ * cordova-plugin-statusbar is installed, the call forwards an opaque #RRGGBB
+ * color to window.StatusBar.backgroundColorByHexString().
  */
 Object.defineProperty(statusBar, 'setBackgroundColor', {
     configurable: false,
