@@ -42,7 +42,7 @@
     "./lib/*": "./lib/*.js"
   },
   "dependencies": {
-    "bplist-parser": "^0.5.0",
+    "bplist-parser": "^0.6.0",
     "cordova-common": "^6.0.0",
     "devicectl": "^0.0.2",
     "elementtree": "^0.1.7",
